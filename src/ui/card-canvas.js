@@ -9,7 +9,9 @@ window.VCardApp.CardCanvasExporter = (function () {
     return new Promise((resolve) => {
       if (!src) return resolve(null);
       const img = new Image();
-      img.crossOrigin = 'anonymous';
+      if (!src.startsWith('data:')) {
+        img.crossOrigin = 'anonymous';
+      }
       img.onload = () => resolve(img);
       img.onerror = () => resolve(null);
       img.src = src;
@@ -31,7 +33,18 @@ window.VCardApp.CardCanvasExporter = (function () {
   }
 
   async function generateCardCanvas(state, qrMode) {
-    const palette = THEME_PALETTES[state.theme] || THEME_PALETTES.obsidian;
+    if (document.fonts && document.fonts.ready) {
+      try {
+        await document.fonts.ready;
+      } catch {
+        // Fallback
+      }
+    }
+
+    const palette = (THEME_PALETTES && THEME_PALETTES[state.theme]) || {
+      qrDark: '#18181b',
+      headerBg: 'bg-zinc-900'
+    };
     const accentHex = palette.qrDark || '#18181b';
 
     // Business card standard dimensions (1100 x 660 px, high definition 300 DPI ready)
@@ -103,13 +116,23 @@ window.VCardApp.CardCanvasExporter = (function () {
     // Full Name
     const fullName = `${state.firstName || ''} ${state.lastName || ''}`.trim() || 'Votre Nom';
     ctx.fillStyle = '#09090B';
-    ctx.font = "bold 34px 'Plus Jakarta Sans', 'Inter', sans-serif";
+    let nameFontSize = 34;
+    ctx.font = `bold ${nameFontSize}px 'Plus Jakarta Sans', 'Inter', sans-serif`;
+    while (ctx.measureText(fullName).width > 490 && nameFontSize > 22) {
+      nameFontSize -= 2;
+      ctx.font = `bold ${nameFontSize}px 'Plus Jakarta Sans', 'Inter', sans-serif`;
+    }
     ctx.fillText(fullName, textStartX, 96);
 
     // Job Title
     if (state.jobTitle) {
       ctx.fillStyle = '#52525B';
-      ctx.font = "500 20px 'Inter', sans-serif";
+      let titleFontSize = 20;
+      ctx.font = `500 ${titleFontSize}px 'Inter', sans-serif`;
+      while (ctx.measureText(state.jobTitle).width > 490 && titleFontSize > 15) {
+        titleFontSize -= 1;
+        ctx.font = `500 ${titleFontSize}px 'Inter', sans-serif`;
+      }
       ctx.fillText(state.jobTitle, textStartX, 128);
     }
 
@@ -146,8 +169,10 @@ window.VCardApp.CardCanvasExporter = (function () {
       contactItems.push({ label: 'LOCALISATION', value: state.location, isMono: false });
     }
 
-    let startY = 224;
-    contactItems.slice(0, 4).forEach((item) => {
+    const itemsToDisplay = contactItems.slice(0, 5);
+    const itemGap = itemsToDisplay.length > 4 ? 50 : 58;
+    let startY = 222;
+    itemsToDisplay.forEach((item) => {
       // Label
       ctx.fillStyle = '#A1A1AA';
       ctx.font = "600 11px 'Inter', sans-serif";
@@ -155,12 +180,16 @@ window.VCardApp.CardCanvasExporter = (function () {
 
       // Value
       ctx.fillStyle = '#18181B';
-      ctx.font = item.isMono
-        ? "500 17px 'JetBrains Mono', monospace"
-        : "500 16px 'Inter', sans-serif";
-      ctx.fillText(item.value, 54, startY + 24);
+      let valFontSize = item.isMono ? 16 : 15;
+      const fontFam = item.isMono ? "'JetBrains Mono', monospace" : "'Inter', sans-serif";
+      ctx.font = `500 ${valFontSize}px ${fontFam}`;
+      while (ctx.measureText(item.value).width > 620 && valFontSize > 12) {
+        valFontSize -= 1;
+        ctx.font = `500 ${valFontSize}px ${fontFam}`;
+      }
+      ctx.fillText(item.value, 54, startY + 23);
 
-      startY += 58;
+      startY += itemGap;
     });
 
     // Bio or subtle footnote
@@ -168,11 +197,11 @@ window.VCardApp.CardCanvasExporter = (function () {
       ctx.fillStyle = '#71717A';
       ctx.font = "italic 13px 'Inter', sans-serif";
       const truncatedBio = state.bio.length > 70 ? state.bio.slice(0, 68) + '...' : state.bio;
-      ctx.fillText(`« ${truncatedBio} »`, 54, 590);
+      ctx.fillText(`« ${truncatedBio} »`, 54, 592);
     } else {
       ctx.fillStyle = '#A1A1AA';
       ctx.font = "500 12px 'JetBrains Mono', monospace";
-      ctx.fillText('CARTE DE VISITE NUMÉRIQUE • vCard 3.0', 54, 590);
+      ctx.fillText('CARTE DE VISITE NUMÉRIQUE • vCard 3.0', 54, 592);
     }
 
     // 6. Right Side: Framed QR Code Module
@@ -202,22 +231,27 @@ window.VCardApp.CardCanvasExporter = (function () {
 
     // Render QR Code onto an offscreen canvas
     const qrCanvas = document.createElement('canvas');
-    const qrPayload = QrView.resolvePayload(state, qrMode);
+    const qrPayload = QrView ? QrView.resolvePayload(state, qrMode) : (state.slug ? `/c/${state.slug}` : window.location.href);
+    const byteLength = new Blob([qrPayload]).size;
 
     await new Promise((resolve) => {
+      if (!window.QRCode) return resolve();
       window.QRCode.toCanvas(
         qrCanvas,
         qrPayload,
         {
           width: 250,
           margin: 1,
-          errorCorrectionLevel: 'M',
+          errorCorrectionLevel: byteLength > 600 ? 'L' : 'M',
           color: {
             dark: accentHex,
             light: '#ffffff'
           }
         },
-        () => resolve()
+        (err) => {
+          if (err) console.warn('QR Code canvas generation warning:', err);
+          resolve();
+        }
       );
     });
 
@@ -264,17 +298,31 @@ window.VCardApp.CardCanvasExporter = (function () {
     ctx.stroke();
 
     const displayUrl =
-      ApiService.isAvailable() && state.slug
+      ApiService && ApiService.isAvailable() && state.slug
         ? `/c/${state.slug}`
         : qrMode === 'vcard'
         ? 'vCard Direct (Offline)'
-        : 'Lien Carte Numérique';
+        : (state.slug ? `/c/${state.slug}` : 'Carte Numérique');
 
     ctx.fillStyle = accentHex;
     ctx.font = "600 12px 'JetBrains Mono', monospace";
     ctx.fillText(displayUrl, qrFrameX + qrFrameW / 2, pillY + 22);
 
     return canvas;
+  }
+
+  async function renderCardToCanvas(targetCanvas, state, qrMode) {
+    if (!targetCanvas) return;
+    try {
+      const offscreen = await generateCardCanvas(state, qrMode);
+      targetCanvas.width = offscreen.width;
+      targetCanvas.height = offscreen.height;
+      const ctx = targetCanvas.getContext('2d');
+      ctx.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
+      ctx.drawImage(offscreen, 0, 0);
+    } catch (err) {
+      console.error('Erreur renderCardToCanvas:', err);
+    }
   }
 
   async function downloadCardImage(state, qrMode, onComplete) {
@@ -284,14 +332,32 @@ window.VCardApp.CardCanvasExporter = (function () {
       const safeLast = (state.lastName || 'Visite').replace(/[^a-zA-Z0-9_-]/g, '_');
       const fileName = `Carte_Visite_${safeFirst}_${safeLast}.png`;
 
-      const link = document.createElement('a');
-      link.download = fileName;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          const dataUrl = canvas.toDataURL('image/png');
+          const link = document.createElement('a');
+          link.download = fileName;
+          link.href = dataUrl;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          if (typeof onComplete === 'function') onComplete(true, fileName);
+          return;
+        }
 
-      if (typeof onComplete === 'function') {
-        onComplete(true, fileName);
-      }
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = fileName;
+        link.href = url;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(() => URL.revokeObjectURL(url), 3000);
+
+        if (typeof onComplete === 'function') {
+          onComplete(true, fileName);
+        }
+      }, 'image/png');
     } catch (err) {
       console.error('Erreur génération carte de visite image:', err);
       if (typeof onComplete === 'function') {
@@ -302,6 +368,7 @@ window.VCardApp.CardCanvasExporter = (function () {
 
   return {
     generateCardCanvas,
+    renderCardToCanvas,
     downloadCardImage
   };
 })();
