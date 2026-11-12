@@ -361,6 +361,17 @@
           target.dataset.edited = 'true';
         }
 
+        if (target.name === 'qrLogoUrl') {
+          const url = String(target.value || '').trim();
+          if (url && !/^https?:\/\//i.test(url)) {
+            ProfileCardUI.showToast('URL logo : http(s) uniquement');
+          } else if (url) {
+            state.qrLogoBase64 = '';
+            const upload = document.getElementById('qrLogoUpload');
+            if (upload) upload.value = '';
+          }
+        }
+
         scheduleRender();
         schedulePersistence();
       });
