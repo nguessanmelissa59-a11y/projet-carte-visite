@@ -260,25 +260,25 @@ Respecter `prefers-reduced-motion`.
 
 ```css
 :root {
-  --surface: #f3efe4;
-  --surface-elevated: #fcfcf8;
-  --ink: #0c1818;
-  --ink-muted: #5b616c;
-  --line: rgba(12, 24, 24, 0.12);
-  --accent: #0c543c;
-  --accent-soft: rgba(12, 84, 60, 0.12);
-  --ambient-a: rgba(12, 84, 60, 0.06);
-  --ambient-b: rgba(252, 228, 216, 0.45);
+  --surface: #f6f0e2;
+  --surface-elevated: #fffdf7;
+  --ink: #0a1714;
+  --ink-muted: #4f5a55;
+  --line: rgba(10, 23, 20, 0.14);
+  --accent: #0a6b45;
+  --accent-soft: rgba(10, 107, 69, 0.16);
+  --ambient-a: rgba(10, 107, 69, 0.1);
+  --ambient-b: rgba(255, 215, 194, 0.55);
   --radius-panel: 1rem;
-  --shadow-panel: 0 12px 40px rgba(12, 24, 24, 0.08);
+  --shadow-panel: 0 12px 40px rgba(10, 23, 20, 0.1);
   --font-display: 'Fraunces', Georgia, serif;
   --font-body: 'Figtree', system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 }
 
 html[data-card-theme='forest'] {
-  --accent: #0c543c;
-  --accent-soft: rgba(12, 84, 60, 0.12);
+  --accent: #0a6b45;
+  --accent-soft: rgba(10, 107, 69, 0.16);
 }
 ```
 
