@@ -4,8 +4,8 @@
   --ink: #14120f;
   --ink-muted: #5c574f;
   --line: rgba(20, 18, 15, 0.1);
-  --accent: #18181b;
-  --accent-soft: rgba(24, 24, 27, 0.08);
+  --accent: #0c0a09;
+  --accent-soft: rgba(12, 10, 9, 0.1);
   --ambient-a: rgba(24, 24, 27, 0.08);
   --ambient-b: rgba(120, 113, 98, 0.12);
   --radius-panel: 1rem;
@@ -437,13 +437,17 @@ html.dark[data-card-theme='obsidian'] .btn-primary {
 
 .theme-swatch {
   position: relative;
-  width: 1.85rem;
-  height: 1.85rem;
-  border-radius: 0.55rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  width: 2.15rem;
+  height: 2.15rem;
+  min-width: 2.15rem;
+  min-height: 2.15rem;
+  border-radius: 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 1px 2px rgba(20, 18, 15, 0.12);
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
 }
 
 .theme-swatch:hover {
