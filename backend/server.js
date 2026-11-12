@@ -130,6 +130,12 @@ const server = http.createServer((req, res) => {
     return handleDownloadVcf(req, res, shortVcfMatch[1], true);
   }
 
+  if (req.method === 'GET' && (pathname === '/auth' || pathname === '/auth/')) {
+    res.writeHead(302, { Location: '/auth.html' });
+    res.end();
+    return;
+  }
+
   serveStaticFile(req, res, pathname);
 });
 

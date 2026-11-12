@@ -376,13 +376,6 @@ html.dark[data-card-theme='obsidian'] .easy-steps li.is-active span {
   margin-bottom: 1rem;
 }
 
-.panel-intro-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.55rem 0.85rem;
-}
-
 .eyebrow {
   display: inline-block;
   font-family: var(--font-mono);
@@ -391,7 +384,7 @@ html.dark[data-card-theme='obsidian'] .easy-steps li.is-active span {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--accent);
-  margin: 0;
+  margin: 0 0 0.15rem;
 }
 
 .panel-intro .hero-brand {
@@ -405,7 +398,7 @@ html.dark[data-card-theme='obsidian'] .easy-steps li.is-active span {
 }
 
 .panel-intro .hero-lead {
-  margin: 0;
+  margin: 0.15rem 0 0;
   max-width: 32rem;
   font-size: 1rem;
   line-height: 1.45;

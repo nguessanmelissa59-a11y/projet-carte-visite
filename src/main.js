@@ -74,7 +74,7 @@
 
     if (editSlugParam) {
       if (!ApiService.isAuthenticated()) {
-        window.location.href = '/auth.html';
+        window.location.href = '/auth';
         return;
       }
       const serverCard = await ApiService.fetchCardBySlug(editSlugParam, false);
@@ -130,7 +130,7 @@
     }
     if (!ApiService.isAuthenticated()) {
       ProfileCardUI.showToast('Connectez-vous pour enregistrer votre carte');
-      window.location.href = '/auth.html';
+      window.location.href = '/auth';
       return;
     }
     try {
