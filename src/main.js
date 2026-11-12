@@ -422,6 +422,35 @@
       });
     }
 
+    const tabPreviewMobile = document.getElementById('tabPreviewMobile');
+    const tabPreviewCard = document.getElementById('tabPreviewCard');
+    const previewMobileContainer = document.getElementById('previewMobileContainer');
+    const previewCardContainer = document.getElementById('previewCardContainer');
+    const btnDownloadFromCardPreview = document.getElementById('btnDownloadFromCardPreview');
+
+    if (btnDownloadFromCardPreview) {
+      btnDownloadFromCardPreview.addEventListener('click', handleDownloadCardImage);
+    }
+
+    if (tabPreviewMobile && tabPreviewCard) {
+      tabPreviewMobile.addEventListener('click', () => {
+        previewTab = 'mobile';
+        tabPreviewMobile.classList.add('is-active');
+        tabPreviewCard.classList.remove('is-active');
+        if (previewMobileContainer) previewMobileContainer.classList.remove('hidden');
+        if (previewCardContainer) previewCardContainer.classList.add('hidden');
+      });
+
+      tabPreviewCard.addEventListener('click', () => {
+        previewTab = 'card';
+        tabPreviewCard.classList.add('is-active');
+        tabPreviewMobile.classList.remove('is-active');
+        if (previewMobileContainer) previewMobileContainer.classList.remove('hidden');
+        if (previewCardContainer) previewCardContainer.classList.remove('hidden');
+        updateVirtualCardPreview();
+      });
+    }
+
     const btnSharePublic = document.getElementById('btnSharePublic');
     if (btnSharePublic) {
       btnSharePublic.addEventListener('click', async () => {
