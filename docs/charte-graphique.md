@@ -1,288 +1,318 @@
 # EVC — Charte graphique
 
-Document de reference issu de l'analyse de la maquette « Refonte de la plateforme » (landing, formulaire de creation, apercu carte, parcours mobile).
+Source officielle : [`EVC-Refonte-maquettes.pdf`](./EVC-Refonte-maquettes.pdf) (5 ecrans).  
+Previews rendues : `docs/maquette-pages/page-01.png` … `page-05.png`.
 
-**Intention** : une plateforme de cartes de visite digitales premium, chaleureuse et structuree — papier creme, vert foret, typographie serif editoriale. Pas de look corporate froid, pas de degradés violet/indigo.
+**Intention** : plateforme de cartes de visite digitales premium, chaleureuse et structuree — papier creme, vert foret, typographie serif editoriale. Pas de look corporate froid, pas de degrades violet/indigo.
 
 ---
 
-## 1. Positionnement visuel
+## 1. Inventaire des ecrans (maquette)
+
+| Page | Format | Ecran | Contenu cle |
+|---|---|---|---|
+| 01 | Desktop A4 | Creation + apercu | Nav, hero, stepper 1–3, formulaire sections 1–4, apercu mobile live |
+| 02 | Mobile | Fiche publique | Header theme raye, avatar initiales, CTA contacts, liste coords, footer EVC |
+| 03 | Print | Recto / verso 85×55 mm | Identite + contacts ; verso QR + URL `evc.app/c/…` ; fond perdu 3 mm, marge 4 mm |
+| 04 | Mobile | Formulaire etape 1/3 | Hero compact, qui etes-vous, joindre, couleur, CTA enregistrer |
+| 05 | Desktop | Partage etape 3/3 | QR court, lien, actions export (QR, PDF, vcf, WhatsApp), perso QR, banner compte |
+
+Parcours produit : **Vos infos → Enregistrer → Partager le QR**.
+
+---
+
+## 2. Positionnement visuel
 
 | Axe | Direction |
 |---|---|
 | Ton | Boutique / editorial premium, accessible |
-| Atmosphere | Papier, lumiere douce, espace blanc genereux |
+| Atmosphere | Papier, lumiere douce, espace genereux |
 | Structure | Parcours numerote, sections claires, hierarchie forte |
-| Contraste | Fonds clairs chauds + accents verts profonds |
+| Contraste | Fonds creme chauds + accent vert profond |
 | Interdit | Neon, glow, violet/indigo cliche, cards empilees flottantes, emojis UI |
 
 ---
 
-## 2. Couleurs
+## 3. Couleurs
 
-Valeurs extraites / normalisees a partir de la maquette.
+Valeurs echantillonnees sur les pages PDF (`#0C543C`, `#F0F0E4`, `#FCFCF0`, peches `#FCE4D8`).
 
-### 2.1 Surfaces
-
-| Token | Hex | Usage |
-|---|---|---|
-| `--surface` | `#F5F0E6` | Fond de page (creme papier) |
-| `--surface-warm` | `#F2ECE0` | Zones secondaires, bandes douces |
-| `--surface-elevated` | `#FFFDF9` | Panneaux, champs, cartes blanches |
-| `--surface-muted` | `#EDEDED` | Zones neutres (bandeaux collage, filets) |
-
-### 2.2 Encre et texte
+### 3.1 Surfaces
 
 | Token | Hex | Usage |
 |---|---|---|
-| `--ink` | `#14201A` | Titres, texte principal (vert-charbon) |
-| `--ink-strong` | `#171717` | Boutons secondaires sombres, nav |
-| `--ink-muted` | `#5B616C` | Sous-titres, labels, hints |
-| `--ink-on-accent` | `#FFFFFF` | Texte sur boutons / bandeaux verts |
+| `--surface` | `#F3EFE4` | Fond de page (creme papier) |
+| `--surface-warm` | `#F0E8D8` | Zones secondaires |
+| `--surface-elevated` | `#FCFCF8` | Panneaux blancs, champs |
+| `--surface-panel` | `#FFFFFF` | Cartes / conteneurs principaux |
 
-### 2.3 Accent principal (marque)
-
-| Token | Hex | Usage |
-|---|---|---|
-| `--accent` | `#0F5C3F` | CTA primaire, header carte, etapes actives |
-| `--accent-hover` | `#0C4A33` | Survol bouton primaire |
-| `--accent-soft` | `#D8F4E1` | Badges, puces d'etape, fonds status |
-| `--accent-mid` | `#156044` | Variante moyenne (icones, focus) |
-
-### 2.4 Accents secondaires (UI systeme)
+### 3.2 Encre
 
 | Token | Hex | Usage |
 |---|---|---|
-| `--info-warm` | `#FFEFD0` | Bannieres info / tips |
-| `--info-warm-border` | `#FFE098` | Contour banniere |
-| `--terracotta` | `#B66A2C` | Alerte douce, accent optionnel |
-| `--line` | `rgba(20, 32, 26, 0.12)` | Bordures et separateurs |
-| `--shadow-card` | `0 12px 40px rgba(20, 32, 26, 0.10)` | Ombre carte / panneau |
+| `--ink` | `#0C1818` | Titres, texte principal |
+| `--ink-strong` | `#171717` | Bouton « Se connecter » |
+| `--ink-muted` | `#5B616C` | Labels, hints, meta |
+| `--ink-on-accent` | `#FFFFFF` | Texte sur vert / noir |
 
-### 2.5 Themes de carte (swatches utilisateur)
+### 3.3 Accent marque
 
-Couleurs d'en-tete de carte proposees dans la maquette :
-
-| Nom | Hex | Role |
+| Token | Hex | Usage |
 |---|---|---|
-| Forest | `#0F5C3F` | Defaut marque |
-| Navy | `#1E3A5F` | Professionnel froid |
-| Terracotta | `#9C542F` | Chaleureux |
-| Bordeaux | `#763221` | Premium sombre |
-| Charcoal | `#2A2D34` | Neutre / Obsidian |
+| `--accent` | `#0C543C` | CTA, logo mark, steps actifs, header carte |
+| `--accent-mid` | `#186048` | Motif rayures header, hover leger |
+| `--accent-deep` | `#005430` | Survol CTA / etat presse |
+| `--accent-soft` | `#E6F0EB` | Steps termines, badge entreprise |
 
-> En code actuel, les themes vivent sous `html[data-card-theme='…']` dans `assets/css/styles.css`. Lors de l'alignement maquette, prioriser **Forest `#0F5C3F`** comme accent produit (au lieu du gris encre actuel).
+### 3.4 Accents systeme
 
-### 2.6 Regles d'usage couleur
+| Token | Hex | Usage |
+|---|---|---|
+| `--beta` / info warm | `#FCE4D8` | Badge « Beta », bannieres conseil |
+| `--line` | `rgba(12, 24, 24, 0.12)` | Bordures, separateurs fiche |
+| `--shadow-panel` | `0 12px 40px rgba(12, 24, 24, 0.08)` | Ombre panneaux / apercu |
 
-1. Un seul accent fort par ecran (vert foret pour les CTA).
-2. Le creme `#F5F0E6` reste le fond global ; le blanc `#FFFDF9` est reserve aux surfaces interactives.
-3. Jamais de texte `#FFFFFF` sur fond creme (contraste insuffisant).
-4. Les themes de carte colorent **l'en-tete de la carte** et l'accent local, pas tout le chrome de l'app.
-5. Mode sombre : hors perimetre de cette maquette ; conserver le mapping existant si active, sans l'imposer a la landing.
+### 3.5 Themes de carte (swatches page 01)
+
+Pastilles dans « Couleur de la carte » (ordre maquette) :
+
+| Ordre | Orientation | Hex cible |
+|---|---|---|
+| 1 | Forest (defaut) | `#0C543C` |
+| 2 | Orange | `#E digérer` → `#C45A1A` |
+| 3 | Obsidian | `#2A2D34` |
+| 4 | Cobalt | `#2F5B8A` |
+| 5 | Bronze / terre | `#9C542F` |
+| 6 | Bordeaux | `#763221` |
+| 7 | Teal | `#1F6B5C` |
+
+> Les themes colorent surtout le **bandeau de la fiche** (et l’accent local), pas tout le chrome de l’app.
+
+### 3.6 Regles
+
+1. Un seul accent fort par ecran (vert pour les CTA produit).
+2. Creme = fond global ; blanc = surfaces interactives.
+3. Badge Beta / bannieres = peche `#FCE4D8`, jamais rouge alerte agressif.
+4. Texte blanc uniquement sur accent ou encre forte.
+5. Mode sombre : toggle present en nav maquette ; hors detail de ce PDF — ne pas inventer la palette sombre sans spec.
 
 ---
 
-## 3. Typographie
+## 4. Typographie
 
-### 3.1 Familles (deja chargees dans le projet)
+### 4.1 Familles (projet)
 
 | Role | Famille | Fallback | Usage |
 |---|---|---|---|
-| Display | **Fraunces** | Georgia, serif | Titres hero, titres de section |
-| Body / UI | **Figtree** | system-ui, sans-serif | Labels, boutons, corps, navigation |
-| Mono | **IBM Plex Mono** | ui-monospace | Slugs, URLs courtes, donnees techniques |
+| Display | **Fraunces** | Georgia, serif | Hero, titres de section, nom sur fiche |
+| Body / UI | **Figtree** | system-ui, sans-serif | Labels, boutons, nav, corps |
+| Mono | **IBM Plex Mono** | ui-monospace | URLs, slugs |
 
-### 3.2 Hierarchie
+Logo wordmark « EVC » : sans gras dans un carre accent + texte adjacent.
 
-| Niveau | Police | Poids | Taille indicative | Tracking | Couleur |
-|---|---|---|---|---|---|
-| Hero H1 | Fraunces | 600–700 | `clamp(2rem, 4vw, 3.25rem)` | `-0.02em` | `--ink` |
-| Section H2 | Fraunces | 600 | `clamp(1.5rem, 2.5vw, 2rem)` | `-0.015em` | `--ink` |
-| Sous-titre | Figtree | 400–500 | `1–1.125rem` | `0` | `--ink-muted` |
-| Label champ | Figtree | 500 | `0.8125–0.875rem` | `0.01em` | `--ink-muted` |
-| Corps | Figtree | 400 | `1rem` (16 px min mobile) | `0` | `--ink` |
-| Bouton | Figtree | 600 | `0.9375–1rem` | `0` | selon variante |
-| Meta / step | Figtree | 500 | `0.75–0.875rem` | `0.02em` | `--ink-muted` |
-| Numero section (`01`) | Figtree ou Mono | 500 | `0.75rem` | `0.06em` | `--accent` |
+### 4.2 Hierarchie
 
-### 3.3 Style textuel (ton editorial)
+| Niveau | Police | Poids | Taille | Notes |
+|---|---|---|---|---|
+| Hero H1 | Fraunces | 600–700 | `clamp(2rem, 4vw, 3.25rem)` | tracking serre |
+| Section H2 | Fraunces | 600 | `clamp(1.35rem, 2.2vw, 1.75rem)` | « Qui etes-vous ? » |
+| Nom fiche | Fraunces | 600–700 | ~1.5–1.75rem | page 02 |
+| Eyebrow | Figtree | 500–600 | 0.75rem | `ÉTAPE X SUR 3`, `CARTE NUMÉRIQUE`, `VOTRE LIEN` — small caps / uppercase leger |
+| Label | Figtree | 500 | 0.8125–0.875rem | au-dessus des champs |
+| Corps | Figtree | 400 | ≥ 16 px mobile | |
+| Bouton | Figtree | 600 | 0.9375–1rem | |
+| Meta liste fiche | Figtree | 500 | 0.7–0.75rem | `TÉLÉPHONE`, `E-MAIL` uppercase + tracking |
 
-- Titres : phrases courtes, affirmation claire (« Votre carte, prete a partager. »).
-- Sous-titres : une phrase utile, sans jargon marketing.
-- Sections formulaire : questions directes (« Qui etes-vous ? », « Comment vous joindre ? »).
-- Pas de TOUT-EN-CAPITALES agressif sur les titres ; les labels restent sentence case.
-- Numeros de section (`01` … `04`) en prefixe discret, pas en gros badges flottants.
+### 4.3 Ton editorial (textes maquette)
+
+- Hero : « Votre carte, prete a partager. »
+- Sous-titre : « Renseignez vos infos, enregistrez, puis partagez le QR. Trois minutes suffisent. »
+- Sections : questions (« Qui etes-vous ? », « Comment vous joindre ? »).
+- CTA : verbe + objet (« Enregistrer ma carte », « Copier mon lien », « Enregistrer dans les contacts »).
+- Sentence case partout sauf eyebrows / labels techniques uppercase.
 
 ---
 
-## 4. Mise en page et rythme
+## 5. Layout et rythme
 
-### 4.1 Grille
+### 5.1 Structure
 
-- Conteneur principal : `width: 100%` ; `max-width: 72rem` ; padding horizontal `1–1.5rem`.
-- Desktop creation : **deux colonnes** — formulaire a gauche, apercu carte a droite.
-- Mobile : **une colonne** ; apercu sous le formulaire ou en sticky leger selon contexte.
-- Sections du formulaire empilees verticalement avec numerotation.
+- **Desktop creation (p01)** : header sticky ; hero + stepper ; **2 colonnes** — formulaire (gauche) / apercu mobile (droite).
+- **Desktop partage (p05)** : panneau blanc ; **2 colonnes** — QR | actions lien + exports.
+- **Mobile form (p04)** : 1 colonne, sections empilees, CTA bas de flux.
+- **Fiche publique (p02)** : colonne unique type telephone.
+- Conteneur : `max-width: 72rem`, padding horizontal `1–1.5rem`.
 
-### 4.2 Espacements
+### 5.2 Espacements
 
-| Token | Valeur | Usage |
-|---|---|---|
-| `--space-1` | `0.25rem` | Micro |
-| `--space-2` | `0.5rem` | Inter-elements serres |
-| `--space-3` | `0.75rem` | Label → champ |
-| `--space-4` | `1rem` | Gap champs |
-| `--space-6` | `1.5rem` | Entre blocs |
-| `--space-8` | `2rem` | Entre sections |
-| `--space-12` | `3rem` | Respiration hero / page |
+| Token | Valeur |
+|---|---|
+| `--space-2` | `0.5rem` |
+| `--space-3` | `0.75rem` |
+| `--space-4` | `1rem` |
+| `--space-6` | `1.5rem` |
+| `--space-8` | `2rem` |
+| `--space-12` | `3rem` |
 
-### 4.3 Breakpoints (mobile-first)
+### 5.3 Breakpoints
 
 | Seuil | Usage |
+|---|---|
+| `< 576px` | Mobile (stack) |
+| `≥ 768px` | Tablette / grilles 2 champs |
+| `≥ 992px` | Desktop 2 colonnes form + apercu |
+| `≥ 1200px` | Grand desktop |
+
+Controle obligatoire : **360 / 768 / 1024 / 1280**.
+
+---
+
+## 6. Composants
+
+### 6.1 Navigation
+
+- Gauche : mark carre vert + « EVC » + badge **Beta** peche.
+- Droite : « Apercu » (outline), toggle theme, « Se connecter » (pill noir).
+- Page partage : « Voir ma carte » outline + « Se connecter ».
+
+### 6.2 Boutons
+
+| Variante | Style | Exemples |
 |---|---|---|
-| `< 576px` | Mobile (stack, CTA pleine largeur) |
-| `≥ 768px` | Tablette |
-| `≥ 992px` | Desktop 2 colonnes formulaire / apercu |
-| `≥ 1200px` | Grand desktop, max-width atteint |
+| Primaire | Fond `#0C543C`, texte blanc, radius eleve (pill ou ~12–999px) | Enregistrer ma carte, Copier mon lien |
+| Secondaire sombre | Fond `#171717`, texte blanc, pill | Se connecter |
+| Outline | Bordure fine, fond clair | Apercu, Choisir une photo, Voir ma carte |
+| Tile action | Carre arrondi + icone + label | Telecharger QR, PDF, vcf, WhatsApp |
 
-Verifier systematiquement **360 / 768 / 1024 / 1280**.
+Hauteur tactile ≥ 44 px. Transition couleur ~150 ms. Pas de pulse permanent.
 
----
+### 6.3 Formulaire
 
-## 5. Composants
+- Sections numerotees **1–4** (identite, contact, liens, couleur).
+- Champs : fond elevé, border `--line`, radius ~8–10 px, label au-dessus.
+- Photo : avatar initiales + bouton outline « Choisir une photo » (JPG/PNG, carre).
+- Focus : anneau fin accent, pas de halo flou.
+- Banniere peche sous le stepper : invitation a se connecter.
 
-### 5.1 Boutons
+### 6.4 Stepper
 
-| Variante | Fond | Texte | Forme | Usage |
-|---|---|---|---|---|
-| Primaire | `#0F5C3F` | blanc | pill (`border-radius: 999px`) | CTA principal |
-| Secondaire sombre | `#171717` | blanc | pill ou `0.75rem` | « Se connecter » |
-| Secondaire clair | transparent / `#FFFDF9` | `--ink` | bordure `--line` | Actions secondaires |
-| Ghost | transparent | `--ink-muted` | — | Liens discrets |
+1. Actif : pastille `#0C543C` + numero blanc.
+2. Termine : pastille `#E6F0EB` + coche outline.
+3. Inactif : cercle bordure grise.
+4. Labels : Vos infos / Enregistrer / Partager le QR.
+5. Eyebrow mobile : `ÉTAPE 1 SUR 3`, `ÉTAPE 3 SUR 3`.
 
-- Hauteur cible : `44–48px` (tactile).
-- Transition fond : `150ms ease`.
-- Pas d'`animate-pulse` permanent sur le CTA.
+### 6.5 Apercu / fiche publique
 
-### 5.2 Champs de formulaire
+- Header theme plein + **rayures diagonales** legerement plus claires.
+- Avatar coins arrondis (initiales) a cheval header / corps.
+- Badge entreprise pill soft green.
+- Nom serif ; poste / ville muted ; bio courte.
+- CTA pleine largeur « Enregistrer dans les contacts ».
+- Grille 3 actions outline : Appeler / E-mail / WhatsApp.
+- Liste contacts separee par filets ; labels uppercase.
+- Footer : « Carte creee avec EVC » (EVC en accent serif).
 
-- Fond : `#FFFDF9`
-- Bordure : `1px solid` `--line`
-- Radius : `0.5–0.625rem` (`8–10px`)
-- Label au-dessus, Figtree medium
-- Focus : anneau fin `1–2px` `--accent` (`#0F5C3F`), pas de halo flou large
-- Largeur : 100 % sur mobile ; grille 2 colonnes a partir de `768px` quand pertinent (Prenom / Nom)
+### 6.6 Carte imprimee 85×55 mm (p03)
 
-### 5.3 Stepper (parcours)
+- Recto : bandeau theme + identite + contacts.
+- Verso : message scan + QR + URL courte.
+- Export : fond perdu **3 mm**, marges de securite **4 mm**.
 
-1. Cercles numerotes relies par un filet.
-2. Etape complete : fond `--accent-soft` ou coche verte sobre (icone outline, pas emoji).
-3. Etape active : fond `--accent`, texte blanc.
-4. Labels : « Vos infos », « Enregistrer », « Partager le QR ».
+### 6.7 Ecran partage (p05)
 
-### 5.4 Carte de visite (apercu)
-
-- Format de reference : **85 × 55 mm** (ratio ~1.545).
-- Structure : bandeau superieur colore (initiales / logo) + corps clair (identite + contacts).
-- Ombre : `--shadow-card` sur fond creme.
-- Icones contact : **stroke fin**, monochrome, une seule librairie (pas d'emojis).
-- Photo / logo : `max-width: 100%`, cadre net, pas de collage flottant.
-
-### 5.5 Navigation
-
-- Logo / wordmark « EVC » a gauche, sobre.
-- Actions a droite : lien ou bouton secondaire (« Se connecter »).
-- Sur mobile : meme hierarchie, actions wrap ou menu compact sans casser le hero.
-
-### 5.6 Bannieres info
-
-- Fond `--info-warm`, texte `--ink`, radius doux.
-- Une seule idee par banniere ; pas de stickers flottants sur le hero.
+- QR dans cadre clair, mention « QR court · lien raccourci ».
+- Champ lien + CTA copier.
+- Grille 2×2 exports + « Personnaliser le QR ».
+- Banniere peche : connexion pour garder le lien actif.
 
 ---
 
-## 6. Iconographie
+## 7. Iconographie
 
-- Style : **outline**, trait fin, coherents avec le set du projet.
-- Couleur : `currentColor` ou `--ink` / `--accent`.
-- Interdit : sparkles, fusées, robots, orbes degradés, emojis fonctionnels.
-- Domaines : telephone, email, WhatsApp, LinkedIn, partage QR, upload photo.
-
----
-
-## 7. Motion
-
-Motions intentionnelles (2–3 max par ecran) :
-
-1. Apparition douce du panneau / hero (`opacity` + leger `translateY`, 200–300 ms).
-2. Transition de theme de carte (couleur header, 150–200 ms).
-3. Feedback focus / hover boutons (couleur uniquement).
-
-Pas d'animations continues decoratives.
+- Outline, trait fin, `currentColor`.
+- Une seule librairie coherente (pas d’emojis fonctionnels).
+- Usages : telephone, email, chat, user-plus, download, print, link, chevron, share.
+- Interdit : sparkles, fusees, robots, orbes degradees.
 
 ---
 
-## 8. Accessibilite et qualite
+## 8. Motion
 
-- Contraste texte / fond conforme AA (vert `#0F5C3F` sur blanc OK pour gros CTA ; verifier labels muted).
-- Corps ≥ 16 px sur mobile.
-- Cibles tactiles ≥ ~44 × 44 px.
-- `prefers-reduced-motion` : desactiver les translations non essentielles.
-- Viewport : `width=device-width, initial-scale=1`.
+1. Mise a jour live de l’apercu a la saisie (instantanee, sans animation lourde).
+2. Fade / leger slide des panneaux (200–300 ms).
+3. Hover / focus boutons (couleur uniquement).
+
+Respecter `prefers-reduced-motion`.
 
 ---
 
-## 9. Mapping CSS recommande
+## 9. Accessibilite
 
-Alignement cible avec les variables de `assets/css/styles.css` :
+- Corps ≥ 16 px mobile ; cibles ≥ ~44×44 px.
+- Contraste AA sur CTA vert / texte encre.
+- Viewport meta present.
+- Pas d’action critique uniquement au `:hover`.
+
+---
+
+## 10. Mapping CSS cible
 
 ```css
 :root {
-  --surface: #f5f0e6;
-  --surface-elevated: #fffdf9;
-  --ink: #14201a;
+  --surface: #f3efe4;
+  --surface-elevated: #fcfcf8;
+  --ink: #0c1818;
   --ink-muted: #5b616c;
-  --line: rgba(20, 32, 26, 0.12);
-  --accent: #0f5c3f;
-  --accent-soft: rgba(15, 92, 63, 0.12);
-  --ambient-a: rgba(15, 92, 63, 0.06);
-  --ambient-b: rgba(182, 106, 44, 0.05);
-  --radius-panel: 0.625rem;
-  --shadow-panel: 0 12px 40px rgba(20, 32, 26, 0.1);
+  --line: rgba(12, 24, 24, 0.12);
+  --accent: #0c543c;
+  --accent-soft: rgba(12, 84, 60, 0.12);
+  --ambient-a: rgba(12, 84, 60, 0.06);
+  --ambient-b: rgba(252, 228, 216, 0.45);
+  --radius-panel: 1rem;
+  --shadow-panel: 0 12px 40px rgba(12, 24, 24, 0.08);
   --font-display: 'Fraunces', Georgia, serif;
   --font-body: 'Figtree', system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 }
-```
 
-Theme carte defaut :
-
-```css
 html[data-card-theme='forest'] {
-  --accent: #0f5c3f;
-  --accent-soft: rgba(15, 92, 63, 0.12);
+  --accent: #0c543c;
+  --accent-soft: rgba(12, 84, 60, 0.12);
 }
 ```
 
 ---
 
-## 10. Criteres d'acceptation visuelle
+## 11. Criteres d’acceptation
 
-Une ecran est conforme a la charte si :
-
-1. Fond page = creme papier, pas gris froid `#f3f4f1` seul.
-2. CTA primaire = vert foret pill, pas noir encre seul.
+1. Fond page = creme papier (pas gris froid seul).
+2. CTA primaire = vert `#0C543C`.
 3. Titres = Fraunces ; UI = Figtree.
-4. Formulaire structure en sections numerotees, labels au-dessus.
-5. Apercu carte avec bandeau theme + ombre douce.
-6. Responsive OK a 360 / 768 / 1024 / 1280, sans scroll horizontal.
-7. Aucune icone / motif « IA generique ».
+4. Formulaire en sections numerotees ; labels au-dessus.
+5. Fiche : bandeau raye + avatar + CTA contacts + liste filetee.
+6. Partage : QR + lien + exports + banner compte.
+7. Print : 85×55, fond perdu 3 mm / marge 4 mm.
+8. Responsive OK a 360 / 768 / 1024 / 1280, sans scroll horizontal.
+9. Aucune icone « IA generique ».
 
 ---
 
-## 11. Source
+## 12. Ecarts vs code actuel (a traiter)
 
-- Maquette de reference : collage « EVC — Refonte de la plateforme » (landing, form desktop, themes, apercu 85×55, parcours mobile).
-- Couleurs dominantees echantillonnees sur le fichier source (`#0F5C3F`, `#F5F0E6`, `#14201A`, `#D8F4E1`, `#FFEFD0`).
-- Stack typographique projet : Fraunces + Figtree + IBM Plex Mono (`index.html`).
+| Sujet | Code actuel | Cible maquette |
+|---|---|---|
+| `--surface` | `#f3f4f1` | `#f3efe4` |
+| `--accent` defaut | `#12141a` | `#0c543c` |
+| Theme forest | `#5a7d6c` (pastel) | `#0c543c` (profond) |
+| Header fiche | uni | uni + rayures diagonales |
+| Badge Beta / banners | a verifier | peche `#FCE4D8` |
+
+---
+
+## 13. Sources
+
+- PDF : `docs/EVC-Refonte-maquettes.pdf`
+- Rendu pages : `docs/maquette-pages/`
+- Fonts chargees : `index.html` (Fraunces, Figtree, IBM Plex Mono)
+- Tokens live : `assets/css/styles.css`
