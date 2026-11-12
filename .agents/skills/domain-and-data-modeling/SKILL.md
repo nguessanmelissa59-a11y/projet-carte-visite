@@ -128,3 +128,4 @@ Consulter **[reference.md](reference.md)** pour :
 * Les formulaires complets de normalisation (1NF, 2NF, 3NF, BCNF) illustres.
 * Les modeles DDL SQL types (SQLite et PostgreSQL) avec indexation et triggers.
 * Les patrons DDD (Agregats, Objets-Valeurs, Repositories).
+

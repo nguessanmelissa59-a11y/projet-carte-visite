@@ -215,3 +215,4 @@ Lorsqu'une evolution de modele est requise sur un systeme en production :
 3. **Phase 3 (Backfill)** : Executer un script de migration en tâche de fond pour synchroniser l'historique ancien vers les nouvelles colonnes.
 4. **Phase 4 (Read Switch)** : Basculer les lectures sur la nouvelle structure uniquement.
 5. **Phase 5 (Contract)** : Retirer les ecritures sur l'ancienne colonne, ajouter les contraintes finales (`NOT NULL`) et supprimer l'ancienne colonne.
+
