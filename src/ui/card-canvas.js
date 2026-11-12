@@ -98,8 +98,19 @@ window.VCardApp.CardCanvasExporter = (function () {
       : state.slug
         ? `/c/${state.slug}`
         : window.location.href;
-    const byteLength = new Blob([qrPayload]).size;
 
+    if (QrView && typeof QrView.paintQrToCanvas === 'function') {
+      await QrView.paintQrToCanvas(qrCanvas, qrPayload, {
+        width: size,
+        margin: 1,
+        dark: accentHex,
+        light: '#ffffff',
+        logoSrc: QrView.getLogoSrc(state)
+      });
+      return qrCanvas;
+    }
+
+    const byteLength = new Blob([qrPayload]).size;
     await new Promise((resolve) => {
       if (!window.QRCode) return resolve();
       window.QRCode.toCanvas(
