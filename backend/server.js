@@ -18,19 +18,39 @@ const {
   handleUpdateProfile,
   handleMyCards
 } = require('./controllers/auth.controller');
+const {
+  handleAdminStats,
+  handleAdminListCards,
+  handleAdminDeleteCard,
+  handleAdminListUsers,
+  handleAdminUpdateUserRole
+} = require('./controllers/admin.controller');
+
+const ADMIN_DIST = path.join(PUBLIC_ROOT, 'admin', 'dist');
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
   '.js': 'application/javascript; charset=utf-8',
+  '.mjs': 'application/javascript; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
+  '.map': 'application/json; charset=utf-8',
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.svg': 'image/svg+xml',
   '.ico': 'image/x-icon',
+  '.woff': 'font/woff',
+  '.woff2': 'font/woff2',
   '.vcf': 'text/vcard; charset=utf-8'
 };
+
+function sendFile(res, fullPath) {
+  const ext = path.extname(fullPath).toLowerCase();
+  const contentType = MIME_TYPES[ext] || 'application/octet-stream';
+  res.writeHead(200, { 'Content-Type': contentType });
+  fs.createReadStream(fullPath).pipe(res);
+}
 
 function serveStaticFile(req, res, pathname) {
   const relativePath = pathname === '/' ? 'index.html' : pathname.replace(/^\/+/, '');
@@ -49,11 +69,40 @@ function serveStaticFile(req, res, pathname) {
       res.end('Fichier introuvable');
       return;
     }
+    sendFile(res, fullPath);
+  });
+}
 
-    const ext = path.extname(fullPath).toLowerCase();
-    const contentType = MIME_TYPES[ext] || 'application/octet-stream';
-    res.writeHead(200, { 'Content-Type': contentType });
-    fs.createReadStream(fullPath).pipe(res);
+function serveAdminSpa(req, res, pathname) {
+  const relative = pathname === '/admin' || pathname === '/admin/'
+    ? 'index.html'
+    : pathname.replace(/^\/admin\/?/, '');
+  const safeRel = path.normalize(relative).replace(/^(\.\.(\/|\\|$))+/, '');
+  const candidate = path.join(ADMIN_DIST, safeRel);
+
+  if (!candidate.startsWith(ADMIN_DIST)) {
+    res.writeHead(403);
+    res.end('Forbidden');
+    return;
+  }
+
+  fs.stat(candidate, (err, stats) => {
+    if (!err && stats.isFile()) {
+      sendFile(res, candidate);
+      return;
+    }
+
+    const indexPath = path.join(ADMIN_DIST, 'index.html');
+    fs.stat(indexPath, (indexErr, indexStats) => {
+      if (indexErr || !indexStats.isFile()) {
+        res.writeHead(503, { 'Content-Type': 'text/plain; charset=utf-8' });
+        res.end(
+          'Admin non construit. Lancez : cd admin && npm install && npm run build'
+        );
+        return;
+      }
+      sendFile(res, indexPath);
+    });
   });
 }
 
@@ -64,7 +113,7 @@ const server = http.createServer((req, res) => {
   if (req.method === 'OPTIONS') {
     res.writeHead(204, {
       'Access-Control-Allow-Origin': req.headers.origin || '',
-      'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
+      'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
       'Access-Control-Allow-Credentials': 'true'
     });
@@ -96,6 +145,26 @@ const server = http.createServer((req, res) => {
   }
   if (req.method === 'GET' && pathname === '/api/me/cards') {
     return handleMyCards(req, res);
+  }
+
+  if (req.method === 'GET' && pathname === '/api/admin/stats') {
+    return handleAdminStats(req, res);
+  }
+  if (req.method === 'GET' && pathname === '/api/admin/cards') {
+    return handleAdminListCards(req, res);
+  }
+  if (req.method === 'GET' && pathname === '/api/admin/users') {
+    return handleAdminListUsers(req, res);
+  }
+
+  const adminCardDelete = pathname.match(/^\/api\/admin\/cards\/([a-zA-Z0-9_-]+)$/);
+  if (req.method === 'DELETE' && adminCardDelete) {
+    return handleAdminDeleteCard(req, res, adminCardDelete[1]);
+  }
+
+  const adminUserRole = pathname.match(/^\/api\/admin\/users\/([a-zA-Z0-9_:-]+)\/role$/);
+  if (req.method === 'PATCH' && adminUserRole) {
+    return handleAdminUpdateUserRole(req, res, adminUserRole[1]);
   }
 
   if (req.method === 'GET' && pathname === '/api/cards') {
@@ -131,9 +200,18 @@ const server = http.createServer((req, res) => {
   }
 
   if (req.method === 'GET' && (pathname === '/auth' || pathname === '/auth/')) {
-    res.writeHead(302, { Location: '/auth.html' });
+    const next = parsedUrl.searchParams.get('next');
+    const location =
+      next && next.startsWith('/') && !next.startsWith('//')
+        ? `/auth.html?next=${encodeURIComponent(next)}`
+        : '/auth.html';
+    res.writeHead(302, { Location: location });
     res.end();
     return;
+  }
+
+  if (pathname === '/admin' || pathname.startsWith('/admin/')) {
+    return serveAdminSpa(req, res, pathname);
   }
 
   serveStaticFile(req, res, pathname);
@@ -145,4 +223,5 @@ server.listen(PORT, HOST, () => {
   console.log(`- Local (PC)      : http://localhost:${PORT}`);
   console.log(`- Reseau (Mobile) : http://${lanIp}:${PORT}`);
   console.log(`- Auth OTP        : http://localhost:${PORT}/auth`);
+  console.log(`- Admin           : http://localhost:${PORT}/admin`);
 });

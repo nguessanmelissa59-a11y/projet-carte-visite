@@ -117,7 +117,10 @@
         });
         setStep(3);
         setAuthMessage('Connexion réussie.');
-        window.location.href = '/';
+        const next = new URLSearchParams(window.location.search).get('next');
+        const safeNext =
+          next && next.startsWith('/') && !next.startsWith('//') ? next : '/';
+        window.location.href = safeNext;
       } catch (err) {
         setAuthMessage(err.message || 'Code incorrect');
       }
