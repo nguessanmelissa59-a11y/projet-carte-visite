@@ -684,17 +684,30 @@
     const btnDownloadFromCardPreview = document.getElementById('btnDownloadFromCardPreview');
 
     if (btnDownloadFromCardPreview) {
-      btnDownloadFromCardPreview.addEventListener('click', handleDownloadCardImage);
+      btnDownloadFromCardPreview.addEventListener('click', () => {
+        updateVirtualCardPreview();
+        openPrintPreview({ focusDownload: true });
+      });
     }
 
-    const tabCardRecto = document.getElementById('tabCardRecto');
-    const tabCardVerso = document.getElementById('tabCardVerso');
-    if (tabCardRecto) {
-      tabCardRecto.addEventListener('click', () => setCardPreviewSide('recto'));
+    const printPreviewDialog = document.getElementById('printPreviewDialog');
+    if (printPreviewDialog) {
+      printPreviewDialog.addEventListener('click', (e) => {
+        const closer = e.target.closest('[data-print-preview-close]');
+        if (closer) closePrintPreview();
+      });
     }
-    if (tabCardVerso) {
-      tabCardVerso.addEventListener('click', () => setCardPreviewSide('verso'));
+
+    const btnConfirmPrintDownload = document.getElementById('btnConfirmPrintDownload');
+    if (btnConfirmPrintDownload) {
+      btnConfirmPrintDownload.addEventListener('click', confirmDownloadCardPdf);
     }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      const dialog = document.getElementById('printPreviewDialog');
+      if (dialog && !dialog.hidden) closePrintPreview();
+    });
 
     const cardTemplatePicker = document.getElementById('cardTemplatePicker');
     if (cardTemplatePicker) {

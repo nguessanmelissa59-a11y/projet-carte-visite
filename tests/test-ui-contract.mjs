@@ -47,8 +47,10 @@ function testHtmlContracts() {
   assert.doesNotMatch(html, /cdn\.jsdelivr\.net\/npm\/qrcode@/);
   assert.match(html, /Choisir un modèle/);
   assert.match(html, /Logo au centre/);
-  assert.match(html, /PDF recto \+ verso 85×55 mm/);
-  assert.match(html, /tabCardVerso/);
+  assert.match(html, /Aperçu PDF 85×55 mm/);
+  assert.match(html, /virtualCardVersoCanvas/);
+  assert.match(html, /printPreviewDialog/);
+  assert.match(html, /btnConfirmPrintDownload/);
 }
 
 function testVendoredQrcodeLibrary() {
