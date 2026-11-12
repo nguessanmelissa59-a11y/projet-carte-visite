@@ -164,49 +164,116 @@
     });
   }
 
-  let cardPreviewSide = 'recto';
+  let printPreviewReady = false;
 
-  function handleDownloadCardImage() {
-    const exporter = CardCanvasExporter || window.VCardApp.CardCanvasExporter;
+  function getCardExporter() {
+    return CardCanvasExporter || window.VCardApp.CardCanvasExporter || null;
+  }
+
+  function confirmDownloadCardPdf() {
+    const exporter = getCardExporter();
     if (!exporter) {
       ProfileCardUI.showToast('Générateur de carte non disponible');
+      return;
+    }
+    if (!printPreviewReady) {
+      openPrintPreview({ focusDownload: true });
+      ProfileCardUI.showToast('Vérifiez d’abord le recto et le verso');
       return;
     }
     ProfileCardUI.showToast('Préparation du PDF recto + verso (85×55 mm)...');
     exporter.downloadCardImage(state, qrMode, (ok, fileName) => {
       if (ok) {
         ProfileCardUI.showToast(`PDF recto + verso prêt (${fileName})`);
+        closePrintPreview();
       } else {
         ProfileCardUI.showToast('Erreur lors de la génération du PDF imprimable');
       }
     });
   }
 
-  function setCardPreviewSide(side) {
-    cardPreviewSide = side === 'verso' ? 'verso' : 'recto';
-    const tabRecto = document.getElementById('tabCardRecto');
-    const tabVerso = document.getElementById('tabCardVerso');
-    const hint = document.getElementById('cardFaceHint');
-    if (tabRecto) tabRecto.classList.toggle('is-active', cardPreviewSide === 'recto');
-    if (tabVerso) tabVerso.classList.toggle('is-active', cardPreviewSide === 'verso');
-    if (hint) {
-      hint.textContent =
-        cardPreviewSide === 'verso'
-          ? 'Face arrière · QR à scanner'
-          : 'Face avant · identité';
+  function updateVirtualCardPreview() {
+    const exporter = getCardExporter();
+    if (!exporter) return;
+    const rectoCanvas = document.getElementById('virtualCardPreviewCanvas');
+    const versoCanvas = document.getElementById('virtualCardVersoCanvas');
+    const jobs = [];
+    if (rectoCanvas) jobs.push(exporter.renderCardToCanvas(rectoCanvas, state, qrMode));
+    if (versoCanvas && typeof exporter.renderVersoToCanvas === 'function') {
+      jobs.push(exporter.renderVersoToCanvas(versoCanvas, state, qrMode));
     }
-    updateVirtualCardPreview();
+    Promise.all(jobs)
+      .then(() => {
+        if (rectoCanvas && versoCanvas) printPreviewReady = true;
+      })
+      .catch(() => {
+        printPreviewReady = false;
+      });
   }
 
-  function updateVirtualCardPreview() {
-    const cardCanvas = document.getElementById('virtualCardPreviewCanvas');
-    const exporter = CardCanvasExporter || window.VCardApp.CardCanvasExporter;
-    if (!cardCanvas || !exporter) return;
-    if (cardPreviewSide === 'verso' && typeof exporter.renderVersoToCanvas === 'function') {
-      exporter.renderVersoToCanvas(cardCanvas, state, qrMode);
+  async function renderPrintPreviewCanvases() {
+    const exporter = getCardExporter();
+    if (!exporter) return false;
+    const rectoCanvas = document.getElementById('printPreviewRectoCanvas');
+    const versoCanvas = document.getElementById('printPreviewVersoCanvas');
+    try {
+      if (rectoCanvas) await exporter.renderCardToCanvas(rectoCanvas, state, qrMode);
+      if (versoCanvas && typeof exporter.renderVersoToCanvas === 'function') {
+        await exporter.renderVersoToCanvas(versoCanvas, state, qrMode);
+      }
+      printPreviewReady = true;
+      return true;
+    } catch (err) {
+      console.error('Erreur aperçu impression:', err);
+      printPreviewReady = false;
+      return false;
+    }
+  }
+
+  function openPrintPreview(options) {
+    const opts = options || {};
+    const dialog = document.getElementById('printPreviewDialog');
+    if (!dialog) {
+      confirmDownloadCardPdf();
       return;
     }
-    exporter.renderCardToCanvas(cardCanvas, state, qrMode);
+
+    const tabPreviewCard = document.getElementById('tabPreviewCard');
+    if (tabPreviewCard && !isPublicScanView) {
+      tabPreviewCard.click();
+    }
+
+    dialog.hidden = false;
+    dialog.classList.remove('hidden');
+    document.body.classList.add('print-preview-open');
+    printPreviewReady = false;
+
+    renderPrintPreviewCanvases().then((ok) => {
+      if (!ok) {
+        ProfileCardUI.showToast('Impossible de préparer l’aperçu');
+        return;
+      }
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+      if (opts.focusDownload) {
+        const confirmBtn = document.getElementById('btnConfirmPrintDownload');
+        if (confirmBtn) confirmBtn.focus();
+      }
+    });
+  }
+
+  function closePrintPreview() {
+    const dialog = document.getElementById('printPreviewDialog');
+    if (!dialog) return;
+    dialog.hidden = true;
+    dialog.classList.add('hidden');
+    document.body.classList.remove('print-preview-open');
+  }
+
+  /** Ancien nom : ouvre l’aperçu obligatoire avant téléchargement. */
+  function handleDownloadCardImage() {
+    openPrintPreview({ focusDownload: true });
   }
 
   function renderCardTemplatePicker() {
@@ -547,12 +614,12 @@
 
     const btnDownloadCardPng = document.getElementById('btnDownloadCardPng');
     if (btnDownloadCardPng) {
-      btnDownloadCardPng.addEventListener('click', handleDownloadCardImage);
+      btnDownloadCardPng.addEventListener('click', () => openPrintPreview({ focusDownload: true }));
     }
 
     const btnDownloadCardPublic = document.getElementById('btnDownloadCardPublic');
     if (btnDownloadCardPublic) {
-      btnDownloadCardPublic.addEventListener('click', handleDownloadCardImage);
+      btnDownloadCardPublic.addEventListener('click', () => openPrintPreview({ focusDownload: true }));
     }
 
     const btnDownloadQrPng = document.getElementById('btnDownloadQrPng');
