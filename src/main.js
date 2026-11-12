@@ -1,5 +1,5 @@
 (function () {
-  const { DEMO_DATA, FORM_FIELDS } = window.VCardApp.Config;
+  const { DEMO_DATA, FORM_FIELDS, CARD_TEMPLATES } = window.VCardApp.Config;
   const StorageService = window.VCardApp.StorageService;
   const UrlCodec = window.VCardApp.UrlCodec;
   const VCardService = window.VCardApp.VCardService;
@@ -37,6 +37,7 @@
 
     // Immediate synchronous render (0ms wait)
     populateForm();
+    renderCardTemplatePicker();
     setViewMode(isPublicScanView);
     bindEvents();
     renderAll(true);
