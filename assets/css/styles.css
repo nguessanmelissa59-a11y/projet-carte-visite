@@ -834,6 +834,15 @@ html.dark .qr-frame {
   .action-chip span {
     font-size: 0.6875rem;
   }
+
+  #otpCode {
+    letter-spacing: 0.2em;
+    font-size: 1.125rem;
+  }
+
+  .studio-header .btn span.hidden {
+    display: none;
+  }
 }
 
 @media (min-width: 768px) {
