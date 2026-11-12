@@ -28,125 +28,125 @@ html.dark {
 }
 
 html[data-card-theme='obsidian'] {
-  --accent: #12141a;
-  --accent-soft: rgba(18, 20, 26, 0.08);
-  --ambient-a: rgba(18, 20, 26, 0.08);
-  --ambient-b: rgba(91, 97, 108, 0.1);
+  --accent: #2a2d34;
+  --accent-soft: rgba(42, 45, 52, 0.07);
+  --ambient-a: rgba(42, 45, 52, 0.05);
+  --ambient-b: rgba(91, 97, 108, 0.06);
 }
 
 html[data-card-theme='forest'] {
-  --accent: #059669;
-  --accent-soft: rgba(5, 150, 105, 0.1);
-  --ambient-a: rgba(5, 150, 105, 0.12);
-  --ambient-b: rgba(16, 185, 129, 0.1);
+  --accent: #5a7d6c;
+  --accent-soft: rgba(90, 125, 108, 0.08);
+  --ambient-a: rgba(90, 125, 108, 0.07);
+  --ambient-b: rgba(122, 154, 138, 0.06);
 }
 
 html[data-card-theme='cobalt'] {
-  --accent: #2563eb;
-  --accent-soft: rgba(37, 99, 235, 0.1);
-  --ambient-a: rgba(37, 99, 235, 0.12);
-  --ambient-b: rgba(59, 130, 246, 0.1);
+  --accent: #5c7a9e;
+  --accent-soft: rgba(92, 122, 158, 0.08);
+  --ambient-a: rgba(92, 122, 158, 0.07);
+  --ambient-b: rgba(125, 149, 178, 0.06);
 }
 
 html[data-card-theme='bronze'] {
-  --accent: #ea580c;
-  --accent-soft: rgba(234, 88, 12, 0.1);
-  --ambient-a: rgba(234, 88, 12, 0.12);
-  --ambient-b: rgba(251, 146, 60, 0.1);
+  --accent: #b8845c;
+  --accent-soft: rgba(184, 132, 92, 0.08);
+  --ambient-a: rgba(184, 132, 92, 0.07);
+  --ambient-b: rgba(201, 160, 122, 0.06);
 }
 
 html[data-card-theme='bordeaux'] {
-  --accent: #e11d48;
-  --accent-soft: rgba(225, 29, 72, 0.1);
-  --ambient-a: rgba(225, 29, 72, 0.12);
-  --ambient-b: rgba(244, 63, 94, 0.1);
+  --accent: #a35d6a;
+  --accent-soft: rgba(163, 93, 106, 0.08);
+  --ambient-a: rgba(163, 93, 106, 0.07);
+  --ambient-b: rgba(186, 130, 140, 0.06);
 }
 
 html[data-card-theme='teal'] {
-  --accent: #0f766e;
-  --accent-soft: rgba(15, 118, 110, 0.1);
-  --ambient-a: rgba(15, 118, 110, 0.12);
-  --ambient-b: rgba(45, 212, 191, 0.1);
+  --accent: #5a8a84;
+  --accent-soft: rgba(90, 138, 132, 0.08);
+  --ambient-a: rgba(90, 138, 132, 0.07);
+  --ambient-b: rgba(122, 164, 158, 0.06);
 }
 
 html[data-card-theme='gold'] {
-  --accent: #a16207;
-  --accent-soft: rgba(161, 98, 7, 0.1);
-  --ambient-a: rgba(161, 98, 7, 0.12);
-  --ambient-b: rgba(234, 179, 8, 0.1);
+  --accent: #9a8458;
+  --accent-soft: rgba(154, 132, 88, 0.08);
+  --ambient-a: rgba(154, 132, 88, 0.07);
+  --ambient-b: rgba(176, 156, 116, 0.06);
 }
 
 html[data-card-theme='navy'] {
-  --accent: #1e3a5f;
-  --accent-soft: rgba(30, 58, 95, 0.1);
-  --ambient-a: rgba(30, 58, 95, 0.12);
-  --ambient-b: rgba(71, 85, 105, 0.1);
+  --accent: #4a5d73;
+  --accent-soft: rgba(74, 93, 115, 0.08);
+  --ambient-a: rgba(74, 93, 115, 0.07);
+  --ambient-b: rgba(110, 126, 145, 0.06);
 }
 
 html[data-card-theme='plum'] {
-  --accent: #9f1239;
-  --accent-soft: rgba(159, 18, 57, 0.1);
-  --ambient-a: rgba(159, 18, 57, 0.12);
-  --ambient-b: rgba(225, 29, 72, 0.1);
+  --accent: #8a5a68;
+  --accent-soft: rgba(138, 90, 104, 0.08);
+  --ambient-a: rgba(138, 90, 104, 0.07);
+  --ambient-b: rgba(164, 124, 136, 0.06);
 }
 
 html[data-card-theme='indigo'] {
-  --accent: #3730a3;
-  --accent-soft: rgba(55, 48, 163, 0.1);
-  --ambient-a: rgba(55, 48, 163, 0.12);
-  --ambient-b: rgba(99, 102, 241, 0.1);
+  --accent: #5f6488;
+  --accent-soft: rgba(95, 100, 136, 0.08);
+  --ambient-a: rgba(95, 100, 136, 0.07);
+  --ambient-b: rgba(130, 134, 164, 0.06);
 }
 
 html.dark[data-card-theme='obsidian'] {
   --accent: #eef0f3;
-  --accent-soft: rgba(238, 240, 243, 0.1);
-  --ambient-a: rgba(238, 240, 243, 0.06);
-  --ambient-b: rgba(154, 161, 173, 0.1);
+  --accent-soft: rgba(238, 240, 243, 0.08);
+  --ambient-a: rgba(238, 240, 243, 0.04);
+  --ambient-b: rgba(154, 161, 173, 0.06);
 }
 
 html.dark[data-card-theme='forest'] {
-  --ambient-a: rgba(52, 211, 153, 0.12);
-  --ambient-b: rgba(16, 185, 129, 0.1);
+  --ambient-a: rgba(122, 154, 138, 0.08);
+  --ambient-b: rgba(90, 125, 108, 0.06);
 }
 
 html.dark[data-card-theme='cobalt'] {
-  --ambient-a: rgba(96, 165, 250, 0.12);
-  --ambient-b: rgba(59, 130, 246, 0.1);
+  --ambient-a: rgba(125, 149, 178, 0.08);
+  --ambient-b: rgba(92, 122, 158, 0.06);
 }
 
 html.dark[data-card-theme='bronze'] {
-  --ambient-a: rgba(251, 146, 60, 0.12);
-  --ambient-b: rgba(234, 88, 12, 0.1);
+  --ambient-a: rgba(201, 160, 122, 0.08);
+  --ambient-b: rgba(184, 132, 92, 0.06);
 }
 
 html.dark[data-card-theme='bordeaux'] {
-  --ambient-a: rgba(251, 113, 133, 0.12);
-  --ambient-b: rgba(225, 29, 72, 0.1);
+  --ambient-a: rgba(186, 130, 140, 0.08);
+  --ambient-b: rgba(163, 93, 106, 0.06);
 }
 
 html.dark[data-card-theme='teal'] {
-  --ambient-a: rgba(45, 212, 191, 0.12);
-  --ambient-b: rgba(15, 118, 110, 0.1);
+  --ambient-a: rgba(122, 164, 158, 0.08);
+  --ambient-b: rgba(90, 138, 132, 0.06);
 }
 
 html.dark[data-card-theme='gold'] {
-  --ambient-a: rgba(250, 204, 21, 0.12);
-  --ambient-b: rgba(161, 98, 7, 0.1);
+  --ambient-a: rgba(176, 156, 116, 0.08);
+  --ambient-b: rgba(154, 132, 88, 0.06);
 }
 
 html.dark[data-card-theme='navy'] {
-  --ambient-a: rgba(148, 163, 184, 0.12);
-  --ambient-b: rgba(30, 58, 95, 0.1);
+  --ambient-a: rgba(148, 163, 184, 0.08);
+  --ambient-b: rgba(74, 93, 115, 0.06);
 }
 
 html.dark[data-card-theme='plum'] {
-  --ambient-a: rgba(251, 113, 133, 0.12);
-  --ambient-b: rgba(159, 18, 57, 0.1);
+  --ambient-a: rgba(164, 124, 136, 0.08);
+  --ambient-b: rgba(138, 90, 104, 0.06);
 }
 
 html.dark[data-card-theme='indigo'] {
-  --ambient-a: rgba(129, 140, 248, 0.12);
-  --ambient-b: rgba(55, 48, 163, 0.1);
+  --ambient-a: rgba(130, 134, 164, 0.08);
+  --ambient-b: rgba(95, 100, 136, 0.06);
 }
 
 *,

@@ -200,7 +200,7 @@ function testProfileCardMarkup() {
 
   assert.match(html, /profile-card/);
   assert.match(html, /profile-card__banner/);
-  assert.match(html, /background:#059669/);
+  assert.match(html, /background:#5a7d6c/);
   assert.match(html, /Koffi Kouadio/);
   assert.match(html, /data-action="save-vcard"/);
   assert.match(html, /data-action="download-card-image"/);
