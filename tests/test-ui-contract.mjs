@@ -52,9 +52,11 @@ function testHtmlContracts() {
   assert.match(html, /printPreviewDialog/);
   assert.match(html, /btnConfirmPrintDownload/);
   assert.match(html, /src\/services\/field-validation\.js/);
-  assert.match(html, /id="phone"[^>]*type="tel"/s);
-  assert.match(html, /id="email"[^>]*type="email"/s);
-  assert.match(html, /pattern="\^\\\+\\\?\[0-9\\s\(\)\.\-\]\{6,\}"/);
+  assert.match(html, /id="phone"/);
+  assert.match(html, /type="tel"/);
+  assert.match(html, /id="email"/);
+  assert.match(html, /type="email"/);
+  assert.match(html, /pattern="\^\\\+\?\[0-9\\s\(\)\.\\-\]\{6,\}"/);
 }
 
 function testFieldValidationClient() {

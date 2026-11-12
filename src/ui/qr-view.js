@@ -150,6 +150,7 @@ window.VCardApp.QrView = (function () {
     const sizeDisplay = document.getElementById('payloadSizeDisplay');
     const statusBadge = document.getElementById('qrStatusBadge');
     const logoPreview = document.getElementById('qrLogoPreview');
+    const offlineNotice = document.getElementById('offlineModeNotice');
 
     if (!canvas) return;
     if (!window.QRCode || typeof window.QRCode.toCanvas !== 'function') {
@@ -162,9 +163,11 @@ window.VCardApp.QrView = (function () {
     }
 
     const palette = THEME_PALETTES[state.theme] || THEME_PALETTES.forest;
+    const isOfflineMode = qrMode === 'vcard';
     const payload = resolvePayload(state, qrMode);
+    const linkUrl = isOfflineMode ? resolvePayload(state, 'url') : payload;
     const logoSrc = getLogoSrc(state);
-    const signature = `${qrMode}|${state.theme}|${payload}|${logoSignature(state)}`;
+    const signature = `${qrMode}|${state.theme}|${payload}|${isOfflineMode ? linkUrl : ''}|${logoSignature(state)}`;
 
     if (logoPreview) {
       logoPreview.replaceChildren();
@@ -185,7 +188,10 @@ window.VCardApp.QrView = (function () {
     lastRenderedSignature = signature;
 
     if (urlDisplay) {
-      urlDisplay.textContent = qrMode === 'vcard' ? 'Mode vCard 3.0 Direct (Hors-ligne)' : payload;
+      urlDisplay.textContent = linkUrl;
+    }
+    if (offlineNotice) {
+      offlineNotice.hidden = !isOfflineMode;
     }
 
     const byteLength = new Blob([payload]).size;
