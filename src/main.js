@@ -115,10 +115,35 @@
     if (accountLabel) {
       accountLabel.textContent = user
         ? user.firstName || user.email.split('@')[0]
-        : 'Compte';
+        : 'Connexion';
     }
     if (authHint) {
       authHint.classList.toggle('hidden', Boolean(user) || !ApiService.isAvailable());
+    }
+  }
+
+  async function saveCardToServer() {
+    StorageService.saveDraft(state);
+    if (!ApiService.isAvailable()) {
+      ProfileCardUI.showToast('Brouillon enregistré sur cet appareil');
+      return;
+    }
+    if (!ApiService.isAuthenticated()) {
+      ProfileCardUI.showToast('Connectez-vous pour enregistrer votre carte');
+      window.location.href = '/auth.html';
+      return;
+    }
+    try {
+      const saved = await ApiService.saveCard(state);
+      if (saved) {
+        state.slug = saved.slug;
+        state.scans = saved.scans;
+        populateForm();
+        renderAll(true);
+        ProfileCardUI.showToast('Carte enregistrée. Vous pouvez partager le QR.');
+      }
+    } catch (err) {
+      ProfileCardUI.showToast(err.message || 'Enregistrement impossible');
     }
   }
 
@@ -201,14 +226,14 @@
 
     if (backendStatus.available) {
       if (modeIndicator) {
-        modeIndicator.textContent = 'Serveur SQLite actif';
+        modeIndicator.textContent = 'Prêt';
         modeIndicator.className = 'status-chip';
         modeIndicator.dataset.state = 'online';
       }
       if (scanCounterWrap) scanCounterWrap.classList.remove('hidden');
     } else {
       if (modeIndicator) {
-        modeIndicator.textContent = 'Mode statique autonome';
+        modeIndicator.textContent = 'Hors ligne';
         modeIndicator.className = 'status-chip';
         modeIndicator.dataset.state = 'offline';
       }
@@ -379,29 +404,14 @@
 
     const btnSaveServer = document.getElementById('btnSaveServer');
     if (btnSaveServer) {
-      btnSaveServer.addEventListener('click', async () => {
-        StorageService.saveDraft(state);
-        if (!ApiService.isAvailable()) {
-          ProfileCardUI.showToast('Brouillon enregistré localement');
-          return;
-        }
-        if (!ApiService.isAuthenticated()) {
-          ProfileCardUI.showToast('Connectez-vous pour enregistrer en base');
-          window.location.href = '/auth.html';
-          return;
-        }
-        try {
-          const saved = await ApiService.saveCard(state);
-          if (saved) {
-            state.slug = saved.slug;
-            state.scans = saved.scans;
-            populateForm();
-            renderAll(true);
-            ProfileCardUI.showToast(`Carte synchronisée (/c/${saved.slug})`);
-          }
-        } catch (err) {
-          ProfileCardUI.showToast(err.message || 'Erreur de sauvegarde serveur');
-        }
+      btnSaveServer.addEventListener('click', () => {
+        saveCardToServer();
+      });
+    }
+    const btnSaveServerBottom = document.getElementById('btnSaveServerBottom');
+    if (btnSaveServerBottom) {
+      btnSaveServerBottom.addEventListener('click', () => {
+        saveCardToServer();
       });
     }
 
