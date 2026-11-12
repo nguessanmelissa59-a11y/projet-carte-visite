@@ -656,7 +656,7 @@
         renderCardTemplatePicker();
         renderAll(true);
         schedulePersistence();
-        ProfileCardUI.showToast('Données par défaut chargées');
+        ProfileCardUI.showToast('Exemple chargé');
       });
     }
 
@@ -689,7 +689,7 @@
         renderCardTemplatePicker();
         renderAll(true);
         schedulePersistence();
-        ProfileCardUI.showToast('Formulaire vidé');
+        ProfileCardUI.showToast('Formulaire réinitialisé');
       });
     }
 
