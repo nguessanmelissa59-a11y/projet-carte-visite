@@ -78,8 +78,8 @@ function testQrLogoOverlay() {
   assert.match(source, /LOGO_RATIO = 0\.18/);
   assert.match(source, /resolveErrorCorrection/);
   assert.match(source, /if \(hasLogo\) return 'H'/);
-  assert.match(source, /javascript:/i); // must NOT accept - check rejection via https only below
-  assert.match(source, /\/\^https\?:/);
+  assert.doesNotMatch(source, /javascript:/i);
+  assert.match(source, /\^https\?:/);
 
   const constants = read('src/config/constants.js');
   const sandbox = { window: {} };
@@ -192,6 +192,7 @@ const tests = [
   ['html contracts', testHtmlContracts],
   ['vendored qrcode library', testVendoredQrcodeLibrary],
   ['qr view guards missing library', testQrViewGuardsMissingLibrary],
+  ['qr logo overlay', testQrLogoOverlay],
   ['css atmosphere', testCssAtmosphere],
   ['theme banner colors', testThemeBannerColors],
   ['card templates catalog', testCardTemplatesCatalog],
