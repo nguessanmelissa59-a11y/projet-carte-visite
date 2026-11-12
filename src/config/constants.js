@@ -94,12 +94,12 @@ window.VCardApp.Config = {
   THEME_PALETTES: {
     obsidian: {
       label: 'Encre',
-      bannerColor: '#0c0a09',
-      headerBg: 'bg-stone-950',
-      btnBg: 'bg-stone-950 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-950',
-      badgeBg: 'bg-stone-100 text-stone-800 border-stone-200 dark:bg-stone-800 dark:text-stone-100 dark:border-stone-700',
-      iconColor: 'text-stone-800 dark:text-stone-200',
-      qrDark: '#0c0a09'
+      bannerColor: '#12141a',
+      headerBg: 'bg-slate-950',
+      btnBg: 'bg-slate-950 hover:bg-slate-800 text-white dark:bg-slate-100 dark:hover:bg-white dark:text-slate-950',
+      badgeBg: 'bg-slate-100 text-slate-800 border-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700',
+      iconColor: 'text-slate-800 dark:text-slate-200',
+      qrDark: '#12141a'
     },
     forest: {
       label: 'Émeraude',

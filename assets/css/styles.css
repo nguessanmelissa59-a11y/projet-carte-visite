@@ -605,18 +605,15 @@ html.dark[data-card-theme='obsidian'] .btn-primary {
 .qr-frame {
   width: fit-content;
   margin-inline: auto;
-  padding: 0.85rem;
-  border-radius: 1rem;
-  background:
-    linear-gradient(145deg, #fff 0%, #f3f0ea 100%);
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  background: #fff;
   border: 1px solid var(--line);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.7) inset,
-    0 16px 32px -24px rgba(20, 18, 15, 0.45);
+  box-shadow: none;
 }
 
 html.dark .qr-frame {
-  background: linear-gradient(145deg, #1c1917 0%, #0f0e0c 100%);
+  background: #fff;
 }
 
 .phone-shell {
