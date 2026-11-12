@@ -1,11 +1,14 @@
 const crypto = require('node:crypto');
 const { db, newId } = require('./connection');
+const { isAdminEmail } = require('../config/env');
+
+const ROLES = Object.freeze({ USER: 'user', ADMIN: 'admin' });
 
 const stmtGetUserByEmail = db.prepare('SELECT * FROM users WHERE email = ? COLLATE NOCASE');
 const stmtGetUserById = db.prepare('SELECT * FROM users WHERE id = ?');
 const stmtInsertUser = db.prepare(`
-  INSERT INTO users (id, email, first_name, last_name, email_verified, created_at, updated_at)
-  VALUES (?, ?, ?, ?, ?, ?, ?)
+  INSERT INTO users (id, email, first_name, last_name, email_verified, role, created_at, updated_at)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 `);
 const stmtUpdateUserProfile = db.prepare(`
   UPDATE users
@@ -14,6 +17,28 @@ const stmtUpdateUserProfile = db.prepare(`
 `);
 const stmtMarkVerified = db.prepare(`
   UPDATE users SET email_verified = 1, updated_at = ? WHERE id = ?
+`);
+const stmtSetUserRole = db.prepare(`
+  UPDATE users SET role = ?, updated_at = ? WHERE id = ?
+`);
+const stmtCountAdmins = db.prepare(`
+  SELECT COUNT(*) AS total FROM users WHERE role = 'admin'
+`);
+const stmtListUsersAdmin = db.prepare(`
+  SELECT
+    u.id,
+    u.email,
+    u.first_name,
+    u.last_name,
+    u.email_verified,
+    u.role,
+    u.created_at,
+    u.updated_at,
+    (
+      SELECT COUNT(*) FROM cards c WHERE c.user_id = u.id
+    ) AS cards_count
+  FROM users u
+  ORDER BY u.created_at DESC
 `);
 
 const stmtInsertOtp = db.prepare(`
@@ -43,7 +68,7 @@ const stmtInsertSession = db.prepare(`
   VALUES (?, ?, ?, ?, ?)
 `);
 const stmtGetSessionByTokenHash = db.prepare(`
-  SELECT s.*, u.email, u.first_name, u.last_name, u.email_verified
+  SELECT s.*, u.email, u.first_name, u.last_name, u.email_verified, u.role
   FROM sessions s
   JOIN users u ON u.id = s.user_id
   WHERE s.token_hash = ?
@@ -59,6 +84,10 @@ function normalizeEmail(email) {
     .slice(0, 254);
 }
 
+function normalizeRole(role) {
+  return role === ROLES.ADMIN ? ROLES.ADMIN : ROLES.USER;
+}
+
 function mapUser(row) {
   if (!row) return null;
   return {
@@ -67,6 +96,7 @@ function mapUser(row) {
     firstName: row.first_name,
     lastName: row.last_name,
     emailVerified: Boolean(row.email_verified),
+    role: normalizeRole(row.role),
     createdAt: row.created_at,
     updatedAt: row.updated_at
   };
@@ -80,19 +110,50 @@ function getUserById(id) {
   return mapUser(stmtGetUserById.get(id));
 }
 
-function createUser({ email, firstName, lastName }) {
+function createUser({ email, firstName, lastName, role }) {
   const now = new Date().toISOString();
   const id = newId('usr');
+  const normalizedEmail = normalizeEmail(email);
+  const initialRole = normalizeRole(
+    role || (isAdminEmail(normalizedEmail) ? ROLES.ADMIN : ROLES.USER)
+  );
   stmtInsertUser.run(
     id,
-    normalizeEmail(email),
+    normalizedEmail,
     String(firstName || '').trim().slice(0, 80),
     String(lastName || '').trim().slice(0, 80),
     0,
+    initialRole,
     now,
     now
   );
   return getUserById(id);
+}
+
+function ensureAdminBootstrap(user) {
+  if (!user) return null;
+  if (isAdminEmail(user.email) && user.role !== ROLES.ADMIN) {
+    return setUserRole(user.id, ROLES.ADMIN);
+  }
+  return user;
+}
+
+function setUserRole(userId, role) {
+  const nextRole = normalizeRole(role);
+  stmtSetUserRole.run(nextRole, new Date().toISOString(), userId);
+  return getUserById(userId);
+}
+
+function countAdmins() {
+  const row = stmtCountAdmins.get();
+  return Number(row?.total) || 0;
+}
+
+function listUsersForAdmin() {
+  return stmtListUsersAdmin.all().map((row) => ({
+    ...mapUser(row),
+    cardsCount: Number(row.cards_count) || 0
+  }));
 }
 
 function updateUserProfile(userId, { firstName, lastName }) {
