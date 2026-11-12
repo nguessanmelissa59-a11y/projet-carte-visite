@@ -1099,8 +1099,8 @@ html.dark .qr-frame {
 
 @media (min-width: 768px) {
   .studio-main {
-    padding-top: 2rem;
-    padding-bottom: 2.5rem;
+    padding-top: 1.5rem;
+    padding-bottom: 2rem;
   }
 }
 
@@ -1110,8 +1110,12 @@ html.dark .qr-frame {
   }
 
   .studio-grid > aside {
-    max-height: calc(100vh - 5.5rem);
+    max-height: calc(100vh - 4.25rem);
     overflow-y: auto;
     overscroll-behavior: contain;
+  }
+
+  .preview-panel {
+    min-height: min(40rem, calc(100vh - 5rem));
   }
 }
