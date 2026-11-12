@@ -356,36 +356,24 @@ window.VCardApp.CardCanvasExporter = (function () {
   }
 
   async function drawCorporate(ctx, state, qrMode) {
-    const accent = '#67e8f9';
-    const deep = '#0b1c2c';
+    const accent = '#1d4e89';
+    const deep = '#0f2438';
+    const panel = '#143049';
+
     ctx.fillStyle = deep;
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
-    const grad = ctx.createLinearGradient(0, 0, WIDTH, HEIGHT);
-    grad.addColorStop(0, '#0b1c2c');
-    grad.addColorStop(0.55, '#12324a');
-    grad.addColorStop(1, '#0a1622');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+    ctx.fillStyle = accent;
+    ctx.fillRect(0, 0, 10, HEIGHT);
 
-    ctx.fillStyle = 'rgba(103, 232, 249, 0.08)';
-    ctx.beginPath();
-    ctx.arc(980, 80, 180, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.fillStyle = 'rgba(255,255,255,0.06)';
-    drawRoundedRect(ctx, 40, 40, 620, HEIGHT - 80, 24);
-    ctx.fill();
-    ctx.strokeStyle = 'rgba(103, 232, 249, 0.35)';
-    ctx.lineWidth = 1.5;
-    drawRoundedRect(ctx, 40, 40, 620, HEIGHT - 80, 24);
-    ctx.stroke();
+    ctx.fillStyle = panel;
+    ctx.fillRect(40, 40, 620, HEIGHT - 80);
 
     await drawAvatar(ctx, state, 72, 72, 100, {
-      radius: 18,
-      fill: '#1d4e89',
-      ring: accent,
-      textColor: '#ecfeff'
+      radius: 12,
+      fill: accent,
+      ring: '#dbe7f3',
+      textColor: '#f8fafc'
     });
 
     const name = getFullName(state);
@@ -394,32 +382,32 @@ window.VCardApp.CardCanvasExporter = (function () {
     fitText(ctx, name, 430, 34, 22, (s) => `700 ${s}px 'Fraunces', serif`);
     ctx.fillText(name, 198, 112);
     if (state.jobTitle) {
-      ctx.fillStyle = '#94a3b8';
+      ctx.fillStyle = '#b7c4d4';
       ctx.font = "400 18px 'Figtree', sans-serif";
       ctx.fillText(state.jobTitle, 198, 144);
     }
     if (state.organization) {
-      ctx.fillStyle = accent;
+      ctx.fillStyle = '#9ec0e6';
       ctx.font = "600 13px 'IBM Plex Mono', monospace";
       ctx.fillText(state.organization.toUpperCase(), 198, 172);
     }
 
     drawContactRows(ctx, collectContacts(state), 72, 250, {
-      labelColor: '#64748b',
-      valueColor: '#e2e8f0',
+      labelColor: '#8fa0b3',
+      valueColor: '#e8eef5',
       gap: 52,
       maxWidth: 520
     });
 
-    await drawQrPanel(ctx, state, qrMode, '#0b1c2c', {
+    await drawQrPanel(ctx, state, qrMode, deep, {
       x: 700,
       y: 70,
       w: 340,
       h: 520,
-      bg: 'rgba(255,255,255,0.08)',
-      border: 'rgba(103, 232, 249, 0.35)',
-      titleColor: '#ecfeff',
-      subColor: '#94a3b8'
+      bg: '#ffffff',
+      border: '#c5d3e0',
+      titleColor: deep,
+      subColor: accent
     });
   }
 

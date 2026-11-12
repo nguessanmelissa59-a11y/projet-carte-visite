@@ -458,8 +458,7 @@ html.dark[data-card-theme='obsidian'] .easy-steps li.is-active span {
     padding: 0.65rem;
     border: 1px solid var(--line);
     border-radius: 0.5rem;
-    background: color-mix(in srgb, var(--surface-elevated) 92%, transparent);
-    backdrop-filter: blur(8px);
+    background: var(--surface-elevated);
   }
 }
 

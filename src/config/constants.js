@@ -20,8 +20,8 @@ window.VCardApp.Config = {
     corporate: {
       id: 'corporate',
       label: 'Corporate Tech',
-      blurb: 'Navy sombre, verre',
-      swatch: ['#0b1c2c', '#1d4e89', '#67e8f9']
+      blurb: 'Navy mat, filet bleu',
+      swatch: ['#0f2438', '#1d4e89', '#dbe7f3']
     },
     creative: {
       id: 'creative',
@@ -80,8 +80,8 @@ window.VCardApp.Config = {
     arctic: {
       id: 'arctic',
       label: 'Arctic',
-      blurb: 'Glace et acier',
-      swatch: ['#f8fafc', '#0ea5e9', '#1e293b']
+      blurb: 'Blanc et bleu acier',
+      swatch: ['#f8fafc', '#0284c7', '#1e293b']
     },
     metro: {
       id: 'metro',
