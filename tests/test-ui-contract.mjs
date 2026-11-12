@@ -216,15 +216,18 @@ function testProfileCardMarkup() {
   assert.match(html, /Koffi Kouadio/);
   assert.match(html, /data-action="save-vcard"/);
   assert.match(html, /data-action="download-card-image"/);
-  assert.match(html, /PDF recto \+ verso 85×55 mm/);
+  assert.match(html, /Aperçu PDF 85×55 mm/);
   assert.doesNotMatch(html, /<script/i);
 }
 
 function testPrintableCardExport() {
   const html = read('index.html');
-  assert.match(html, /PDF recto \+ verso 85×55 mm/);
-  assert.match(html, /tabCardRecto/);
-  assert.match(html, /tabCardVerso/);
+  assert.match(html, /Aperçu PDF 85×55 mm/);
+  assert.match(html, /virtualCardVersoCanvas/);
+  assert.match(html, /printPreviewDialog/);
+  assert.match(html, /printPreviewRectoCanvas/);
+  assert.match(html, /printPreviewVersoCanvas/);
+  assert.match(html, /btnConfirmPrintDownload/);
   assert.match(html, /Fond perdu 3/);
   assert.match(html, /marges 4/);
 
@@ -244,9 +247,26 @@ function testPrintableCardExport() {
   assert.match(source, /getPrintSpecs/);
 
   const main = read('src/main.js');
-  assert.match(main, /PDF recto \+ verso/);
-  assert.match(main, /setCardPreviewSide/);
+  assert.match(main, /openPrintPreview/);
+  assert.match(main, /confirmDownloadCardPdf/);
+  assert.match(main, /printPreviewReady/);
   assert.match(main, /renderVersoToCanvas/);
+
+  const css = read('assets/css/styles.css');
+  assert.match(css, /\.print-faces/);
+  assert.match(css, /\.print-preview-dialog/);
+}
+
+function testPrintPreviewRequiresVisualization() {
+  const css = read('assets/css/styles.css');
+  assert.match(css, /\.print-faces/);
+  assert.match(css, /\.print-preview-dialog/);
+  assert.match(css, /@media \(min-width: 640px\)/);
+
+  const main = read('src/main.js');
+  assert.match(main, /function openPrintPreview/);
+  assert.match(main, /function confirmDownloadCardPdf/);
+  assert.match(main, /Vérifiez d’abord le recto et le verso/);
 }
 
 function testToastCentered() {
@@ -296,6 +316,7 @@ const tests = [
   ['card templates catalog', testCardTemplatesCatalog],
   ['profile card markup', testProfileCardMarkup],
   ['printable card export', testPrintableCardExport],
+  ['print preview requires visualization', testPrintPreviewRequiresVisualization],
   ['toast centered', testToastCentered]
 ];
 
