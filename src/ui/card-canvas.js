@@ -1153,7 +1153,7 @@ window.VCardApp.CardCanvasExporter = (function () {
       `${(cardX + cardW).toFixed(2)} ${(cardY + cardH + gap).toFixed(2)} m ${(cardX + cardW).toFixed(2)} ${(cardY + cardH + mark).toFixed(2)} l S`,
       'BT /F1 9 Tf 0.35 0.35 0.35 rg',
       `50 ${(cardY - 28).toFixed(2)} Td`,
-      "(Carte 85 x 55 mm - Imprimer a l'echelle 100 % / sans ajustement) Tj",
+      '(Carte 85 x 55 mm - Imprimer a echelle reelle, sans ajustement) Tj',
       'ET'
     ].join('\n');
     const contentBytes = encoder.encode(content);
