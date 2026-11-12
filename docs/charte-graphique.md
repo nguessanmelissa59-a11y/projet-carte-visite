@@ -298,15 +298,15 @@ html[data-card-theme='forest'] {
 
 ---
 
-## 12. Ecarts vs code actuel (a traiter)
+## 12. Ecarts vs code (applique)
 
-| Sujet | Code actuel | Cible maquette |
+| Sujet | Avant | Apres (maquette) |
 |---|---|---|
 | `--surface` | `#f3f4f1` | `#f3efe4` |
 | `--accent` defaut | `#12141a` | `#0c543c` |
-| Theme forest | `#5a7d6c` (pastel) | `#0c543c` (profond) |
-| Header fiche | uni | uni + rayures diagonales |
-| Badge Beta / banners | a verifier | peche `#FCE4D8` |
+| Theme forest | `#5a7d6c` | `#0c543c` |
+| Header fiche | uni | rayures diagonales |
+| Badge Beta / banners | absent / neutre | peche `#FCE4D8` |
 
 ---
 
