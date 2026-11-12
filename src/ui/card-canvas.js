@@ -1206,58 +1206,13 @@ window.VCardApp.CardCanvasExporter = (function () {
     return out;
   }
 
-  function buildPrintablePdfBytes(jpegBytes, pixelW, pixelH) {
-    const pageW = PRINT_PAGE_WIDTH_MM * MM_TO_PT;
-    const pageH = PRINT_PAGE_HEIGHT_MM * MM_TO_PT;
-    const cardW = PRINT_CARD_WIDTH_MM * MM_TO_PT;
-    const cardH = PRINT_CARD_HEIGHT_MM * MM_TO_PT;
-    const cardX = (pageW - cardW) / 2;
-    const cardY = (pageH - cardH) / 2;
+  function buildCropMarksContent(cardX, cardY, cardW, cardH, label) {
     const mark = 8;
     const gap = 2;
-    const encoder = new TextEncoder();
-    const chunks = [];
-    const offsets = [0];
-
-    function sizeOf() {
-      return chunks.reduce((n, c) => n + c.length, 0);
-    }
-
-    function write(data) {
-      if (typeof data === 'string') chunks.push(encoder.encode(data));
-      else chunks.push(data);
-    }
-
-    function startObj() {
-      offsets.push(sizeOf());
-    }
-
-    write('%PDF-1.4\n%\xFF\xFF\xFF\xFF\n');
-
-    startObj();
-    write('1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n');
-
-    startObj();
-    write('2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n');
-
-    startObj();
-    write(
-      `3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageW.toFixed(2)} ${pageH.toFixed(2)}] ` +
-        `/Resources << /XObject << /Im0 4 0 R >> /Font << /F1 5 0 R >> >> /Contents 6 0 R >>\nendobj\n`
-    );
-
-    startObj();
-    write(
-      `4 0 obj\n<< /Type /XObject /Subtype /Image /Width ${pixelW} /Height ${pixelH} ` +
-        `/ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpegBytes.length} >>\nstream\n`
-    );
-    write(jpegBytes);
-    write('endstream\nendobj\n');
-
-    startObj();
-    write('5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n');
-
-    const content = [
+    const safeLabel = String(label || '')
+      .replace(/[()\\]/g, ' ')
+      .slice(0, 90);
+    return [
       'q',
       `${cardW.toFixed(2)} 0 0 ${cardH.toFixed(2)} ${cardX.toFixed(2)} ${cardY.toFixed(2)} cm`,
       '/Im0 Do',
@@ -1274,15 +1229,110 @@ window.VCardApp.CardCanvasExporter = (function () {
       `${(cardX + cardW).toFixed(2)} ${(cardY + cardH + gap).toFixed(2)} m ${(cardX + cardW).toFixed(2)} ${(cardY + cardH + mark).toFixed(2)} l S`,
       'BT /F1 9 Tf 0.35 0.35 0.35 rg',
       `50 ${(cardY - 28).toFixed(2)} Td`,
-      '(Carte 85 x 55 mm - Imprimer a echelle reelle, sans ajustement) Tj',
+      `(${safeLabel}) Tj`,
       'ET'
     ].join('\n');
-    const contentBytes = encoder.encode(content);
+  }
+
+  /**
+   * Construit un PDF A4 multi-pages (une carte 85x55 centree par page).
+   * @param {Array<{jpegBytes: Uint8Array, pixelW: number, pixelH: number, label: string}>} pages
+   */
+  function buildPrintablePdfBytes(pages) {
+    const pageList = Array.isArray(pages) ? pages : [];
+    if (!pageList.length) {
+      throw new Error('PDF imprimable: aucune page');
+    }
+
+    const pageW = PRINT_PAGE_WIDTH_MM * MM_TO_PT;
+    const pageH = PRINT_PAGE_HEIGHT_MM * MM_TO_PT;
+    const cardW = PRINT_CARD_WIDTH_MM * MM_TO_PT;
+    const cardH = PRINT_CARD_HEIGHT_MM * MM_TO_PT;
+    const cardX = (pageW - cardW) / 2;
+    const cardY = (pageH - cardH) / 2;
+    const encoder = new TextEncoder();
+    const chunks = [];
+    const offsets = [0];
+
+    function sizeOf() {
+      return chunks.reduce((n, c) => n + c.length, 0);
+    }
+
+    function write(data) {
+      if (typeof data === 'string') chunks.push(encoder.encode(data));
+      else chunks.push(data);
+    }
+
+    function startObj() {
+      offsets.push(sizeOf());
+      return offsets.length - 1;
+    }
+
+    write('%PDF-1.4\n%\xFF\xFF\xFF\xFF\n');
 
     startObj();
-    write(`6 0 obj\n<< /Length ${contentBytes.length} >>\nstream\n`);
-    write(contentBytes);
-    write('\nendstream\nendobj\n');
+    write('1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n');
+
+    const pageObjIds = [];
+    const pagePayloads = [];
+
+    pageList.forEach((page, index) => {
+      const pageObjId = 3 + index * 3;
+      const imageObjId = pageObjId + 1;
+      const contentObjId = pageObjId + 2;
+      pageObjIds.push(pageObjId);
+      pagePayloads.push({
+        pageObjId,
+        imageObjId,
+        contentObjId,
+        jpegBytes: page.jpegBytes,
+        pixelW: page.pixelW,
+        pixelH: page.pixelH,
+        label:
+          page.label ||
+          `Carte 85 x 55 mm - page ${index + 1} - Imprimer a echelle reelle`
+      });
+    });
+
+    const fontObjId = 3 + pageList.length * 3;
+    const kids = pageObjIds.map((id) => `${id} 0 R`).join(' ');
+
+    startObj();
+    write(
+      `2 0 obj\n<< /Type /Pages /Kids [${kids}] /Count ${pageList.length} >>\nendobj\n`
+    );
+
+    pagePayloads.forEach((page) => {
+      startObj();
+      write(
+        `${page.pageObjId} 0 obj\n<< /Type /Page /Parent 2 0 R ` +
+          `/MediaBox [0 0 ${pageW.toFixed(2)} ${pageH.toFixed(2)}] ` +
+          `/Resources << /XObject << /Im0 ${page.imageObjId} 0 R >> ` +
+          `/Font << /F1 ${fontObjId} 0 R >> >> /Contents ${page.contentObjId} 0 R >>\nendobj\n`
+      );
+
+      startObj();
+      write(
+        `${page.imageObjId} 0 obj\n<< /Type /XObject /Subtype /Image ` +
+          `/Width ${page.pixelW} /Height ${page.pixelH} ` +
+          `/ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode ` +
+          `/Length ${page.jpegBytes.length} >>\nstream\n`
+      );
+      write(page.jpegBytes);
+      write('endstream\nendobj\n');
+
+      const content = buildCropMarksContent(cardX, cardY, cardW, cardH, page.label);
+      const contentBytes = encoder.encode(content);
+      startObj();
+      write(`${page.contentObjId} 0 obj\n<< /Length ${contentBytes.length} >>\nstream\n`);
+      write(contentBytes);
+      write('\nendstream\nendobj\n');
+    });
+
+    startObj();
+    write(
+      `${fontObjId} 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n`
+    );
 
     const xrefStart = sizeOf();
     write(`xref\n0 ${offsets.length}\n`);
@@ -1315,18 +1365,32 @@ window.VCardApp.CardCanvasExporter = (function () {
 
   async function downloadCardImage(state, qrMode, onComplete) {
     try {
-      const source = await generateCardCanvas(state, qrMode);
-      const printCanvas = buildPrintCardCanvas(source);
-      const jpegBytes = canvasToJpegBytes(printCanvas, 0.95);
-      const pdfBytes = buildPrintablePdfBytes(
-        jpegBytes,
-        printCanvas.width,
-        printCanvas.height
-      );
+      const [rectoSource, versoSource] = await Promise.all([
+        generateCardCanvas(state, qrMode),
+        generateVersoCanvas(state, qrMode)
+      ]);
+      const rectoPrint = buildPrintCardCanvas(rectoSource);
+      const versoPrint = buildPrintCardCanvas(versoSource);
+      const pdfBytes = buildPrintablePdfBytes([
+        {
+          jpegBytes: canvasToJpegBytes(rectoPrint, 0.95),
+          pixelW: rectoPrint.width,
+          pixelH: rectoPrint.height,
+          label:
+            'Recto 85 x 55 mm - Fond perdu 3 mm / marges 4 mm - Imprimer a 100%'
+        },
+        {
+          jpegBytes: canvasToJpegBytes(versoPrint, #0.95),
+          pixelW: versoPrint.width,
+          pixelH: versoPrint.height,
+          label:
+            'Verso 85 x 55 mm - Fond perdu 3 mm / marges 4 mm - Imprimer a 100%'
+        }
+      ]);
       const safeFirst = (state.firstName || 'Carte').replace(/[^a-zA-Z0-9_-]/g, '_');
       const safeLast = (state.lastName || 'Visite').replace(/[^a-zA-Z0-9_-]/g, '_');
       const tpl = state.cardTemplate || 'editorial';
-      const fileName = `Carte_Visite_${safeFirst}_${safeLast}_${tpl}_85x55mm.pdf`;
+      const fileName = `Carte_Visite_${safeFirst}_${safeLast}_${tpl}_recto-verso_85x55mm.pdf`;
       const blob = new Blob([pdfBytes], { type: 'application/pdf' });
       triggerBlobDownload(blob, fileName);
       if (typeof onComplete === 'function') onComplete(true, fileName);
