@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-  <title>Compte — vCard Studio</title>
-  <meta name="description" content="Inscription et connexion par OTP pour gérer votre carte de visite." />
+  <title>Connexion — EVC Melissa</title>
+  <meta name="description" content="Créez votre compte ou connectez-vous pour gérer votre carte de visite." />
   <meta name="theme-color" content="#14120f" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -33,12 +33,12 @@
 <body class="app-shell antialiased selection:bg-zinc-900 selection:text-white dark:selection:bg-zinc-100 dark:selection:text-zinc-900">
 
   <header class="studio-header sticky top-0 z-40">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-3">
+    <div class="max-w-lg mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-3">
       <a href="/" class="flex items-center gap-3 min-w-0 no-underline text-[color:var(--ink)]">
         <div class="brand-mark shrink-0" aria-hidden="true">
           <i data-lucide="qr-code" class="w-4 h-4"></i>
         </div>
-        <span class="font-display font-bold text-base tracking-tight truncate">vCard Studio</span>
+        <span class="font-display font-bold text-base tracking-tight truncate">EVC Melissa</span>
       </a>
       <button id="btnThemeToggle" type="button" aria-label="Basculer le thème" class="btn btn-secondary h-11 w-11 min-h-11 p-0">
         <i data-lucide="moon" class="w-3.5 h-3.5 dark:hidden"></i>
@@ -47,61 +47,61 @@
     </div>
   </header>
 
-  <main class="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
-    <div class="panel-intro mb-6 sm:mb-8">
-      <p class="eyebrow">Compte sécurisé</p>
+  <main class="max-w-lg mx-auto px-4 sm:px-6 py-6 sm:py-10">
+    <div class="panel-intro mb-6">
+      <p class="eyebrow">Étape simple</p>
       <h1 class="font-display text-2xl sm:text-3xl font-bold tracking-tight m-0">
-        Inscription et connexion par OTP
+        Accédez à votre carte
       </h1>
-      <p class="text-base text-[color:var(--ink-muted)] mt-2 max-w-xl m-0">
-        Créez un compte librement, recevez un code à usage unique, puis modifiez votre carte depuis une session.
+      <p class="text-base text-[color:var(--ink-muted)] mt-2 m-0">
+        Indiquez votre e-mail, recevez un code, puis gérez votre fiche.
       </p>
     </div>
 
+    <ol class="easy-steps mb-6" aria-label="Étapes">
+      <li class="is-active" id="stepBadge1"><span>1</span> E-mail</li>
+      <li id="stepBadge2"><span>2</span> Code</li>
+      <li id="stepBadge3"><span>3</span> Prêt</li>
+    </ol>
+
     <section id="authGuestPanel" class="panel panel-pad p-5 sm:p-7">
-      <div class="mode-toggle mb-6" role="tablist" aria-label="Mode compte">
-        <button type="button" id="tabRegister" class="is-active" role="tab" aria-selected="true">Inscription</button>
-        <button type="button" id="tabLogin" role="tab" aria-selected="false">Connexion OTP</button>
+      <div id="authStepIdentity">
+        <form id="registerForm" class="space-y-4" autocomplete="on">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="regFirstName" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">Prénom</label>
+              <input id="regFirstName" name="firstName" type="text" required maxlength="80" class="form-input" placeholder="Votre prénom" />
+            </div>
+            <div>
+              <label for="regLastName" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">Nom</label>
+              <input id="regLastName" name="lastName" type="text" required maxlength="80" class="form-input" placeholder="Votre nom" />
+            </div>
+          </div>
+          <div>
+            <label for="regEmail" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">E-mail</label>
+            <input id="regEmail" name="email" type="email" required maxlength="254" class="form-input" placeholder="vous@email.com" autocomplete="email" />
+          </div>
+          <button type="submit" class="btn btn-primary h-11 min-h-11 w-full px-5">
+            <span>Créer mon compte</span>
+          </button>
+        </form>
+
+        <p class="text-sm text-center text-[color:var(--ink-muted)] mt-5 mb-3 m-0">Déjà inscrit ?</p>
+        <form id="loginForm" class="space-y-3" autocomplete="on">
+          <label for="loginEmail" class="sr-only">E-mail de connexion</label>
+          <input id="loginEmail" name="email" type="email" required maxlength="254" class="form-input" placeholder="Votre e-mail" autocomplete="email" />
+          <button type="submit" class="btn btn-secondary h-11 min-h-11 w-full px-5">
+            <span>Me connecter</span>
+          </button>
+        </form>
       </div>
 
-      <form id="registerForm" class="space-y-4" autocomplete="on">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label for="regFirstName" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">Prénom</label>
-            <input id="regFirstName" name="firstName" type="text" required maxlength="80" class="form-input" placeholder="Koffi" />
-          </div>
-          <div>
-            <label for="regLastName" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">Nom</label>
-            <input id="regLastName" name="lastName" type="text" required maxlength="80" class="form-input" placeholder="Kouadio" />
-          </div>
-        </div>
+      <form id="otpForm" class="space-y-4 hidden">
+        <p class="text-base text-[color:var(--ink-muted)] m-0" id="otpHint">
+          Entrez le code à 6 chiffres reçu.
+        </p>
         <div>
-          <label for="regEmail" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">E-mail</label>
-          <input id="regEmail" name="email" type="email" required maxlength="254" class="form-input" placeholder="vous@entreprise.com" autocomplete="email" />
-        </div>
-        <button type="submit" class="btn btn-primary h-11 min-h-11 w-full sm:w-auto px-5">
-          <i data-lucide="mail" class="w-4 h-4"></i>
-          <span>Recevoir le code OTP</span>
-        </button>
-      </form>
-
-      <form id="loginForm" class="space-y-4 hidden" autocomplete="on">
-        <div>
-          <label for="loginEmail" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">E-mail</label>
-          <input id="loginEmail" name="email" type="email" required maxlength="254" class="form-input" placeholder="vous@entreprise.com" autocomplete="email" />
-        </div>
-        <button type="submit" class="btn btn-primary h-11 min-h-11 w-full sm:w-auto px-5">
-          <i data-lucide="key-round" class="w-4 h-4"></i>
-          <span>Envoyer un OTP</span>
-        </button>
-      </form>
-
-      <form id="otpForm" class="space-y-4 hidden mt-8 pt-6 border-t border-[color:var(--line)]">
-        <div>
-          <p class="text-sm text-[color:var(--ink-muted)] m-0 mb-3" id="otpHint">
-            Saisissez le code à 6 chiffres.
-          </p>
-          <label for="otpCode" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">Code OTP</label>
+          <label for="otpCode" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">Code à 6 chiffres</label>
           <input
             id="otpCode"
             name="code"
@@ -114,11 +114,13 @@
             placeholder="000000"
             autocomplete="one-time-code"
           />
-          <p id="devOtpHint" class="hidden text-xs font-mono text-[color:var(--ink-muted)] mt-2 m-0"></p>
+          <p id="devOtpHint" class="hidden text-sm text-[color:var(--ink-muted)] mt-2 m-0"></p>
         </div>
-        <button type="submit" class="btn btn-primary h-11 min-h-11 w-full sm:w-auto px-5">
-          <i data-lucide="shield-check" class="w-4 h-4"></i>
-          <span>Valider et ouvrir la session</span>
+        <button type="submit" class="btn btn-primary h-11 min-h-11 w-full px-5">
+          <span>Valider le code</span>
+        </button>
+        <button type="button" id="btnBackToEmail" class="btn btn-ghost h-11 min-h-11 w-full">
+          Retour
         </button>
       </form>
 
@@ -128,44 +130,41 @@
     <section id="authSessionPanel" class="panel panel-pad p-5 sm:p-7 hidden">
       <div class="flex flex-wrap items-start justify-between gap-3 mb-6">
         <div>
-          <p class="eyebrow">Session active</p>
+          <p class="eyebrow">Connecté</p>
           <h2 class="font-display text-xl font-bold tracking-tight m-0" id="sessionTitle">Compte</h2>
           <p class="text-sm text-[color:var(--ink-muted)] mt-1 m-0" id="sessionEmail"></p>
         </div>
         <button id="btnLogout" type="button" class="btn btn-secondary h-11 min-h-11 px-4">
-          <i data-lucide="log-out" class="w-4 h-4"></i>
           <span>Déconnexion</span>
         </button>
       </div>
 
+      <a href="/" class="btn btn-primary h-11 min-h-11 w-full px-5 no-underline mb-6">
+        <span>Créer ou modifier ma carte</span>
+      </a>
+
       <form id="profileForm" class="space-y-4 mb-8">
+        <p class="text-sm font-medium m-0">Vos informations de compte</p>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label for="profileFirstName" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">Prénom</label>
+            <label for="profileFirstName" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">Prénom</label>
             <input id="profileFirstName" name="firstName" type="text" required maxlength="80" class="form-input" />
           </div>
           <div>
-            <label for="profileLastName" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">Nom</label>
+            <label for="profileLastName" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">Nom</label>
             <input id="profileLastName" name="lastName" type="text" required maxlength="80" class="form-input" />
           </div>
         </div>
-        <button type="submit" class="btn btn-primary h-11 min-h-11 w-full sm:w-auto px-5">
-          <i data-lucide="save" class="w-4 h-4"></i>
-          <span>Enregistrer le profil</span>
+        <button type="submit" class="btn btn-secondary h-11 min-h-11 w-full sm:w-auto px-5">
+          <span>Mettre à jour</span>
         </button>
       </form>
 
       <div class="border-t border-[color:var(--line)] pt-6">
-        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
-          <h3 class="font-display text-base font-bold m-0">Mes cartes</h3>
-          <a href="/" class="btn btn-secondary h-11 min-h-11 px-4 no-underline">
-            <i data-lucide="pen-line" class="w-4 h-4"></i>
-            <span>Éditeur</span>
-          </a>
-        </div>
+        <h3 class="font-display text-base font-bold m-0 mb-4">Mes cartes</h3>
         <ul id="myCardsList" class="space-y-2 m-0 p-0 list-none"></ul>
         <p id="myCardsEmpty" class="text-sm text-[color:var(--ink-muted)] m-0 hidden">
-          Aucune carte liée pour l’instant. Ouvrez l’éditeur et enregistrez-en une.
+          Pas encore de carte. Cliquez sur le bouton ci-dessus pour en créer une.
         </p>
       </div>
 

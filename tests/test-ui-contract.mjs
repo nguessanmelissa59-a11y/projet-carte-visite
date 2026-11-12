@@ -27,7 +27,11 @@ function testHtmlContracts() {
     'qrModeVcard',
     'cardTemplatePicker',
     'virtualCardPreviewCanvas',
-    'tabPreviewCard'
+    'tabPreviewCard',
+    'qrLogoUpload',
+    'qrLogoUrl',
+    'qrLogoPreview',
+    'btnRemoveQrLogo'
   ];
 
   for (const id of requiredIds) {
@@ -42,6 +46,7 @@ function testHtmlContracts() {
   assert.match(html, /assets\/vendor\/qrcode\.min\.js/);
   assert.doesNotMatch(html, /cdn\.jsdelivr\.net\/npm\/qrcode@/);
   assert.match(html, /Modèles de carte virtuelle/);
+  assert.match(html, /Logo au centre du QR/);
 }
 
 function testVendoredQrcodeLibrary() {
@@ -63,6 +68,30 @@ function testQrViewGuardsMissingLibrary() {
   const source = read('src/ui/qr-view.js');
   assert.match(source, /Lib QR absente/);
   assert.match(source, /typeof window\.QRCode\.toCanvas !== 'function'/);
+}
+
+function testQrLogoOverlay() {
+  const source = read('src/ui/qr-view.js');
+  assert.match(source, /function overlayLogo/);
+  assert.match(source, /function paintQrToCanvas/);
+  assert.match(source, /function getLogoSrc/);
+  assert.match(source, /LOGO_RATIO = 0\.18/);
+  assert.match(source, /resolveErrorCorrection/);
+  assert.match(source, /if \(hasLogo\) return 'H'/);
+  assert.match(source, /javascript:/i); // must NOT accept - check rejection via https only below
+  assert.match(source, /\/\^https\?:/);
+
+  const constants = read('src/config/constants.js');
+  const sandbox = { window: {} };
+  Function('window', constants)(sandbox.window);
+  const demo = sandbox.window.VCardApp.Config.DEMO_DATA;
+  assert.equal(demo.qrLogoUrl, '');
+  assert.equal(demo.qrLogoBase64, '');
+  assert.ok(sandbox.window.VCardApp.Config.FORM_FIELDS.includes('qrLogoUrl'));
+
+  const canvasSource = read('src/ui/card-canvas.js');
+  assert.match(canvasSource, /QrView\.paintQrToCanvas/);
+  assert.match(canvasSource, /QrView\.getLogoSrc/);
 }
 
 function testCssAtmosphere() {
