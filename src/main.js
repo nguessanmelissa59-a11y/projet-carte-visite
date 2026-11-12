@@ -454,7 +454,8 @@
           ProfileCardUI.showToast('Logo trop volumineux (max 2 Mo)');
           return;
         }
-        StorageService.resizeImageToBase64(file, 160, 160, 0.85, (b64) => {
+
+        const applyLogo = (b64) => {
           if (!b64 || !/^data:image\//i.test(b64)) {
             ProfileCardUI.showToast('Impossible de lire le logo');
             return;
@@ -466,7 +467,17 @@
           renderAll(true);
           schedulePersistence();
           ProfileCardUI.showToast('Logo QR appliqué');
-        });
+        };
+
+        if (/svg\+xml/i.test(file.type)) {
+          const reader = new FileReader();
+          reader.onload = () => applyLogo(String(reader.result || ''));
+          reader.onerror = () => ProfileCardUI.showToast('Impossible de lire le logo');
+          reader.readAsDataURL(file);
+          return;
+        }
+
+        StorageService.resizeImageToBase64(file, 160, 160, 0.85, applyLogo);
       });
     }
 
