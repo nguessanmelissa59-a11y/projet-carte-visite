@@ -1,15 +1,15 @@
 :root {
-  --surface: #f3f4f1;
-  --surface-elevated: #ffffff;
-  --ink: #12141a;
+  --surface: #f3efe4;
+  --surface-elevated: #fcfcf8;
+  --ink: #0c1818;
   --ink-muted: #5b616c;
-  --line: rgba(18, 20, 26, 0.12);
-  --accent: #12141a;
-  --accent-soft: rgba(18, 20, 26, 0.08);
+  --line: rgba(12, 24, 24, 0.12);
+  --accent: #0c543c;
+  --accent-soft: rgba(12, 84, 60, 0.12);
   --danger: #8b3a3a;
   --danger-soft: rgba(139, 58, 58, 0.1);
-  --radius: 0.5rem;
-  --font-display: 'Fraunces', 'Times New Roman', serif;
+  --radius: 1rem;
+  --font-display: 'Fraunces', Georgia, serif;
   --font-body: 'Figtree', system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 }
@@ -33,8 +33,8 @@ body {
   line-height: 1.5;
   color: var(--ink);
   background:
-    radial-gradient(1200px 600px at 10% -10%, rgba(18, 20, 26, 0.05), transparent 60%),
-    radial-gradient(900px 500px at 100% 0%, rgba(91, 97, 108, 0.08), transparent 55%),
+    radial-gradient(1200px 600px at 10% -10%, rgba(12, 84, 60, 0.06), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgba(252, 228, 216, 0.45), transparent 55%),
     var(--surface);
 }
 

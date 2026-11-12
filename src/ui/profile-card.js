@@ -49,7 +49,7 @@ window.VCardApp.ProfileCardUI = (function () {
             </div>
             ${
               dataObj.organization
-                ? `<span class="px-2.5 py-1 rounded-md text-[11px] font-medium border ${palette.badgeBg} mb-1 max-w-[180px] truncate">
+                ? `<span class="px-2.5 py-1 rounded-full text-[11px] font-medium border ${palette.badgeBg} mb-1 max-w-[180px] truncate">
                     ${escapeHtml(dataObj.organization)}
                    </span>`
                 : ''
@@ -134,7 +134,7 @@ window.VCardApp.ProfileCardUI = (function () {
               dataObj.phone
                 ? `<a href="tel:${escapeHtml(cleanPhone)}" class="contact-row">
                     <div class="min-w-0">
-                      <p class="contact-row__label">Téléphone</p>
+                      <p class="contact-row__label">Téléphone</p><!-- uppercase via CSS -->
                       <p class="contact-row__value mono">${escapeHtml(dataObj.phone)}</p>
                     </div>
                     <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 contact-row__chevron"></i>
