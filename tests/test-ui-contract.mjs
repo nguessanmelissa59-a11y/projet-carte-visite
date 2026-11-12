@@ -45,8 +45,8 @@ function testHtmlContracts() {
   assert.match(html, /assets\/css\/styles\.css/);
   assert.match(html, /assets\/vendor\/qrcode\.min\.js/);
   assert.doesNotMatch(html, /cdn\.jsdelivr\.net\/npm\/qrcode@/);
-  assert.match(html, /Modèles de carte virtuelle/);
-  assert.match(html, /Logo au centre du QR/);
+  assert.match(html, /Choisir un modèle/);
+  assert.match(html, /Logo au centre/);
 }
 
 function testVendoredQrcodeLibrary() {
