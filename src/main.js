@@ -21,6 +21,7 @@
 
     const searchParams = new URLSearchParams(window.location.search);
     const cardIdParam = searchParams.get('id');
+    const editSlugParam = searchParams.get('edit');
     const isScanEvent = searchParams.get('scan') === '1';
     const urlPayload = UrlCodec.extractFromCurrentLocation();
 
@@ -48,10 +49,10 @@
     }
 
     // Asynchronous non-blocking backend sync
-    initBackendConnection(cardIdParam, isScanEvent);
+    initBackendConnection(cardIdParam, isScanEvent, editSlugParam);
   });
 
-  async function initBackendConnection(cardIdParam, isScanEvent) {
+  async function initBackendConnection(cardIdParam, isScanEvent, editSlugParam) {
     const backendStatus = await ApiService.checkBackend();
     updateBackendStatusUI(backendStatus);
     updateAuthChrome();
@@ -70,6 +71,24 @@
     }
 
     if (isPublicScanView) return;
+
+    if (editSlugParam) {
+      if (!ApiService.isAuthenticated()) {
+        window.location.href = '/auth.html';
+        return;
+      }
+      const serverCard = await ApiService.fetchCardBySlug(editSlugParam, false);
+      if (serverCard) {
+        if (serverCard.userId && serverCard.userId !== ApiService.getCurrentUser().id) {
+          ProfileCardUI.showToast('Cette carte appartient à un autre compte');
+        } else {
+          state = { ...DEMO_DATA, ...serverCard };
+          populateForm();
+        }
+      }
+      renderAll(true);
+      return;
+    }
 
     if (ApiService.isAuthenticated()) {
       const myCards = await ApiService.fetchMyCards();
