@@ -3,6 +3,7 @@ window.VCardApp = window.VCardApp || {};
 window.VCardApp.ApiService = (function () {
   let backendAvailable = false;
   let serverOrigin = window.location.origin;
+  let currentUser = null;
 
   function slugify(text) {
     return (
@@ -14,6 +15,16 @@ window.VCardApp.ApiService = (function () {
         .replace(/^-+|-+$/g, '')
         .slice(0, 48) || 'contact'
     );
+  }
+
+  async function parseJson(res) {
+    let data = {};
+    try {
+      data = await res.json();
+    } catch {
+      data = {};
+    }
+    return data;
   }
 
   async function checkBackend() {
@@ -34,13 +45,108 @@ window.VCardApp.ApiService = (function () {
         window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
       serverOrigin = isLocalhost && data.lanOrigin ? data.lanOrigin : window.location.origin;
 
-      return { available: true, origin: serverOrigin, info: data };
+      await refreshSession();
+      return { available: true, origin: serverOrigin, info: data, user: currentUser };
     } catch {
       clearTimeout(timer);
       backendAvailable = false;
       serverOrigin = window.location.origin;
-      return { available: false, origin: serverOrigin };
+      currentUser = null;
+      return { available: false, origin: serverOrigin, user: null };
     }
+  }
+
+  async function refreshSession() {
+    if (!backendAvailable) {
+      currentUser = null;
+      return null;
+    }
+    try {
+      const res = await fetch('/api/auth/me', {
+        method: 'GET',
+        credentials: 'include'
+      });
+      if (!res.ok) {
+        currentUser = null;
+        return null;
+      }
+      const data = await parseJson(res);
+      currentUser = data.user || null;
+      return currentUser;
+    } catch {
+      currentUser = null;
+      return null;
+    }
+  }
+
+  async function register({ email, firstName, lastName }) {
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, firstName, lastName })
+    });
+    const data = await parseJson(res);
+    if (!res.ok) throw new Error(data.error || 'Inscription impossible');
+    return data;
+  }
+
+  async function login({ email }) {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const data = await parseJson(res);
+    if (!res.ok) throw new Error(data.error || 'Connexion impossible');
+    return data;
+  }
+
+  async function verifyOtp({ email, code, purpose }) {
+    const res = await fetch('/api/auth/verify', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, code, purpose })
+    });
+    const data = await parseJson(res);
+    if (!res.ok) throw new Error(data.error || 'Vérification OTP échouée');
+    currentUser = data.user || null;
+    return data;
+  }
+
+  async function logout() {
+    const res = await fetch('/api/auth/logout', {
+      method: 'POST',
+      credentials: 'include'
+    });
+    currentUser = null;
+    const data = await parseJson(res);
+    return data;
+  }
+
+  async function updateProfile({ firstName, lastName }) {
+    const res = await fetch('/api/auth/profile', {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ firstName, lastName })
+    });
+    const data = await parseJson(res);
+    if (!res.ok) throw new Error(data.error || 'Mise à jour impossible');
+    currentUser = data.user || null;
+    return data.user;
+  }
+
+  async function fetchMyCards() {
+    const res = await fetch('/api/me/cards', {
+      method: 'GET',
+      credentials: 'include'
+    });
+    if (!res.ok) return [];
+    const data = await parseJson(res);
+    return data.cards || [];
   }
 
   async function fetchCardBySlug(slug, countScan = false) {
@@ -48,7 +154,7 @@ window.VCardApp.ApiService = (function () {
     const query = countScan ? '?scan=1' : '';
     const res = await fetch(`/api/cards/${encodeURIComponent(clean)}${query}`);
     if (!res.ok) return null;
-    const data = await res.json();
+    const data = await parseJson(res);
     return data.card || null;
   }
 
@@ -56,16 +162,25 @@ window.VCardApp.ApiService = (function () {
     if (!backendAvailable) return null;
     const res = await fetch('/api/cards', {
       method: 'POST',
+      credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(cardState)
     });
-    if (!res.ok) throw new Error('Erreur de sauvegarde');
-    const data = await res.json();
+    const data = await parseJson(res);
+    if (!res.ok) throw new Error(data.error || 'Erreur de sauvegarde');
     return data.card || null;
   }
 
   function isAvailable() {
     return backendAvailable;
+  }
+
+  function getCurrentUser() {
+    return currentUser;
+  }
+
+  function isAuthenticated() {
+    return Boolean(currentUser);
   }
 
   function getShortProfileUrl(state) {
@@ -81,9 +196,18 @@ window.VCardApp.ApiService = (function () {
   return {
     slugify,
     checkBackend,
+    refreshSession,
+    register,
+    login,
+    verifyOtp,
+    logout,
+    updateProfile,
+    fetchMyCards,
     fetchCardBySlug,
     saveCard,
     isAvailable,
+    getCurrentUser,
+    isAuthenticated,
     getShortProfileUrl,
     getDirectVcfUrl
   };
