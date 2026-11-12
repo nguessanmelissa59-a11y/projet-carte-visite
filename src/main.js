@@ -115,7 +115,7 @@
     if (accountLabel) {
       accountLabel.textContent = user
         ? user.firstName || user.email.split('@')[0]
-        : 'Connexion';
+        : 'Se connecter';
     }
     if (authHint) {
       authHint.classList.toggle('hidden', Boolean(user) || !ApiService.isAvailable());
@@ -660,38 +660,39 @@
       });
     }
 
-    const btnClearForm = document.getElementById('btnClearForm');
-    if (btnClearForm) {
-      btnClearForm.addEventListener('click', () => {
-        state = {
-          slug: 'contact',
-          firstName: '',
-          lastName: '',
-          jobTitle: '',
-          organization: '',
-          phone: '',
-          whatsapp: '',
-          email: '',
-          location: '',
-          linkedinUrl: '',
-          portfolioUrl: '',
-          bio: '',
-          photoUrl: '',
-          photoBase64: '',
-          qrLogoUrl: '',
-          qrLogoBase64: '',
-          theme: 'obsidian',
-          cardTemplate: 'editorial',
-          autoDownload: true,
-          scans: 0
-        };
-        populateForm();
-        renderCardTemplatePicker();
-        renderAll(true);
-        schedulePersistence();
-        ProfileCardUI.showToast('Formulaire réinitialisé');
-      });
-    }
+    const clearForm = () => {
+      state = {
+        slug: 'contact',
+        firstName: '',
+        lastName: '',
+        jobTitle: '',
+        organization: '',
+        phone: '',
+        whatsapp: '',
+        email: '',
+        location: '',
+        linkedinUrl: '',
+        portfolioUrl: '',
+        bio: '',
+        photoUrl: '',
+        photoBase64: '',
+        qrLogoUrl: '',
+        qrLogoBase64: '',
+        theme: 'obsidian',
+        cardTemplate: 'editorial',
+        autoDownload: true,
+        scans: 0
+      };
+      populateForm();
+      renderCardTemplatePicker();
+      renderAll(true);
+      schedulePersistence();
+      ProfileCardUI.showToast('Formulaire réinitialisé');
+    };
+    ['btnClearForm', 'btnClearFormMobile'].forEach((id) => {
+      const btn = document.getElementById(id);
+      if (btn) btn.addEventListener('click', clearForm);
+    });
 
     const btnThemeToggle = document.getElementById('btnThemeToggle');
     const btnThemeTogglePublic = document.getElementById('btnThemeTogglePublic');
