@@ -8,6 +8,7 @@ const {
 const { buildVCard30 } = require('../services/vcard-builder');
 const { sendJson, readJsonBody } = require('../http/json');
 const { resolveSessionFromRequest } = require('../services/session-service');
+const { sanitizeCardPayload } = require('../services/validation');
 
 function handleGetServerInfo(req, res) {
   const lanIp = getLanIpAddress();

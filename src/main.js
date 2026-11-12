@@ -1,5 +1,6 @@
 (function () {
   const { DEMO_DATA, FORM_FIELDS, CARD_TEMPLATES } = window.VCardApp.Config;
+  const FieldValidation = window.VCardApp.FieldValidation;
   const StorageService = window.VCardApp.StorageService;
   const UrlCodec = window.VCardApp.UrlCodec;
   const VCardService = window.VCardApp.VCardService;

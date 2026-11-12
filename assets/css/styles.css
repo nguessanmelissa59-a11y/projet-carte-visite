@@ -736,6 +736,27 @@ html.dark .form-input {
   box-shadow: 0 0 0 1px var(--accent);
 }
 
+.form-input.is-invalid {
+  border-color: #a11f35;
+  box-shadow: 0 0 0 1px rgba(161, 31, 53, 0.35);
+}
+
+.form-input.is-invalid:focus {
+  border-color: #a11f35;
+  box-shadow: 0 0 0 1px #a11f35;
+}
+
+.field-error {
+  margin: 0.35rem 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  color: #a11f35;
+}
+
+.field-error[hidden] {
+  display: none;
+}
+
 .slug-prefix {
   display: inline-flex;
   align-items: center;
