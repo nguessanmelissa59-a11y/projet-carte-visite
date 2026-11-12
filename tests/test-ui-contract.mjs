@@ -99,9 +99,15 @@ function testCssAtmosphere() {
   const css = read('assets/css/styles.css');
   for (const token of [
     '--accent',
+    '--surface: #f3efe4',
+    '--accent: #0c543c',
+    '--info-warm',
+    '.beta-chip',
+    '.btn-ink',
     'body.app-shell',
     '.phone-shell',
     '.profile-card',
+    '.profile-card__banner::before',
     '.reveal',
     '@media (max-width: 575.98px)',
     '@media (min-width: 768px)',
@@ -136,6 +142,9 @@ function testThemeBannerColors() {
     assert.ok(palettes[theme], `missing theme ${theme}`);
     assert.match(palettes[theme].bannerColor, /^#[0-9a-fA-F]{6}$/);
   }
+
+  assert.equal(palettes.forest.bannerColor, '#0c543c');
+  assert.equal(sandbox.window.VCardApp.Config.DEMO_DATA.theme, 'forest');
 }
 
 function testCardTemplatesCatalog() {
