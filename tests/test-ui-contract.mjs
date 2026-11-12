@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import vm from 'node:vm';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -38,7 +39,30 @@ function testHtmlContracts() {
   assert.match(html, /class="app-shell/);
   assert.match(html, /phone-shell/);
   assert.match(html, /assets\/css\/styles\.css/);
+  assert.match(html, /assets\/vendor\/qrcode\.min\.js/);
+  assert.doesNotMatch(html, /cdn\.jsdelivr\.net\/npm\/qrcode@/);
   assert.match(html, /Modèles de carte virtuelle/);
+}
+
+function testVendoredQrcodeLibrary() {
+  const vendorPath = join(root, 'assets/vendor/qrcode.min.js');
+  assert.ok(existsSync(vendorPath), 'missing assets/vendor/qrcode.min.js');
+
+  const code = read('assets/vendor/qrcode.min.js');
+  const ctx = { window: {} };
+  ctx.self = ctx.window;
+  vm.createContext(ctx);
+  vm.runInContext(code, ctx);
+
+  const qr = ctx.QRCode || ctx.window.QRCode;
+  assert.ok(qr, 'QRCode global missing after load');
+  assert.equal(typeof qr.toCanvas, 'function');
+}
+
+function testQrViewGuardsMissingLibrary() {
+  const source = read('src/ui/qr-view.js');
+  assert.match(source, /Lib QR absente/);
+  assert.match(source, /typeof window\.QRCode\.toCanvas !== 'function'/);
 }
 
 function testCssAtmosphere() {
@@ -137,6 +161,8 @@ function testProfileCardMarkup() {
 
 const tests = [
   ['html contracts', testHtmlContracts],
+  ['vendored qrcode library', testVendoredQrcodeLibrary],
+  ['qr view guards missing library', testQrViewGuardsMissingLibrary],
   ['css atmosphere', testCssAtmosphere],
   ['theme banner colors', testThemeBannerColors],
   ['card templates catalog', testCardTemplatesCatalog],
