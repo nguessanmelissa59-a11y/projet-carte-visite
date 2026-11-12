@@ -253,6 +253,10 @@
     if (forceQr) {
       QrView.renderCanvas(state, qrMode, true);
     }
+
+    if (!isPublicScanView && previewTab === 'card') {
+      updateVirtualCardPreview();
+    }
   }
 
   function bindEvents() {
