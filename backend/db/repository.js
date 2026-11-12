@@ -15,6 +15,28 @@ const stmtListCardsByUser = db.prepare(`
   ORDER BY updated_at DESC
   LIMIT 50
 `);
+const stmtListCardsAdmin = db.prepare(`
+  SELECT
+    c.slug,
+    c.first_name,
+    c.last_name,
+    c.job_title,
+    c.organization,
+    c.theme,
+    c.scans,
+    c.updated_at,
+    c.created_at,
+    c.user_id,
+    u.email AS owner_email
+  FROM cards c
+  LEFT JOIN users u ON u.id = c.user_id
+  ORDER BY c.updated_at DESC
+  LIMIT ? OFFSET ?
+`);
+const stmtCountCards = db.prepare('SELECT COUNT(*) AS total FROM cards');
+const stmtSumScans = db.prepare('SELECT COALESCE(SUM(scans), 0) AS total FROM cards');
+const stmtLatestCardUpdate = db.prepare('SELECT MAX(updated_at) AS latest FROM cards');
+const stmtDeleteCard = db.prepare('DELETE FROM cards WHERE slug = ?');
 const stmtUpsertCard = db.prepare(`
   INSERT INTO cards (
     slug, first_name, last_name, job_title, organization,
@@ -155,6 +177,43 @@ function listCardsByUserId(userId) {
   }));
 }
 
+function listCardsForAdmin({ limit = 50, offset = 0 } = {}) {
+  const safeLimit = Math.min(Math.max(Number(limit) || 50, 1), 200);
+  const safeOffset = Math.max(Number(offset) || 0, 0);
+  return stmtListCardsAdmin.all(safeLimit, safeOffset).map((r) => ({
+    slug: r.slug,
+    firstName: r.first_name,
+    lastName: r.last_name,
+    jobTitle: r.job_title,
+    organization: r.organization,
+    theme: r.theme,
+    scans: Number(r.scans) || 0,
+    userId: r.user_id || null,
+    ownerEmail: r.owner_email || null,
+    createdAt: r.created_at,
+    updatedAt: r.updated_at
+  }));
+}
+
+function deleteCardBySlug(slug) {
+  const cleanSlug = slugify(slug);
+  const existing = getCardBySlug(cleanSlug);
+  if (!existing) return null;
+  stmtDeleteCard.run(cleanSlug);
+  return existing;
+}
+
+function getAdminStats() {
+  const cardsTotal = Number(stmtCountCards.get()?.total) || 0;
+  const scansTotal = Number(stmtSumScans.get()?.total) || 0;
+  const latestCardUpdate = stmtLatestCardUpdate.get()?.latest || null;
+  return {
+    cardsTotal,
+    scansTotal,
+    latestCardUpdate
+  };
+}
+
 const countRow = db.prepare('SELECT COUNT(*) AS total FROM cards').get();
 if (countRow && countRow.total === 0) {
   upsertCard({
@@ -183,5 +242,8 @@ module.exports = {
   incrementScans,
   upsertCard,
   listCards,
-  listCardsByUserId
+  listCardsByUserId,
+  listCardsForAdmin,
+  deleteCardBySlug,
+  getAdminStats
 };
