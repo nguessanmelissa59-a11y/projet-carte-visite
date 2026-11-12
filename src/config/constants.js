@@ -4,6 +4,57 @@ window.VCardApp.Config = {
   STORAGE_KEY: 'vcard_studio_draft_v2',
   THEME_STORAGE_KEY: 'vcard_studio_dark_mode',
 
+  CARD_TEMPLATES: {
+    editorial: {
+      id: 'editorial',
+      label: 'Éditorial',
+      blurb: 'Grille nette, QR latéral',
+      swatch: ['#ffffff', '#18181b', '#e4e4e7']
+    },
+    minimal: {
+      id: 'minimal',
+      label: 'Minimaliste',
+      blurb: 'Beige doux, aéré',
+      swatch: ['#f3eee6', '#1c1917', '#d6d3d1']
+    },
+    corporate: {
+      id: 'corporate',
+      label: 'Corporate Tech',
+      blurb: 'Navy sombre, verre',
+      swatch: ['#0b1c2c', '#1d4e89', '#67e8f9']
+    },
+    creative: {
+      id: 'creative',
+      label: 'Créatif',
+      blurb: 'Vagues corail / ambre',
+      swatch: ['#ff7a59', '#f0abfc', '#fbbf24']
+    },
+    eco: {
+      id: 'eco',
+      label: 'Naturel Éco',
+      blurb: 'Sauge et terre',
+      swatch: ['#eef2eb', '#4d7c5a', '#c26d3e']
+    },
+    prestige: {
+      id: 'prestige',
+      label: 'Prestige Luxe',
+      blurb: 'Noir et or',
+      swatch: ['#0a0a0a', '#c9a227', '#f5e6b8']
+    },
+    nocturne: {
+      id: 'nocturne',
+      label: 'Nocturne',
+      blurb: 'Charbon et argent',
+      swatch: ['#111113', '#a1a1aa', '#fafafa']
+    },
+    atelier: {
+      id: 'atelier',
+      label: 'Atelier',
+      blurb: 'Papier chaud, encre',
+      swatch: ['#f7f1e8', '#2a2118', '#8b5e3c']
+    }
+  },
+
   THEME_PALETTES: {
     obsidian: {
       label: 'Noir Obsidienne',
@@ -68,6 +119,7 @@ window.VCardApp.Config = {
     photoUrl: '',
     photoBase64: '',
     theme: 'obsidian',
+    cardTemplate: 'editorial',
     autoDownload: true,
     scans: 0
   },
