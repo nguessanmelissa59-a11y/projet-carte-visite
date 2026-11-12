@@ -49,7 +49,8 @@ async function handleSaveCard(req, res) {
     }
 
     const payload = await readJsonBody(req);
-    const existing = getCardBySlug(payload.slug || `${payload.firstName}-${payload.lastName}`);
+    const sanitized = sanitizeCardPayload(payload);
+    const existing = getCardBySlug(sanitized.slug);
 
     if (existing && existing.userId && existing.userId !== session.userId) {
       return sendJson(res, 403, {
@@ -57,7 +58,7 @@ async function handleSaveCard(req, res) {
       });
     }
 
-    const saved = upsertCard(payload, { userId: session.userId });
+    const saved = upsertCard(sanitized, { userId: session.userId });
     sendJson(res, 200, { card: saved });
   } catch (err) {
     sendJson(res, 400, { error: err.message || 'Requete invalide' });
