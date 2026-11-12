@@ -40,3 +40,4 @@ Ce skill definit les regles visuelles et ergonomiques pour produire des interfac
    - Fond franc, bordure `zinc-300` (clair) / `zinc-700` (sombre), focus net par anneau fin (`focus:ring-1 focus:ring-zinc-900` ou couleur d'accent) sans halo flou surdimensionne.
 3. **Apercu Mobile (Carte de visite)** :
    - Mise en page structurée comme une fiche editoriale : en-tete epure, photo cadree proprement, informations alignees avec rigueur, liste de coordonnees separee par des filets fins.
+
