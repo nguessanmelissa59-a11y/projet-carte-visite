@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-  <title>Connexion — EVC Melissa</title>
+  <title>Se connecter — EVC Melissa</title>
   <meta name="description" content="Créez votre compte ou connectez-vous pour gérer votre carte de visite." />
   <meta name="theme-color" content="#14120f" />
 
@@ -34,9 +34,9 @@
 
   <header class="studio-header sticky top-0 z-40">
     <div class="max-w-lg mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-3">
-      <a href="/" class="flex items-center gap-3 min-w-0 no-underline text-[color:var(--ink)]">
+      <a href="/" class="flex items-center gap-2.5 min-w-0 no-underline text-[color:var(--ink)]">
         <div class="brand-mark shrink-0" aria-hidden="true">EM</div>
-        <span class="font-display font-semibold text-lg tracking-tight truncate">EVC Melissa</span>
+        <span class="font-display font-semibold text-base tracking-tight">EVC</span>
       </a>
       <button id="btnThemeToggle" type="button" aria-label="Basculer le thème" class="btn btn-secondary h-11 w-11 min-h-11 p-0">
         <i data-lucide="moon" class="w-3.5 h-3.5 dark:hidden"></i>
@@ -45,25 +45,33 @@
     </div>
   </header>
 
-  <main class="max-w-lg mx-auto px-4 sm:px-6 py-6 sm:py-10">
-    <div class="panel-intro mb-6">
-      <p class="eyebrow">Compte</p>
-      <h1 class="hero-brand">EVC Melissa</h1>
+  <main class="auth-main max-w-lg mx-auto px-4 sm:px-6 py-4 sm:py-6">
+    <div class="panel-intro reveal">
+      <div class="panel-intro-row">
+        <p class="eyebrow m-0">Compte</p>
+        <h1 class="hero-brand">EVC Melissa</h1>
+      </div>
       <p class="hero-lead">
         Indiquez votre e-mail, recevez un code, puis gérez votre fiche.
       </p>
     </div>
 
-    <ol class="easy-steps mb-6" aria-label="Étapes">
-      <li class="is-active" id="stepBadge1"><span>1</span> E-mail</li>
-      <li id="stepBadge2"><span>2</span> Code</li>
-      <li id="stepBadge3"><span>3</span> Prêt</li>
-    </ol>
+    <div class="editor-strip reveal">
+      <ol class="easy-steps" aria-label="Étapes">
+        <li class="is-active" id="stepBadge1"><span>1</span> E-mail</li>
+        <li id="stepBadge2"><span>2</span> Code</li>
+        <li id="stepBadge3"><span>3</span> Prêt</li>
+      </ol>
+    </div>
 
-    <section id="authGuestPanel" class="panel panel-pad p-5 sm:p-7">
+    <section id="authGuestPanel" class="panel panel-pad p-5 sm:p-6 reveal reveal-delay-1">
       <div id="authStepIdentity">
-        <form id="registerForm" class="space-y-4" autocomplete="on">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="section-label">
+          <span class="idx">1</span>
+          <h2>Créer un compte</h2>
+        </div>
+        <form id="registerForm" class="space-y-3" autocomplete="on">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label for="regFirstName" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">Prénom</label>
               <input id="regFirstName" name="firstName" type="text" required maxlength="80" class="form-input" placeholder="Votre prénom" />
@@ -82,17 +90,26 @@
           </button>
         </form>
 
-        <p class="text-sm text-center text-[color:var(--ink-muted)] mt-5 mb-3 m-0">Déjà inscrit ?</p>
+        <div class="auth-divider" aria-hidden="true"></div>
+
+        <div class="section-label">
+          <span class="idx">2</span>
+          <h2>Déjà inscrit</h2>
+        </div>
         <form id="loginForm" class="space-y-3" autocomplete="on">
-          <label for="loginEmail" class="sr-only">E-mail de connexion</label>
+          <label for="loginEmail" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">E-mail</label>
           <input id="loginEmail" name="email" type="email" required maxlength="254" class="form-input" placeholder="Votre e-mail" autocomplete="email" />
           <button type="submit" class="btn btn-secondary h-11 min-h-11 w-full px-5">
-            <span>Me connecter</span>
+            <span>Se connecter</span>
           </button>
         </form>
       </div>
 
-      <form id="otpForm" class="space-y-4 hidden">
+      <form id="otpForm" class="space-y-3 hidden">
+        <div class="section-label">
+          <span class="idx">2</span>
+          <h2>Code de vérification</h2>
+        </div>
         <p class="text-base text-[color:var(--ink-muted)] m-0" id="otpHint">
           Entrez le code à 6 chiffres reçu.
         </p>
@@ -120,14 +137,14 @@
         </button>
       </form>
 
-      <p id="authMessage" class="text-sm mt-5 m-0 text-[color:var(--ink-muted)]" role="status" aria-live="polite"></p>
+      <p id="authMessage" class="text-sm mt-4 m-0 text-[color:var(--ink-muted)]" role="status" aria-live="polite"></p>
     </section>
 
-    <section id="authSessionPanel" class="panel panel-pad p-5 sm:p-7 hidden">
-      <div class="flex flex-wrap items-start justify-between gap-3 mb-6">
+    <section id="authSessionPanel" class="panel panel-pad p-5 sm:p-6 hidden reveal reveal-delay-1">
+      <div class="flex flex-wrap items-start justify-between gap-3 mb-5 pb-4 border-b border-[color:var(--line)]">
         <div>
-          <p class="eyebrow">Connecté</p>
-          <h2 class="font-display text-xl font-bold tracking-tight m-0" id="sessionTitle">Compte</h2>
+          <p class="eyebrow m-0 mb-1">Connecté</p>
+          <h2 class="font-display text-lg font-semibold tracking-tight m-0" id="sessionTitle">Compte</h2>
           <p class="text-sm text-[color:var(--ink-muted)] mt-1 m-0" id="sessionEmail"></p>
         </div>
         <button id="btnLogout" type="button" class="btn btn-secondary h-11 min-h-11 px-4">
@@ -135,13 +152,16 @@
         </button>
       </div>
 
-      <a href="/" class="btn btn-primary h-11 min-h-11 w-full px-5 no-underline mb-6">
+      <a href="/" class="btn btn-primary h-11 min-h-11 w-full px-5 no-underline mb-5">
         <span>Créer ou modifier ma carte</span>
       </a>
 
-      <form id="profileForm" class="space-y-4 mb-8">
-        <p class="text-sm font-medium m-0">Vos informations de compte</p>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <form id="profileForm" class="space-y-3 mb-6">
+        <div class="section-label">
+          <span class="idx">1</span>
+          <h2>Informations de compte</h2>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label for="profileFirstName" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">Prénom</label>
             <input id="profileFirstName" name="firstName" type="text" required maxlength="80" class="form-input" />
@@ -156,15 +176,18 @@
         </button>
       </form>
 
-      <div class="border-t border-[color:var(--line)] pt-6">
-        <h3 class="font-display text-base font-bold m-0 mb-4">Mes cartes</h3>
+      <div class="border-t border-[color:var(--line)] pt-5">
+        <div class="section-label">
+          <span class="idx">2</span>
+          <h2>Mes cartes</h2>
+        </div>
         <ul id="myCardsList" class="space-y-2 m-0 p-0 list-none"></ul>
         <p id="myCardsEmpty" class="text-sm text-[color:var(--ink-muted)] m-0 hidden">
           Pas encore de carte. Cliquez sur le bouton ci-dessus pour en créer une.
         </p>
       </div>
 
-      <p id="sessionMessage" class="text-sm mt-5 m-0 text-[color:var(--ink-muted)]" role="status" aria-live="polite"></p>
+      <p id="sessionMessage" class="text-sm mt-4 m-0 text-[color:var(--ink-muted)]" role="status" aria-live="polite"></p>
     </section>
   </main>
 
