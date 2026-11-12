@@ -56,7 +56,9 @@ function testHtmlContracts() {
   assert.match(html, /type="tel"/);
   assert.match(html, /id="email"/);
   assert.match(html, /type="email"/);
-  assert.match(html, /pattern="\^\\\+\?\[0-9\\s\(\)\.\\-\]\{6,\}"/);
+  assert.match(html, /inputmode="tel"/);
+  assert.match(html, /inputmode="email"/);
+  assert.ok(html.includes('pattern="^\\+?[0-9\\s().\\-]{6,}$"'));
 }
 
 function testFieldValidationClient() {
@@ -325,8 +327,24 @@ function testEditorPreviewLayout() {
   assert.doesNotMatch(css, /\.studio-grid > aside \{[^}]*overflow-y:\s*auto/);
 }
 
+function testOfflineModeNotice() {
+  const html = read('index.html');
+  const css = read('assets/css/styles.css');
+  const qrView = read('src/ui/qr-view.js');
+
+  const notice = html.match(/<div id="offlineModeNotice"[^>]*>/);
+  assert.ok(notice, 'encart mode hors-ligne introuvable');
+  assert.match(notice[0], /\shidden/, 'encart masque par defaut');
+  assert.match(html, /offline-notice__title">Mode vCard 3\.0 Direct \(Hors-ligne\)</);
+
+  assert.match(css, /\.offline-notice\[hidden\]/);
+  assert.match(qrView, /offlineNotice\.hidden = !isOfflineMode/);
+  assert.doesNotMatch(qrView, /urlDisplay\.textContent = [^;]*Mode vCard/);
+}
+
 const tests = [
   ['html contracts', testHtmlContracts],
+  ['offline mode notice', testOfflineModeNotice],
   ['field validation client', testFieldValidationClient],
   ['editor preview layout', testEditorPreviewLayout],
   ['vendored qrcode library', testVendoredQrcodeLibrary],
