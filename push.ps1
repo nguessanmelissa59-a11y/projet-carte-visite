@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
   Script d'automatisation Git : ajoute, valide (commit) et pousse (push) automatiquement toutes les modifications.
 .EXAMPLE
@@ -43,3 +43,4 @@ if ($remotes -contains "origin") {
   Write-Host "⚠️ Commit créé localement, mais aucun dépôt distant ('origin') n'est encore lié." -ForegroundColor Yellow
   Write-Host "👉 Pour lier un dépôt GitHub/GitLab : git remote add origin <URL_DU_DEPOT>" -ForegroundColor Yellow
 }
+

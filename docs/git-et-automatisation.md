@@ -64,3 +64,4 @@ Pour ne même plus utiliser le terminal :
 Le fichier [.github/workflows/deploy.yml](file:///c:/Users/Meliisa/Desktop/projet_carte_visite/.github/workflows/deploy.yml) est déjà configuré :
 * Dès que vous poussez (`push`) sur GitHub (branche `main`), **GitHub Actions** déploie automatiquement votre site sur **GitHub Pages**.
 * Pour l'activer sur GitHub : allez dans **Settings → Pages → Source**, et sélectionnez **GitHub Actions**.
+
