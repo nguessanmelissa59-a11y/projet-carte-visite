@@ -79,7 +79,7 @@ Pastilles dans « Couleur de la carte » (ordre maquette) :
 | Ordre | Orientation | Hex cible |
 |---|---|---|
 | 1 | Forest (defaut) | `#0C543C` |
-| 2 | Orange | `#E digérer` → `#C45A1A` |
+| 2 | Orange | `#C45A1A` |
 | 3 | Obsidian | `#2A2D34` |
 | 4 | Cobalt | `#2F5B8A` |
 | 5 | Bronze / terre | `#9C542F` |
