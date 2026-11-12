@@ -1131,7 +1131,7 @@ window.VCardApp.CardCanvasExporter = (function () {
         `/ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpegBytes.length} >>\nstream\n`
     );
     write(jpegBytes);
-    write('\nendstream\nendobj\n');
+    write('endstream\nendobj\n');
 
     startObj();
     write('5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n');
