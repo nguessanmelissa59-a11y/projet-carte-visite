@@ -93,49 +93,49 @@ window.VCardApp.Config = {
 
   THEME_PALETTES: {
     obsidian: {
-      label: 'Noir Obsidienne',
-      bannerColor: '#18181b',
-      headerBg: 'bg-zinc-900',
-      btnBg: 'bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-900',
-      badgeBg: 'bg-zinc-100 text-zinc-800 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:border-zinc-700',
-      iconColor: 'text-zinc-700 dark:text-zinc-300',
-      qrDark: '#18181b'
+      label: 'Encre',
+      bannerColor: '#0c0a09',
+      headerBg: 'bg-stone-950',
+      btnBg: 'bg-stone-950 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-950',
+      badgeBg: 'bg-stone-100 text-stone-800 border-stone-200 dark:bg-stone-800 dark:text-stone-100 dark:border-stone-700',
+      iconColor: 'text-stone-800 dark:text-stone-200',
+      qrDark: '#0c0a09'
     },
     forest: {
-      label: 'Vert Foret',
-      bannerColor: '#064e3b',
-      headerBg: 'bg-[#064e3b]',
-      btnBg: 'bg-[#064e3b] hover:bg-[#065f46] text-white',
-      badgeBg: 'bg-emerald-950/5 text-emerald-900 border-emerald-900/15 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/50',
-      iconColor: 'text-[#065f46] dark:text-emerald-400',
-      qrDark: '#064e3b'
+      label: 'Émeraude',
+      bannerColor: '#059669',
+      headerBg: 'bg-[#059669]',
+      btnBg: 'bg-[#059669] hover:bg-[#047857] text-white',
+      badgeBg: 'bg-emerald-50 text-emerald-900 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-200 dark:border-emerald-700',
+      iconColor: 'text-[#059669] dark:text-emerald-300',
+      qrDark: '#047857'
     },
     cobalt: {
-      label: 'Bleu Cobalt',
-      bannerColor: '#1e3a8a',
-      headerBg: 'bg-[#1e3a8a]',
-      btnBg: 'bg-[#1e3a8a] hover:bg-[#1d4ed8] text-white',
-      badgeBg: 'bg-blue-950/5 text-blue-900 border-blue-900/15 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800/50',
-      iconColor: 'text-[#1e3a8a] dark:text-blue-400',
-      qrDark: '#1e3a8a'
+      label: 'Azur',
+      bannerColor: '#2563eb',
+      headerBg: 'bg-[#2563eb]',
+      btnBg: 'bg-[#2563eb] hover:bg-[#1d4ed8] text-white',
+      badgeBg: 'bg-blue-50 text-blue-900 border-blue-200 dark:bg-blue-950/50 dark:text-blue-200 dark:border-blue-700',
+      iconColor: 'text-[#2563eb] dark:text-blue-300',
+      qrDark: '#1d4ed8'
     },
     bronze: {
-      label: 'Terre & Bronze',
-      bannerColor: '#78350f',
-      headerBg: 'bg-[#78350f]',
-      btnBg: 'bg-[#78350f] hover:bg-[#92400e] text-white',
-      badgeBg: 'bg-amber-950/5 text-amber-900 border-amber-900/15 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/50',
-      iconColor: 'text-[#78350f] dark:text-amber-400',
-      qrDark: '#78350f'
+      label: 'Ambre',
+      bannerColor: '#ea580c',
+      headerBg: 'bg-[#ea580c]',
+      btnBg: 'bg-[#ea580c] hover:bg-[#c2410c] text-white',
+      badgeBg: 'bg-orange-50 text-orange-950 border-orange-200 dark:bg-orange-950/45 dark:text-orange-200 dark:border-orange-700',
+      iconColor: 'text-[#ea580c] dark:text-orange-300',
+      qrDark: '#c2410c'
     },
     bordeaux: {
-      label: 'Bordeaux',
-      bannerColor: '#7f1d1d',
-      headerBg: 'bg-[#7f1d1d]',
-      btnBg: 'bg-[#7f1d1d] hover:bg-[#991b1b] text-white',
-      badgeBg: 'bg-rose-950/5 text-rose-900 border-rose-900/15 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800/50',
-      iconColor: 'text-[#7f1d1d] dark:text-rose-400',
-      qrDark: '#7f1d1d'
+      label: 'Cerise',
+      bannerColor: '#e11d48',
+      headerBg: 'bg-[#e11d48]',
+      btnBg: 'bg-[#e11d48] hover:bg-[#be123c] text-white',
+      badgeBg: 'bg-rose-50 text-rose-950 border-rose-200 dark:bg-rose-950/45 dark:text-rose-200 dark:border-rose-700',
+      iconColor: 'text-[#e11d48] dark:text-rose-300',
+      qrDark: '#be123c'
     }
   },
 
