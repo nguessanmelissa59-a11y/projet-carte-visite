@@ -302,38 +302,44 @@ html.dark[data-card-theme='obsidian'] .brand-mark {
 
 .panel-intro {
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+
+.panel-intro-row {
+  display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 0.75rem 1rem;
-  margin-bottom: 1.5rem;
+  align-items: baseline;
+  gap: 0.55rem 0.85rem;
 }
 
 .eyebrow {
   display: inline-block;
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: none;
-  color: var(--ink-muted);
-  margin: 0 0 0.5rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0;
 }
 
 .panel-intro .hero-brand {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(2rem, 6vw, 3rem);
+  font-size: clamp(1.65rem, 4.5vw, 2.25rem);
   font-weight: 600;
   letter-spacing: -0.03em;
-  line-height: 1.05;
+  line-height: 1.1;
   color: var(--ink);
 }
 
 .panel-intro .hero-lead {
-  margin: 0.65rem 0 0;
-  max-width: 28rem;
-  font-size: 1.0625rem;
+  margin: 0;
+  max-width: 32rem;
+  font-size: 1rem;
   line-height: 1.45;
   color: var(--ink-muted);
 }
@@ -341,24 +347,99 @@ html.dark[data-card-theme='obsidian'] .brand-mark {
 .section-label {
   display: flex;
   align-items: baseline;
-  gap: 0.65rem;
-  margin-bottom: 0.85rem;
-  padding-bottom: 0.55rem;
+  gap: 0.55rem;
+  margin-bottom: 0.65rem;
+  padding-bottom: 0.4rem;
   border-bottom: 1px solid var(--line);
 }
 
 .section-label .idx {
   font-family: var(--font-mono);
   font-size: 0.6875rem;
-  color: var(--ink-muted);
+  color: var(--accent);
   letter-spacing: 0.04em;
 }
 
 .section-label h2 {
   margin: 0;
   font-size: 0.8125rem;
-  font-weight: 650;
+  font-weight: 600;
   letter-spacing: -0.01em;
+  text-transform: none;
+  color: var(--ink);
+}
+
+.form-save-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-top: 0.35rem;
+}
+
+@media (max-width: 639.98px) {
+  .form-save-bar {
+    position: sticky;
+    bottom: 0.75rem;
+    z-index: 5;
+    margin-top: 0.5rem;
+    padding: 0.65rem;
+    border: 1px solid var(--line);
+    border-radius: 0.5rem;
+    background: color-mix(in srgb, var(--surface-elevated) 92%, transparent);
+    backdrop-filter: blur(8px);
+  }
+}
+
+.preview-panel {
+  padding: 0;
+}
+
+.preview-panel-toolbar {
+  padding: 0.75rem 0.9rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.preview-panel .phone-shell {
+  margin: 0;
+  max-width: none;
+  width: 100%;
+  border-radius: 0;
+  border: 0;
+  border-top: 0;
+  padding: 0.55rem 0.55rem 0.7rem;
+}
+
+.preview-panel .phone-screen {
+  border-radius: 0.85rem;
+}
+
+.preview-card-body {
+  padding: 0.9rem;
+}
+
+.share-band {
+  margin-top: 1.25rem;
+}
+
+@media (min-width: 1024px) {
+  .share-band {
+    margin-top: 1.5rem;
+  }
+}
+
+.share-band-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.share-band-link {
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--line);
 }
 
 .inset-block {
