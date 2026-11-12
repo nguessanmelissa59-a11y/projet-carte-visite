@@ -47,7 +47,7 @@ function testHtmlContracts() {
   assert.doesNotMatch(html, /cdn\.jsdelivr\.net\/npm\/qrcode@/);
   assert.match(html, /Choisir un modèle/);
   assert.match(html, /Logo au centre/);
-  assert.match(html, /PDF 85×55/);
+  assert.match(html, /PDF imprimable 85×55 mm/);
 }
 
 function testVendoredQrcodeLibrary() {
@@ -193,14 +193,13 @@ function testProfileCardMarkup() {
   assert.match(html, /Koffi Kouadio/);
   assert.match(html, /data-action="save-vcard"/);
   assert.match(html, /data-action="download-card-image"/);
-  assert.match(html, /PDF 85×55 mm/);
+  assert.match(html, /PDF imprimable 85×55 mm/);
   assert.doesNotMatch(html, /<script/i);
 }
 
 function testPrintableCardExport() {
   const html = read('index.html');
-  assert.match(html, /Télécharger pour impression \(PDF 85×55 mm\)/);
-  assert.match(html, /Impression carte \(PDF 85×55\)/);
+  assert.match(html, /PDF imprimable 85×55 mm/);
   assert.match(html, /Planche A4, taille réelle, traits de coupe/);
 
   const source = read('src/ui/card-canvas.js');
