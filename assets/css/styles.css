@@ -63,7 +63,30 @@ html[data-card-theme='bordeaux'] {
 }
 
 html.dark[data-card-theme='obsidian'] {
-  --accent: #e4e4e7;
+  --accent: #f5f5f4;
+  --accent-soft: rgba(245, 245, 244, 0.1);
+  --ambient-a: rgba(245, 245, 244, 0.12);
+  --ambient-b: rgba(168, 162, 158, 0.18);
+}
+
+html.dark[data-card-theme='forest'] {
+  --ambient-a: rgba(52, 211, 153, 0.28);
+  --ambient-b: rgba(16, 185, 129, 0.22);
+}
+
+html.dark[data-card-theme='cobalt'] {
+  --ambient-a: rgba(96, 165, 250, 0.28);
+  --ambient-b: rgba(59, 130, 246, 0.22);
+}
+
+html.dark[data-card-theme='bronze'] {
+  --ambient-a: rgba(251, 146, 60, 0.28);
+  --ambient-b: rgba(234, 88, 12, 0.22);
+}
+
+html.dark[data-card-theme='bordeaux'] {
+  --ambient-a: rgba(251, 113, 133, 0.28);
+  --ambient-b: rgba(225, 29, 72, 0.22);
 }
 
 *,
