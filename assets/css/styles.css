@@ -1,28 +1,34 @@
 .form-input {
   width: 100%;
-  border-radius: 0.75rem;
-  border: 1px solid rgba(203, 213, 225, 0.85);
+  border-radius: 0.5rem;
+  border: 1px solid #d4d4d8;
   background-color: #ffffff;
-  padding: 0.625rem 0.875rem;
+  padding: 0.55rem 0.75rem;
   font-size: 0.875rem;
-  color: #0f172a;
-  transition: all 0.2s ease;
+  line-height: 1.25rem;
+  color: #18181b;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .dark .form-input {
-  border-color: rgba(51, 65, 85, 0.85);
-  background-color: #0f172a;
-  color: #f8fafc;
+  border-color: #27272a;
+  background-color: #09090b;
+  color: #f4f4f5;
 }
 
 .form-input:focus {
   outline: none;
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
+  border-color: #18181b;
+  box-shadow: 0 0 0 1px #18181b;
+}
+
+.dark .form-input:focus {
+  border-color: #a1a1aa;
+  box-shadow: 0 0 0 1px #a1a1aa;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
-  width: 5px;
+  width: 4px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
@@ -30,20 +36,6 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgba(148, 163, 184, 0.35);
+  background-color: rgba(161, 161, 170, 0.4);
   border-radius: 9999px;
 }
-
-@keyframes subtle-pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.015);
-  }
-}
-
-.cta-pulse {
-  animation: subtle-pulse 3s infinite ease-in-out;
-}
-

@@ -21,8 +21,8 @@ window.VCardApp.ProfileCardUI = (function () {
   }
 
   function buildCardHtml(dataObj) {
-    const palette = THEME_PALETTES[dataObj.theme] || THEME_PALETTES.indigo;
-    const fullName = `${dataObj.firstName || ''} ${dataObj.lastName || ''}`.trim() || 'Votre Nom';
+    const palette = THEME_PALETTES[dataObj.theme] || THEME_PALETTES.obsidian;
+    const fullName = `${dataObj.firstName || ''} ${dataObj.lastName || ''}`.trim() || 'Nom du contact';
     const initials = getInitials(dataObj.firstName, dataObj.lastName);
     const avatarSrc = dataObj.photoBase64 || dataObj.photoUrl || '';
     const linkedinHref = normalizeUrl(dataObj.linkedinUrl);
@@ -32,44 +32,44 @@ window.VCardApp.ProfileCardUI = (function () {
 
     const avatarMarkup = avatarSrc
       ? `<img src="${escapeHtml(avatarSrc)}" alt="${escapeHtml(fullName)}" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
-         <span style="display:none" class="w-full h-full items-center justify-center font-display font-bold text-2xl text-white bg-gradient-to-br ${palette.headerBg}">${escapeHtml(initials)}</span>`
-      : `<span class="w-full h-full flex items-center justify-center font-display font-bold text-2xl text-white bg-gradient-to-br ${palette.headerBg}">${escapeHtml(initials)}</span>`;
+         <span style="display:none" class="w-full h-full items-center justify-center font-display font-semibold text-xl text-white ${palette.headerBg}">${escapeHtml(initials)}</span>`
+      : `<span class="w-full h-full flex items-center justify-center font-display font-semibold text-xl text-white ${palette.headerBg}">${escapeHtml(initials)}</span>`;
 
     return `
-      <div class="relative bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
-        <div class="h-28 bg-gradient-to-r ${palette.headerBg} relative overflow-hidden">
-          <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
-        </div>
+      <div class="relative bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">
+        <!-- Minimal Editorial Header -->
+        <div class="h-24 ${palette.headerBg} relative"></div>
 
-        <div class="px-5 pb-6">
-          <div class="relative -mt-12 mb-3 flex items-end justify-between">
-            <div class="w-24 h-24 rounded-3xl p-1 bg-white dark:bg-slate-900 shadow-lg">
-              <div class="w-full h-full rounded-2xl overflow-hidden flex items-center justify-center">
+        <div class="px-6 pb-6">
+          <!-- Avatar & Organization Row -->
+          <div class="relative -mt-10 mb-4 flex items-end justify-between gap-3">
+            <div class="w-20 h-20 rounded-xl p-0.5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm">
+              <div class="w-full h-full rounded-[10px] overflow-hidden flex items-center justify-center">
                 ${avatarMarkup}
               </div>
             </div>
             ${
               dataObj.organization
-                ? `<span class="px-3 py-1 rounded-full text-xs font-semibold border ${palette.badgeBg} mb-1 max-w-[170px] truncate">
+                ? `<span class="px-2.5 py-1 rounded-md text-[11px] font-medium border ${palette.badgeBg} mb-1 max-w-[180px] truncate">
                     ${escapeHtml(dataObj.organization)}
                    </span>`
                 : ''
             }
           </div>
 
-          <div class="space-y-1">
-            <h1 class="font-display font-extrabold text-xl sm:text-2xl tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5">
-              <span>${escapeHtml(fullName)}</span>
-              <i data-lucide="badge-check" class="w-5 h-5 ${palette.iconColor} shrink-0"></i>
+          <!-- Identity -->
+          <div class="space-y-0.5">
+            <h1 class="font-display font-bold text-xl tracking-tight text-zinc-900 dark:text-zinc-50">
+              ${escapeHtml(fullName)}
             </h1>
             ${
               dataObj.jobTitle
-                ? `<p class="text-sm font-medium text-slate-600 dark:text-slate-300">${escapeHtml(dataObj.jobTitle)}</p>`
+                ? `<p class="text-sm text-zinc-600 dark:text-zinc-400">${escapeHtml(dataObj.jobTitle)}</p>`
                 : ''
             }
             ${
               dataObj.location
-                ? `<p class="text-xs text-slate-400 dark:text-slate-500 flex items-center gap-1 pt-0.5">
+                ? `<p class="text-xs text-zinc-400 dark:text-zinc-500 flex items-center gap-1.5 pt-1">
                     <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
                     <span>${escapeHtml(dataObj.location)}</span>
                    </p>`
@@ -79,134 +79,105 @@ window.VCardApp.ProfileCardUI = (function () {
 
           ${
             dataObj.bio
-              ? `<p class="mt-3 text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed bg-slate-50 dark:bg-slate-800/60 p-3 rounded-2xl border border-slate-100 dark:border-slate-800">
+              ? `<p class="mt-4 text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed border-l-2 border-zinc-300 dark:border-zinc-700 pl-3 py-0.5">
                   ${escapeHtml(dataObj.bio)}
                  </p>`
               : ''
           }
 
+          <!-- Primary CTA -->
           <div class="mt-5">
-            <button type="button" data-action="save-vcard" class="cta-pulse w-full py-3.5 px-5 rounded-2xl font-display font-bold text-sm sm:text-base text-white ${palette.btnBg} shadow-lg transition flex items-center justify-center gap-2.5 cursor-pointer">
-              <i data-lucide="user-plus" class="w-5 h-5"></i>
-              <span>Enregistrer dans mes contacts</span>
+            <button type="button" data-action="save-vcard" class="w-full h-11 px-4 rounded-lg font-medium text-sm ${palette.btnBg} transition-colors duration-150 flex items-center justify-center gap-2 cursor-pointer">
+              <i data-lucide="user-plus" class="w-4 h-4"></i>
+              <span>Enregistrer dans les contacts</span>
             </button>
           </div>
 
-          <div class="mt-4 grid grid-cols-3 gap-2.5">
+          <!-- Direct Action Bar -->
+          <div class="mt-3 grid grid-cols-3 gap-2">
             ${
               cleanPhone
-                ? `<a href="tel:${escapeHtml(cleanPhone)}" class="flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/80 dark:hover:bg-slate-800 border border-slate-200/60 dark:border-slate-800 transition group">
-                    <div class="w-9 h-9 rounded-xl bg-white dark:bg-slate-900 shadow-sm flex items-center justify-center group-hover:scale-110 transition">
-                      <i data-lucide="phone" class="w-4 h-4 ${palette.iconColor}"></i>
-                    </div>
-                    <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-300">Appeler</span>
+                ? `<a href="tel:${escapeHtml(cleanPhone)}" class="flex items-center justify-center gap-1.5 h-9 rounded-lg bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-800/70 dark:hover:bg-zinc-800 border border-zinc-200/80 dark:border-zinc-800 text-xs font-medium text-zinc-700 dark:text-zinc-300 transition-colors">
+                    <i data-lucide="phone" class="w-3.5 h-3.5 ${palette.iconColor}"></i>
+                    <span>Appeler</span>
                   </a>`
-                : `<div class="flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl bg-slate-50/50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-800/50 opacity-40">
-                    <div class="w-9 h-9 rounded-xl bg-white dark:bg-slate-900 flex items-center justify-center">
-                      <i data-lucide="phone" class="w-4 h-4"></i>
-                    </div>
-                    <span class="text-[11px] font-medium">Appeler</span>
-                  </div>`
+                : `<span class="flex items-center justify-center gap-1.5 h-9 rounded-lg bg-zinc-50/50 dark:bg-zinc-800/30 border border-zinc-200/40 dark:border-zinc-800/40 text-xs text-zinc-400 opacity-50">
+                    <i data-lucide="phone" class="w-3.5 h-3.5"></i>
+                    <span>Appeler</span>
+                  </span>`
             }
 
             ${
               dataObj.email
-                ? `<a href="mailto:${escapeHtml(dataObj.email)}" class="flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/80 dark:hover:bg-slate-800 border border-slate-200/60 dark:border-slate-800 transition group">
-                    <div class="w-9 h-9 rounded-xl bg-white dark:bg-slate-900 shadow-sm flex items-center justify-center group-hover:scale-110 transition">
-                      <i data-lucide="mail" class="w-4 h-4 ${palette.iconColor}"></i>
-                    </div>
-                    <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-300">Email</span>
+                ? `<a href="mailto:${escapeHtml(dataObj.email)}" class="flex items-center justify-center gap-1.5 h-9 rounded-lg bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-800/70 dark:hover:bg-zinc-800 border border-zinc-200/80 dark:border-zinc-800 text-xs font-medium text-zinc-700 dark:text-zinc-300 transition-colors">
+                    <i data-lucide="mail" class="w-3.5 h-3.5 ${palette.iconColor}"></i>
+                    <span>Email</span>
                   </a>`
-                : `<div class="flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl bg-slate-50/50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-800/50 opacity-40">
-                    <div class="w-9 h-9 rounded-xl bg-white dark:bg-slate-900 flex items-center justify-center">
-                      <i data-lucide="mail" class="w-4 h-4"></i>
-                    </div>
-                    <span class="text-[11px] font-medium">Email</span>
-                  </div>`
+                : `<span class="flex items-center justify-center gap-1.5 h-9 rounded-lg bg-zinc-50/50 dark:bg-zinc-800/30 border border-zinc-200/40 dark:border-zinc-800/40 text-xs text-zinc-400 opacity-50">
+                    <i data-lucide="mail" class="w-3.5 h-3.5"></i>
+                    <span>Email</span>
+                  </span>`
             }
 
             ${
               cleanWhatsapp
-                ? `<a href="https://wa.me/${escapeHtml(cleanWhatsapp)}" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/80 dark:hover:bg-slate-800 border border-slate-200/60 dark:border-slate-800 transition group">
-                    <div class="w-9 h-9 rounded-xl bg-white dark:bg-slate-900 shadow-sm flex items-center justify-center group-hover:scale-110 transition">
-                      <i data-lucide="message-circle" class="w-4 h-4 text-emerald-500"></i>
-                    </div>
-                    <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-300">WhatsApp</span>
+                ? `<a href="https://wa.me/${escapeHtml(cleanWhatsapp)}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-1.5 h-9 rounded-lg bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-800/70 dark:hover:bg-zinc-800 border border-zinc-200/80 dark:border-zinc-800 text-xs font-medium text-zinc-700 dark:text-zinc-300 transition-colors">
+                    <i data-lucide="message-square" class="w-3.5 h-3.5 ${palette.iconColor}"></i>
+                    <span>WhatsApp</span>
                   </a>`
-                : `<div class="flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl bg-slate-50/50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-800/50 opacity-40">
-                    <div class="w-9 h-9 rounded-xl bg-white dark:bg-slate-900 flex items-center justify-center">
-                      <i data-lucide="message-circle" class="w-4 h-4"></i>
-                    </div>
-                    <span class="text-[11px] font-medium">WhatsApp</span>
-                  </div>`
+                : `<span class="flex items-center justify-center gap-1.5 h-9 rounded-lg bg-zinc-50/50 dark:bg-zinc-800/30 border border-zinc-200/40 dark:border-zinc-800/40 text-xs text-zinc-400 opacity-50">
+                    <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+                    <span>WhatsApp</span>
+                  </span>`
             }
           </div>
 
-          <div class="mt-4 space-y-2.5">
+          <!-- Editorial Contact Rows (Hairline Dividers) -->
+          <div class="mt-5 border-t border-zinc-200/80 dark:border-zinc-800 divide-y divide-zinc-200/70 dark:divide-zinc-800/80">
             ${
               dataObj.phone
-                ? `<a href="tel:${escapeHtml(cleanPhone)}" class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/60 dark:hover:bg-slate-800 border border-slate-200/60 dark:border-slate-800 transition group">
-                    <div class="flex items-center gap-3 min-w-0">
-                      <div class="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 flex items-center justify-center shadow-sm shrink-0">
-                        <i data-lucide="phone-call" class="w-4 h-4 ${palette.iconColor}"></i>
-                      </div>
-                      <div class="min-w-0">
-                        <p class="text-[11px] font-medium text-slate-400">Téléphone direct</p>
-                        <p class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">${escapeHtml(dataObj.phone)}</p>
-                      </div>
+                ? `<a href="tel:${escapeHtml(cleanPhone)}" class="flex items-center justify-between py-3 group">
+                    <div class="min-w-0">
+                      <p class="text-[11px] text-zinc-400 dark:text-zinc-500">Téléphone</p>
+                      <p class="text-xs font-mono tabular-nums font-medium text-zinc-800 dark:text-zinc-200 truncate mt-0.5">${escapeHtml(dataObj.phone)}</p>
                     </div>
-                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition shrink-0"></i>
+                    <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors shrink-0"></i>
                   </a>`
                 : ''
             }
 
             ${
               dataObj.email
-                ? `<a href="mailto:${escapeHtml(dataObj.email)}" class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/60 dark:hover:bg-slate-800 border border-slate-200/60 dark:border-slate-800 transition group">
-                    <div class="flex items-center gap-3 min-w-0">
-                      <div class="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 flex items-center justify-center shadow-sm shrink-0">
-                        <i data-lucide="at-sign" class="w-4 h-4 ${palette.iconColor}"></i>
-                      </div>
-                      <div class="min-w-0">
-                        <p class="text-[11px] font-medium text-slate-400">Adresse Email</p>
-                        <p class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">${escapeHtml(dataObj.email)}</p>
-                      </div>
+                ? `<a href="mailto:${escapeHtml(dataObj.email)}" class="flex items-center justify-between py-3 group">
+                    <div class="min-w-0">
+                      <p class="text-[11px] text-zinc-400 dark:text-zinc-500">Courriel professionnel</p>
+                      <p class="text-xs font-medium text-zinc-800 dark:text-zinc-200 truncate mt-0.5">${escapeHtml(dataObj.email)}</p>
                     </div>
-                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition shrink-0"></i>
+                    <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors shrink-0"></i>
                   </a>`
                 : ''
             }
 
             ${
               linkedinHref
-                ? `<a href="${escapeHtml(linkedinHref)}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/60 dark:hover:bg-slate-800 border border-slate-200/60 dark:border-slate-800 transition group">
-                    <div class="flex items-center gap-3 min-w-0">
-                      <div class="w-10 h-10 rounded-xl bg-[#0A66C2]/10 text-[#0A66C2] flex items-center justify-center shrink-0">
-                        <i data-lucide="linkedin" class="w-5 h-5"></i>
-                      </div>
-                      <div class="min-w-0">
-                        <p class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100">Ouvrir LinkedIn</p>
-                        <p class="text-[11px] text-slate-400 truncate">${escapeHtml(formatCleanDomain(linkedinHref))}</p>
-                      </div>
+                ? `<a href="${escapeHtml(linkedinHref)}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between py-3 group">
+                    <div class="min-w-0">
+                      <p class="text-[11px] text-zinc-400 dark:text-zinc-500">LinkedIn</p>
+                      <p class="text-xs font-medium text-zinc-800 dark:text-zinc-200 truncate mt-0.5">${escapeHtml(formatCleanDomain(linkedinHref))}</p>
                     </div>
-                    <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition shrink-0"></i>
+                    <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors shrink-0"></i>
                   </a>`
                 : ''
             }
 
             ${
               portfolioHref
-                ? `<a href="${escapeHtml(portfolioHref)}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/60 dark:hover:bg-slate-800 border border-slate-200/60 dark:border-slate-800 transition group">
-                    <div class="flex items-center gap-3 min-w-0">
-                      <div class="w-10 h-10 rounded-xl bg-indigo-500/10 ${palette.iconColor} flex items-center justify-center shrink-0">
-                        <i data-lucide="globe" class="w-5 h-5"></i>
-                      </div>
-                      <div class="min-w-0">
-                        <p class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100">Ouvrir le Portfolio / Site Web</p>
-                        <p class="text-[11px] text-slate-400 truncate">${escapeHtml(formatCleanDomain(portfolioHref))}</p>
-                      </div>
+                ? `<a href="${escapeHtml(portfolioHref)}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between py-3 group">
+                    <div class="min-w-0">
+                      <p class="text-[11px] text-zinc-400 dark:text-zinc-500">Site web</p>
+                      <p class="text-xs font-medium text-zinc-800 dark:text-zinc-200 truncate mt-0.5">${escapeHtml(formatCleanDomain(portfolioHref))}</p>
                     </div>
-                    <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition shrink-0"></i>
+                    <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors shrink-0"></i>
                   </a>`
                 : ''
             }
@@ -216,20 +187,16 @@ window.VCardApp.ProfileCardUI = (function () {
     `;
   }
 
-  function showToast(message, iconName = 'check-circle-2') {
+  function showToast(message) {
     const container = document.getElementById('toastContainer');
     if (!container) return;
 
     const toast = document.createElement('div');
     toast.className =
-      'pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs sm:text-sm font-semibold shadow-xl border border-slate-700/50 transition-all duration-300 transform translate-y-2 opacity-0';
-    toast.innerHTML = `
-      <i data-lucide="${iconName}" class="w-4 h-4 text-emerald-400 dark:text-emerald-600 shrink-0"></i>
-      <span>${escapeHtml(message)}</span>
-    `;
+      'pointer-events-auto flex items-center gap-2 px-3.5 py-2.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-medium shadow-md border border-zinc-800 dark:border-zinc-200 transition-all duration-200 transform translate-y-2 opacity-0';
+    toast.innerHTML = `<span>${escapeHtml(message)}</span>`;
 
     container.appendChild(toast);
-    if (window.lucide) window.lucide.createIcons();
 
     requestAnimationFrame(() => {
       toast.classList.remove('translate-y-2', 'opacity-0');
@@ -237,8 +204,8 @@ window.VCardApp.ProfileCardUI = (function () {
 
     setTimeout(() => {
       toast.classList.add('translate-y-2', 'opacity-0');
-      setTimeout(() => toast.remove(), 300);
-    }, 3000);
+      setTimeout(() => toast.remove(), 250);
+    }, 2600);
   }
 
   return {
@@ -248,4 +215,3 @@ window.VCardApp.ProfileCardUI = (function () {
     showToast
   };
 })();
-

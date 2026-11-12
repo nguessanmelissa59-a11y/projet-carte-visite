@@ -4,10 +4,14 @@ window.VCardApp.QrView = (function () {
   const { THEME_PALETTES } = window.VCardApp.Config;
   const { buildPublicUrl } = window.VCardApp.UrlCodec;
   const { generateVCardString } = window.VCardApp.VCardService;
+  const ApiService = window.VCardApp.ApiService;
 
   function resolvePayload(state, qrMode) {
     if (qrMode === 'vcard') {
       return generateVCardString(state, false);
+    }
+    if (ApiService && ApiService.isAvailable()) {
+      return ApiService.getShortProfileUrl(state);
     }
     return buildPublicUrl(state, false);
   }
@@ -48,8 +52,14 @@ window.VCardApp.QrView = (function () {
         if (err) {
           statusBadge.textContent = 'Trop long';
           statusBadge.className = 'px-2 py-0.5 text-[11px] rounded-full font-semibold bg-rose-500/10 text-rose-600';
+        } else if (qrMode === 'vcard') {
+          statusBadge.textContent = 'vCard Direct';
+          statusBadge.className = 'px-2 py-0.5 text-[11px] rounded-full font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400';
+        } else if (ApiService && ApiService.isAvailable()) {
+          statusBadge.textContent = 'QR Court (Backend)';
+          statusBadge.className = 'px-2 py-0.5 text-[11px] rounded-full font-semibold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400';
         } else {
-          statusBadge.textContent = qrMode === 'vcard' ? 'vCard Direct' : 'Lien Profil';
+          statusBadge.textContent = 'Lien Autonome';
           statusBadge.className = 'px-2 py-0.5 text-[11px] rounded-full font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400';
         }
       }
@@ -90,8 +100,8 @@ window.VCardApp.QrView = (function () {
   }
 
   return {
+    resolvePayload,
     renderCanvas,
     downloadHighResPng
   };
 })();
-

@@ -1,6 +1,6 @@
 # vCard Studio
 
-Application web statique permettant de generer une carte de visite numerique (vCard 3.0 RFC 2426) accompagnee d'un QR Code dynamique, sans base de donnees (*Zero-Backend*).
+Application web avec backend Node.js et SQLite permettant de generer et gerer des cartes de visite numeriques (vCard 3.0 RFC 2426) via des QR Codes dynamiques courts (`/c/:slug`).
 
 ## Architecture du projet
 
@@ -8,11 +8,23 @@ Application web statique permettant de generer une carte de visite numerique (vC
 projet_carte_visite/
 ├── .agents/
 │   └── skills/
-│       └── clean-architecture-standards/
+│       ├── clean-architecture-standards/
+│       │   └── SKILL.md
+│       └── frontend-editorial-design/
 │           └── SKILL.md
 ├── assets/
 │   └── css/
 │       └── styles.css
+├── backend/
+│   ├── config/
+│   │   └── env.js
+│   ├── controllers/
+│   │   └── card.controller.js
+│   ├── db/
+│   │   └── repository.js
+│   ├── services/
+│   │   └── vcard-builder.js
+│   └── server.js
 ├── docs/
 │   ├── git-et-automatisation.md
 │   ├── prd.md
@@ -24,6 +36,7 @@ projet_carte_visite/
 │   ├── config/
 │   │   └── constants.js
 │   ├── services/
+│   │   ├── api.js
 │   │   ├── storage.js
 │   │   ├── url-codec.js
 │   │   └── vcard.js
@@ -33,19 +46,19 @@ projet_carte_visite/
 │   └── main.js
 ├── AGENTS.md
 ├── README.md
-└── index.html
+├── index.html
+└── package.json
 ```
 
-## Utilisation locale
-
-Ouvrir `index.html` dans un navigateur ou lancer un serveur statique local :
+## Demarrage du serveur (Backend + Frontend)
 
 ```powershell
-npx serve .
+npm start
 ```
+
+Le serveur demarre sur `http://localhost:3000` et affiche egalement l'adresse IP reseau locale (`http://192.168.x.x:3000`) utilisee automatiquement dans le QR Code pour permettre le scan direct depuis un smartphone connecte au meme Wi-Fi.
 
 ## Synchronisation Git
 
 * Envoi ponctuel : `.\scripts\push.ps1 "description"`
 * Surveillance continue : `.\scripts\auto-push.ps1`
-

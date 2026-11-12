@@ -1,79 +1,40 @@
 # Technologies Utilisées — vCard Studio
 
-Ce document présente la stack technique, les librairies, les standards web et les APIs navigateur utilisés pour faire fonctionner **vCard Studio** sans base de données (*Zero-Backend*).
+Ce document présente la stack technique Frontend et Backend, les librairies, les standards web et les APIs utilisés dans **vCard Studio**.
 
 ---
 
-## 1. Technologies Cœur (Frontend)
+## 1. Stack Backend (Node.js & SQLite)
 
-| Technologie | Version / Standard | Rôle dans le projet |
+Le backend garantit des **URLs courtes** (`/c/:slug`) pour des QR Codes peu denses, **modifiables après impression**, avec suivi du nombre de scans et génération serveur du fichier `.vcf`.
+
+| Technologie | Version / Module | Rôle dans le projet |
 | :--- | :--- | :--- |
-| **HTML5** | Standard W3C | Structure sémantique de l'éditeur, du formulaire et de la vue publique mobile. |
-| **CSS3** | Standard W3C | Animations personnalisées (`@keyframes`), barres de défilement sur mesure et variables de style. |
-| **Tailwind CSS** | v3.x (via CDN JIT) | Design system utilitaire, responsive design (*mobile-first*), thèmes de couleurs et mode sombre (`dark:`). |
-| **JavaScript (ES6+)** | ECMAScript 2022+ | Logique applicative complète : gestion d'état, routage par paramètres d'URL (`?data=`), génération du fichier `.vcf` et rendu temps réel. |
+| **Node.js** | v22.5+ / v24 (`node:http`) | Serveur HTTP léger servant l'API REST, les redirections courtes (`/c/:slug`, `/v/:slug`) et les fichiers statiques. |
+| **SQLite natif** | `node:sqlite` (`DatabaseSync`) | Base de données embarquée (`backend/data/cards.sqlite`) stockant les profils, les photos compressées et le compteur de scans sans dépendance externe. |
+| **Détection IP LAN** | `node:os` (`networkInterfaces`) | Détecte automatiquement l'adresse IP locale Wi-Fi du poste pour que les QR Codes générés sur `localhost` soient immédiatement scannables par un téléphone sur le même réseau. |
+
+### Routes principales du serveur (`backend/server.js`)
+* `GET /c/:slug` : Route courte encodée dans le QR Code. Incrémente le compteur de scans dans SQLite et affiche la page de profil.
+* `GET /v/:slug` et `GET /api/cards/:slug/vcf` : Génère et sert le fichier `.vcf` avec l'en-tête HTTP `Content-Type: text/vcard; charset=utf-8` pour déclencher l'ouverture directe de l'application Contacts sur iOS (Safari) et Android.
+* `GET /api/cards/:slug` & `POST /api/cards` : Lecture et sauvegarde en temps réel des fiches.
 
 ---
 
-## 2. Librairies Externes (CDN)
+## 2. Stack Frontend
 
-### `qrcode.js` (`node-qrcode` v1.5.3)
-* **Source :** `https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js`
-* **Utilisation :**
-  * Génère en temps réel le QR Code sur un élément `<canvas>` HTML5.
-  * Ajuste automatiquement le niveau de correction d'erreur (`L` ou `M`) selon la taille des données encodées.
-  * Permet l'export en **PNG Haute Définition (1024×1024 px)** via un canvas hors-écran.
-
-### `lz-string` (v1.5.0)
-* **Source :** `https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js`
-* **Utilisation :**
-  * Compresse l'objet JSON contenant les informations du profil dans une chaîne compatible URL (`compressToEncodedURIComponent`).
-  * Réduit la taille de l'URL de 40 % à 60 % par rapport à un encodage Base64 classique, ce qui garantit un QR Code moins dense et scannable rapidement.
-
-### `Lucide Icons`
-* **Source :** `https://unpkg.com/lucide@latest`
-* **Utilisation :**
-  * Icônes vectorielles SVG pour l'interface utilisateur (Appel, Email, WhatsApp, LinkedIn, Portfolio, Téléchargement).
-
-### `Google Fonts` (`Plus Jakarta Sans` & `Inter`)
-* **Source :** `https://fonts.googleapis.com`
-* **Utilisation :**
-  * **Plus Jakarta Sans :** Titres, noms de profil et boutons d'action principaux.
-  * **Inter :** Texte courant, champs de formulaire et métadonnées.
+| Technologie | Standard | Rôle dans le projet |
+| :--- | :--- | :--- |
+| **HTML5 & CSS3** | Standard W3C | Structure sémantique et contrôles de formulaire sobres. |
+| **Tailwind CSS** | v3.x (CDN) | Grille éditoriale, typographie (`Plus Jakarta Sans`, `Inter`, `JetBrains Mono`) et mode clair/sombre. |
+| **JavaScript (ES6+)** | Architecture modulaire (`src/`) | Découpage strict entre configuration (`src/config`), services (`src/services`) et rendu (`src/ui`). |
+| **`qrcode.js`** | v1.5.3 | Génération du QR Code sur `<canvas>` et export PNG haute résolution (`1024×1024 px`). |
+| **`lz-string`** | v1.5.0 | Compression d'URL en mode de repli statique (`?data=...`) lorsque l'application est ouverte sans serveur Node. |
 
 ---
 
-## 3. Standards & Protocoles Implémentés
+## 3. Norme vCard 3.0 (RFC 2426)
 
-### Norme vCard 3.0 (RFC 2426)
-Le générateur produit dynamiquement un fichier `.vcf` encodé en **UTF-8** respectant la norme **RFC 2426** :
-* **Séparateurs de lignes :** Utilisation de `\r\n` (`CRLF`) à chaque fin de ligne.
+* **Séparateurs de lignes :** `\r\n` (`CRLF`) obligatoire selon la norme RFC 2426.
 * **Champs standards :** `N`, `FN`, `ORG`, `TITLE`, `TEL;TYPE=CELL,VOICE`, `EMAIL;TYPE=PREF,INTERNET`, `ADR`, `NOTE`, `PHOTO`.
-* **Extensions Apple iOS (`X-ABLabel`) :** Utilisation des groupes `ITEM1.URL` / `ITEM1.X-ABLabel:LinkedIn` et `ITEM2.URL` / `ITEM2.X-ABLabel:Portfolio` pour que Safari sur iPhone affiche les libellés personnalisés dans l'application Contacts tout en restant compatible avec Android.
-
----
-
-## 4. APIs Navigateur Natives (Web APIs)
-
-* **HTML5 `<canvas>` API (`2D Context` & `FileReader`) :**
-  * Redimensionne, recadre au centre en carré (`160×160 px`) et compresse en JPEG (`qualité 0.75`) toute photo importée côté client avant conversion en Base64.
-* **URL & History API (`URLSearchParams`, `window.history.replaceState`) :**
-  * Lit et décode le paramètre `?data=...` ou `#data=...` à l'ouverture de la page pour basculer automatiquement entre le mode éditeur et la vue publique.
-* **Blob & Data URI API (`Blob`, `URL.createObjectURL`) :**
-  * Génère le fichier `.vcf` en mémoire avec le type MIME `text/vcard;charset=utf-8`.
-* **Web Share API (`navigator.share`) :**
-  * Ouvre le menu de partage natif d'iOS et d'Android depuis la page de profil publique.
-* **Clipboard API (`navigator.clipboard.writeText`) :**
-  * Copie le lien du profil dans le presse-papiers.
-* **Web Storage API (`localStorage`) :**
-  * Sauvegarde le brouillon de la carte et la préférence de thème sur l'appareil.
-
----
-
-## 5. Hébergement Statique
-
-L'application ne nécessite ni serveur backend ni base de données et peut être déployée sur :
-* GitHub Pages
-* Vercel
-* Netlify
-* Cloudflare Pages
+* **Compatibilité iOS (`X-ABLabel`) :** Groupes `ITEM1.URL` / `ITEM1.X-ABLabel:LinkedIn` et `ITEM2.URL` / `ITEM2.X-ABLabel:Portfolio` pour afficher les libellés exacts dans Contacts sur iPhone et Android.

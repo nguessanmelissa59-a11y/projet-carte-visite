@@ -1,0 +1,14 @@
+{
+  "name": "vcard-studio",
+  "version": "1.0.0",
+  "description": "Generateur de carte de visite numerique et QR Code dynamique avec backend SQLite",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node --no-warnings backend/server.js",
+    "dev": "node --no-warnings --watch backend/server.js"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  }
+}
+

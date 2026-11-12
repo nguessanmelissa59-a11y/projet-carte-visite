@@ -1,58 +1,57 @@
 window.VCardApp = window.VCardApp || {};
 
 window.VCardApp.Config = {
-  STORAGE_KEY: 'vcard_studio_draft_v1',
+  STORAGE_KEY: 'vcard_studio_draft_v2',
   THEME_STORAGE_KEY: 'vcard_studio_dark_mode',
 
   THEME_PALETTES: {
-    indigo: {
-      headerBg: 'from-indigo-600 via-indigo-600 to-violet-700',
-      btnBg: 'bg-indigo-600 hover:bg-indigo-500 shadow-indigo-500/25',
-      badgeBg: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20',
-      iconColor: 'text-indigo-600 dark:text-indigo-400',
-      qrDark: '#1e1b4b'
+    obsidian: {
+      label: 'Noir Obsidienne',
+      headerBg: 'bg-zinc-900',
+      btnBg: 'bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-900',
+      badgeBg: 'bg-zinc-100 text-zinc-800 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:border-zinc-700',
+      iconColor: 'text-zinc-700 dark:text-zinc-300',
+      qrDark: '#18181b'
     },
-    emerald: {
-      headerBg: 'from-emerald-600 via-emerald-600 to-teal-700',
-      btnBg: 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-500/25',
-      badgeBg: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
-      iconColor: 'text-emerald-600 dark:text-emerald-400',
+    forest: {
+      label: 'Vert Foret',
+      headerBg: 'bg-[#064e3b]',
+      btnBg: 'bg-[#064e3b] hover:bg-[#065f46] text-white',
+      badgeBg: 'bg-emerald-950/5 text-emerald-900 border-emerald-900/15 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/50',
+      iconColor: 'text-[#065f46] dark:text-emerald-400',
       qrDark: '#064e3b'
     },
-    blue: {
-      headerBg: 'from-sky-500 via-blue-600 to-indigo-700',
-      btnBg: 'bg-blue-600 hover:bg-blue-500 shadow-blue-500/25',
-      badgeBg: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20',
-      iconColor: 'text-blue-600 dark:text-blue-400',
+    cobalt: {
+      label: 'Bleu Cobalt',
+      headerBg: 'bg-[#1e3a8a]',
+      btnBg: 'bg-[#1e3a8a] hover:bg-[#1d4ed8] text-white',
+      badgeBg: 'bg-blue-950/5 text-blue-900 border-blue-900/15 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800/50',
+      iconColor: 'text-[#1e3a8a] dark:text-blue-400',
       qrDark: '#1e3a8a'
     },
-    rose: {
-      headerBg: 'from-rose-500 via-rose-600 to-pink-700',
-      btnBg: 'bg-rose-600 hover:bg-rose-500 shadow-rose-500/25',
-      badgeBg: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20',
-      iconColor: 'text-rose-600 dark:text-rose-400',
-      qrDark: '#881337'
-    },
-    amber: {
-      headerBg: 'from-amber-500 via-orange-500 to-amber-700',
-      btnBg: 'bg-amber-600 hover:bg-amber-500 shadow-amber-500/25',
-      badgeBg: 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20',
-      iconColor: 'text-amber-600 dark:text-amber-400',
+    bronze: {
+      label: 'Terre & Bronze',
+      headerBg: 'bg-[#78350f]',
+      btnBg: 'bg-[#78350f] hover:bg-[#92400e] text-white',
+      badgeBg: 'bg-amber-950/5 text-amber-900 border-amber-900/15 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/50',
+      iconColor: 'text-[#78350f] dark:text-amber-400',
       qrDark: '#78350f'
     },
-    slate: {
-      headerBg: 'from-slate-800 via-slate-900 to-black',
-      btnBg: 'bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-200 dark:text-slate-900 shadow-slate-900/20',
-      badgeBg: 'bg-slate-500/10 text-slate-700 dark:text-slate-300 border-slate-500/20',
-      iconColor: 'text-slate-700 dark:text-slate-300',
-      qrDark: '#0f172a'
+    bordeaux: {
+      label: 'Bordeaux',
+      headerBg: 'bg-[#7f1d1d]',
+      btnBg: 'bg-[#7f1d1d] hover:bg-[#991b1b] text-white',
+      badgeBg: 'bg-rose-950/5 text-rose-900 border-rose-900/15 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800/50',
+      iconColor: 'text-[#7f1d1d] dark:text-rose-400',
+      qrDark: '#7f1d1d'
     }
   },
 
   DEMO_DATA: {
+    slug: 'koffi-kouadio',
     firstName: 'Koffi',
     lastName: 'Kouadio',
-    jobTitle: 'Directeur Technique & Solutions Cloud',
+    jobTitle: 'Directeur Technique & Infrastructure',
     organization: 'NovaTech Africa',
     phone: '+225 07 08 09 10 11',
     whatsapp: '+225 07 08 09 10 11',
@@ -60,14 +59,16 @@ window.VCardApp.Config = {
     location: 'Abidjan, Côte d’Ivoire',
     linkedinUrl: 'https://linkedin.com/in/koffi-kouadio',
     portfolioUrl: 'https://novatech-africa.com',
-    bio: 'Architecte Cloud & Développeur Full-Stack. Accompagnement des entreprises dans leur transformation digitale.',
+    bio: 'Architecture distribuée, sécurité des systèmes et accompagnement technique.',
     photoUrl: '',
     photoBase64: '',
-    theme: 'indigo',
-    autoDownload: true
+    theme: 'obsidian',
+    autoDownload: true,
+    scans: 0
   },
 
   FORM_FIELDS: [
+    'slug',
     'firstName',
     'lastName',
     'jobTitle',
@@ -82,4 +83,3 @@ window.VCardApp.Config = {
     'photoUrl'
   ]
 };
-
