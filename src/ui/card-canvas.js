@@ -58,7 +58,7 @@ window.VCardApp.CardCanvasExporter = (function () {
 
   function getAccent(state) {
     const palette = (THEME_PALETTES && THEME_PALETTES[state.theme]) || {};
-    return palette.qrDark || palette.bannerColor || '#18181b';
+    return palette.qrDark || palette.bannerColor || '#0c543c';
   }
 
   function getDisplayUrl(state, qrMode) {
