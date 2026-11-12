@@ -1057,39 +1057,246 @@ window.VCardApp.CardCanvasExporter = (function () {
     }
   }
 
+  function canvasToJpegBytes(canvas, quality) {
+    const dataUrl = canvas.toDataURL('image/jpeg', quality);
+    const base64 = dataUrl.split(',')[1] || '';
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i += 1) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes;
+  }
+
+  function buildPrintCardCanvas(sourceCanvas) {
+    const out = document.createElement('canvas');
+    out.width = PRINT_CARD_WIDTH_PX;
+    out.height = PRINT_CARD_HEIGHT_PX;
+    const ctx = out.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, out.width, out.height);
+
+    const scale = Math.min(out.width / sourceCanvas.width, out.height / sourceCanvas.height);
+    const drawW = sourceCanvas.width * scale;
+    const drawH = sourceCanvas.height * scale;
+    const dx = (out.width - drawW) / 2;
+    const dy = (out.height - drawH) / 2;
+    ctx.drawImage(sourceCanvas, dx, dy, drawW, drawH);
+    return out;
+  }
+
+  function buildPrintablePdf(jpegBytes, pixelW, pixelH) {
+    const pageW = PRINT_PAGE_WIDTH_MM * MM_TO_PT;
+    const pageH = PRINT_PAGE_HEIGHT_MM * MM_TO_PT;
+    const cardW = PRINT_CARD_WIDTH_MM * MM_TO_PT;
+    const cardH = PRINT_CARD_HEIGHT_MM * MM_TO_PT;
+    const cardX = (pageW - cardW) / 2;
+    const cardY = (pageH - cardH) / 2;
+    const mark = 8;
+    const gap = 2;
+
+    const encoder = new TextEncoder();
+    const parts = [];
+    const offsets = [0];
+
+    function pushText(text) {
+      parts.push(encoder.encode(text));
+    }
+
+    function pushBytes(bytes) {
+      parts.push(bytes);
+    }
+
+    function currentLength() {
+      return parts.reduce((sum, part) => sum + part.length, 0);
+    }
+
+    function addObject(contentBytes) {
+      offsets.push(currentLength());
+      pushBytes(contentBytes);
+    }
+
+    pushText('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n');
+
+    addObject(encoder.encode('1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n'));
+    addObject(encoder.encode('2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n'));
+    addObject(
+      encoder.encode(
+        `3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageW.toFixed(2)} ${pageH.toFixed(2)}] ` +
+          `/Resources << /XObject << /Im0 4 0 R >> /Font << /F1 5 0 R >> >> /Contents 6 0 R >>\nendobj\n`
+      )
+    );
+
+    const imageHeader =
+      `4 0 obj\n<< /Type /XObject /Subtype /Image /Width ${pixelW} /Height ${pixelH} ` +
+      `/ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpegBytes.length} >>\nstream\n`;
+    offsets.push(currentLength());
+    pushText(imageHeader);
+    pushBytes(jpegBytes);
+    pushText('\nendstream\nendobj\n');
+
+    addObject(
+      encoder.encode('5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n')
+    );
+
+    const content = [
+      'q',
+      `${cardW.toFixed(2)} 0 0 ${cardH.toFixed(2)} ${cardX.toFixed(2)} ${cardY.toFixed(2)} cm`,
+      '/Im0 Do',
+      'Q',
+      '0.4 w',
+      '0 0 0 RG',
+      // Traits de coupe
+      `${(cardX - mark).toFixed(2)} ${cardY.toFixed(2)} m ${(cardX - gap).toFixed(2)} ${cardY.toFixed(2)} l S`,
+      `${cardX.toFixed(2)} ${(cardY - mark).toFixed(2)} m ${cardX.toFixed(2)} ${(cardY - gap).toFixed(2)} l S`,
+      `${(cardX + cardW + gap).toFixed(2)} ${cardY.toFixed(2)} m ${(cardX + cardW + mark).toFixed(2)} ${cardY.toFixed(2)} l S`,
+      `${(cardX + cardW).toFixed(2)} ${(cardY - mark).toFixed(2)} m ${(cardX + cardW).toFixed(2)} ${(cardY - gap).toFixed(2)} l S`,
+      `${(cardX - mark).toFixed(2)} ${(cardY + cardH).toFixed(2)} m ${(cardX - gap).toFixed(2)} ${(cardY + cardH).toFixed(2)} l S`,
+      `${cardX.toFixed(2)} ${(cardY + cardH + gap).toFixed(2)} m ${cardX.toFixed(2)} ${(cardY + cardH + mark).toFixed(2)} l S`,
+      `${(cardX + cardW + gap).toFixed(2)} ${(cardY + cardH).toFixed(2)} m ${(cardX + cardW + mark).toFixed(2)} ${(cardY + cardH).toFixed(2)} l S`,
+      `${(cardX + cardW).toFixed(2)} ${(cardY + cardH + gap).toFixed(2)} m ${(cardX + cardW).toFixed(2)} ${(cardY + cardH + mark).toFixed(2)} l S`,
+      'BT',
+      '/F1 9 Tf',
+      '0.35 0.35 0.35 rg',
+      `50 ${(cardY - 28).toFixed(2)} Td`,
+      '(Carte 85 x 55 mm - Imprimer a l\'echelle 100 % / sans ajustement) Tj',
+      'ET'
+    ].join('\n');
+
+    const contentBytes = encoder.encode(content);
+    addObject(
+      encoder.encode(`6 0 obj\n<< /Length ${contentBytes.length} >>\nstream\n`)
+    );
+    // The previous addObject already wrote header incorrectly - fix by rebuilding content object properly.
+    // Rewrite: pop and do correctly below.
+  }
+
+  function buildPrintablePdfBytes(jpegBytes, pixelW, pixelH) {
+    const pageW = PRINT_PAGE_WIDTH_MM * MM_TO_PT;
+    const pageH = PRINT_PAGE_HEIGHT_MM * MM_TO_PT;
+    const cardW = PRINT_CARD_WIDTH_MM * MM_TO_PT;
+    const cardH = PRINT_CARD_HEIGHT_MM * MM_TO_PT;
+    const cardX = (pageW - cardW) / 2;
+    const cardY = (pageH - cardH) / 2;
+    const mark = 8;
+    const gap = 2;
+    const encoder = new TextEncoder();
+    const chunks = [];
+    const offsets = [0];
+
+    function sizeOf() {
+      return chunks.reduce((n, c) => n + c.length, 0);
+    }
+
+    function write(data) {
+      if (typeof data === 'string') chunks.push(encoder.encode(data));
+      else chunks.push(data);
+    }
+
+    function startObj() {
+      offsets.push(sizeOf());
+    }
+
+    write('%PDF-1.4\n%\xFF\xFF\xFF\xFF\n');
+
+    startObj();
+    write('1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n');
+
+    startObj();
+    write('2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n');
+
+    startObj();
+    write(
+      `3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageW.toFixed(2)} ${pageH.toFixed(2)}] ` +
+        `/Resources << /XObject << /Im0 4 0 R >> /Font << /F1 5 0 R >> >> /Contents 6 0 R >>\nendobj\n`
+    );
+
+    startObj();
+    write(
+      `4 0 obj\n<< /Type /XObject /Subtype /Image /Width ${pixelW} /Height ${pixelH} ` +
+        `/ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpegBytes.length} >>\nstream\n`
+    );
+    write(jpegBytes);
+    write('\nendstream\nendobj\n');
+
+    startObj();
+    write('5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n');
+
+    const content = [
+      'q',
+      `${cardW.toFixed(2)} 0 0 ${cardH.toFixed(2)} ${cardX.toFixed(2)} ${cardY.toFixed(2)} cm`,
+      '/Im0 Do',
+      'Q',
+      '0.4 w',
+      '0 0 0 RG',
+      `${(cardX - mark).toFixed(2)} ${cardY.toFixed(2)} m ${(cardX - gap).toFixed(2)} ${cardY.toFixed(2)} l S`,
+      `${cardX.toFixed(2)} ${(cardY - mark).toFixed(2)} m ${cardX.toFixed(2)} ${(cardY - gap).toFixed(2)} l S`,
+      `${(cardX + cardW + gap).toFixed(2)} ${cardY.toFixed(2)} m ${(cardX + cardW + mark).toFixed(2)} ${cardY.toFixed(2)} l S`,
+      `${(cardX + cardW).toFixed(2)} ${(cardY - mark).toFixed(2)} m ${(cardX + cardW).toFixed(2)} ${(cardY - gap).toFixed(2)} l S`,
+      `${(cardX - mark).toFixed(2)} ${(cardY + cardH).toFixed(2)} m ${(cardX - gap).toFixed(2)} ${(cardY + cardH).toFixed(2)} l S`,
+      `${cardX.toFixed(2)} ${(cardY + cardH + gap).toFixed(2)} m ${cardX.toFixed(2)} ${(cardY + cardH + mark).toFixed(2)} l S`,
+      `${(cardX + cardW + gap).toFixed(2)} ${(cardY + cardH).toFixed(2)} m ${(cardX + cardW + mark).toFixed(2)} ${(cardY + cardH).toFixed(2)} l S`,
+      `${(cardX + cardW).toFixed(2)} ${(cardY + cardH + gap).toFixed(2)} m ${(cardX + cardW).toFixed(2)} ${(cardY + cardH + mark).toFixed(2)} l S`,
+      'BT /F1 9 Tf 0.35 0.35 0.35 rg',
+      `50 ${(cardY - 28).toFixed(2)} Td`,
+      "(Carte 85 x 55 mm - Imprimer a l'echelle 100 % / sans ajustement) Tj",
+      'ET'
+    ].join('\n');
+    const contentBytes = encoder.encode(content);
+
+    startObj();
+    write(`6 0 obj\n<< /Length ${contentBytes.length} >>\nstream\n`);
+    write(contentBytes);
+    write('\nendstream\nendobj\n');
+
+    const xrefStart = sizeOf();
+    write(`xref\n0 ${offsets.length}\n`);
+    write('0000000000 65535 f \n');
+    for (let i = 1; i < offsets.length; i += 1) {
+      write(`${String(offsets[i]).padStart(10, '0')} 00000 n \n`);
+    }
+    write(`trailer\n<< /Size ${offsets.length} /Root 1 0 R >>\nstartxref\n${xrefStart}\n%%EOF`);
+
+    const total = sizeOf();
+    const out = new Uint8Array(total);
+    let offset = 0;
+    for (const chunk of chunks) {
+      out.set(chunk, offset);
+      offset += chunk.length;
+    }
+    return out;
+  }
+
+  function triggerBlobDownload(blob, fileName) {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.download = fileName;
+    link.href = url;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setTimeout(() => URL.revokeObjectURL(url), 3000);
+  }
+
   async function downloadCardImage(state, qrMode, onComplete) {
     try {
-      const canvas = await generateCardCanvas(state, qrMode);
+      const source = await generateCardCanvas(state, qrMode);
+      const printCanvas = buildPrintCardCanvas(source);
+      const jpegBytes = canvasToJpegBytes(printCanvas, 0.95);
+      const pdfBytes = buildPrintablePdfBytes(
+        jpegBytes,
+        printCanvas.width,
+        printCanvas.height
+      );
       const safeFirst = (state.firstName || 'Carte').replace(/[^a-zA-Z0-9_-]/g, '_');
       const safeLast = (state.lastName || 'Visite').replace(/[^a-zA-Z0-9_-]/g, '_');
       const tpl = state.cardTemplate || 'editorial';
-      const fileName = `Carte_Visite_${safeFirst}_${safeLast}_${tpl}.png`;
-
-      canvas.toBlob((blob) => {
-        if (!blob) {
-          const dataUrl = canvas.toDataURL('image/png');
-          const link = document.createElement('a');
-          link.download = fileName;
-          link.href = dataUrl;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          if (typeof onComplete === 'function') onComplete(true, fileName);
-          return;
-        }
-
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.download = fileName;
-        link.href = url;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        setTimeout(() => URL.revokeObjectURL(url), 3000);
-        if (typeof onComplete === 'function') onComplete(true, fileName);
-      }, 'image/png');
+      const fileName = `Carte_Visite_${safeFirst}_${safeLast}_${tpl}_85x55mm.pdf`;
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      triggerBlobDownload(blob, fileName);
+      if (typeof onComplete === 'function') onComplete(true, fileName);
     } catch (err) {
-      console.error('Erreur génération carte de visite image:', err);
+      console.error('Erreur génération carte imprimable:', err);
       if (typeof onComplete === 'function') onComplete(false, null);
     }
   }
@@ -1098,10 +1305,23 @@ window.VCardApp.CardCanvasExporter = (function () {
     return CARD_TEMPLATES || {};
   }
 
+  function getPrintSpecs() {
+    return {
+      cardWidthMm: PRINT_CARD_WIDTH_MM,
+      cardHeightMm: PRINT_CARD_HEIGHT_MM,
+      dpi: PRINT_DPI,
+      pageWidthMm: PRINT_PAGE_WIDTH_MM,
+      pageHeightMm: PRINT_PAGE_HEIGHT_MM,
+      cardWidthPx: PRINT_CARD_WIDTH_PX,
+      cardHeightPx: PRINT_CARD_HEIGHT_PX
+    };
+  }
+
   return {
     generateCardCanvas,
     renderCardToCanvas,
     downloadCardImage,
-    listTemplates
+    listTemplates,
+    getPrintSpecs
   };
 })();
