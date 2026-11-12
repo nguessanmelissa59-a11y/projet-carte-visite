@@ -607,10 +607,6 @@ html.dark .qr-frame {
   .phone-shell {
     max-width: 100%;
   }
-
-  .phone-screen {
-    max-height: min(32rem, calc(100vh - 12rem));
-  }
 }
 
 .phone-notch {
@@ -627,6 +623,12 @@ html.dark .qr-frame {
   background: var(--surface-elevated);
   max-height: 34rem;
   overflow-y: auto;
+}
+
+@media (min-width: 1024px) {
+  .phone-screen {
+    max-height: min(32rem, calc(100vh - 12rem));
+  }
 }
 
 .status-chip {
