@@ -243,7 +243,8 @@ function getSessionByToken(rawToken) {
       email: row.email,
       firstName: row.first_name,
       lastName: row.last_name,
-      emailVerified: Boolean(row.email_verified)
+      emailVerified: Boolean(row.email_verified),
+      role: normalizeRole(row.role)
     }
   };
 }
@@ -278,12 +279,18 @@ function verifyOtpCode(row, code) {
 }
 
 module.exports = {
+  ROLES,
   normalizeEmail,
+  normalizeRole,
   getUserByEmail,
   getUserById,
   createUser,
   updateUserProfile,
   markUserVerified,
+  ensureAdminBootstrap,
+  setUserRole,
+  countAdmins,
+  listUsersForAdmin,
   createOtpChallenge,
   getActiveOtp,
   countRecentOtps,

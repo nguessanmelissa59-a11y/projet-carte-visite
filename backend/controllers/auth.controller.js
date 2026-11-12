@@ -18,6 +18,7 @@ const {
   createUser,
   updateUserProfile,
   markUserVerified,
+  ensureAdminBootstrap,
   getActiveOtp,
   incrementOtpAttempts,
   consumeOtp,
@@ -33,7 +34,8 @@ function publicUser(user) {
     email: user.email,
     firstName: user.firstName,
     lastName: user.lastName,
-    emailVerified: Boolean(user.emailVerified)
+    emailVerified: Boolean(user.emailVerified),
+    role: user.role === 'admin' ? 'admin' : 'user'
   };
 }
 
@@ -171,6 +173,7 @@ async function handleVerifyOtp(req, res) {
     }
 
     user = markUserVerified(user.id);
+    user = ensureAdminBootstrap(user);
     const session = startSession(user.id);
 
     return sendJson(
@@ -193,7 +196,8 @@ function handleMe(req, res) {
   if (!session) {
     return sendJson(res, 401, { error: 'Non authentifié' });
   }
-  return sendJson(res, 200, { user: publicUser(session.user) });
+  const user = ensureAdminBootstrap(session.user);
+  return sendJson(res, 200, { user: publicUser(user) });
 }
 
 function handleLogout(req, res) {
