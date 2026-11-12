@@ -86,6 +86,11 @@ window.VCardApp.ProfileCardUI = (function () {
             <span>Enregistrer dans les contacts</span>
           </button>
 
+          <button type="button" data-action="download-card-image" class="profile-card__cta-secondary">
+            <i data-lucide="credit-card" class="w-4 h-4"></i>
+            <span>Télécharger la carte de visite virtuelle</span>
+          </button>
+
           <div class="action-grid">
             ${
               cleanPhone
