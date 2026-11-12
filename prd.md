@@ -1,4 +1,4 @@
-# 📱 PRD — Générateur de Carte de Visite Numérique Interactive (vCard & QR Code)
+# PRD — Générateur de Carte de Visite Numérique Interactive (vCard & QR Code)
 
 ## 1. Vision & Objectif du Produit
 Concevoir une application web moderne, **mobile-first**, **Zero-Backend** (sans base de données) et prête pour la production permettant de :
