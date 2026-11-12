@@ -47,6 +47,7 @@ function testHtmlContracts() {
   assert.doesNotMatch(html, /cdn\.jsdelivr\.net\/npm\/qrcode@/);
   assert.match(html, /Choisir un modèle/);
   assert.match(html, /Logo au centre/);
+  assert.match(html, /PDF 85×55/);
 }
 
 function testVendoredQrcodeLibrary() {
@@ -191,7 +192,30 @@ function testProfileCardMarkup() {
   assert.match(html, /background:#059669/);
   assert.match(html, /Koffi Kouadio/);
   assert.match(html, /data-action="save-vcard"/);
+  assert.match(html, /data-action="download-card-image"/);
+  assert.match(html, /PDF 85×55 mm/);
   assert.doesNotMatch(html, /<script/i);
+}
+
+function testPrintableCardExport() {
+  const html = read('index.html');
+  assert.match(html, /Télécharger pour impression \(PDF 85×55 mm\)/);
+  assert.match(html, /Impression carte \(PDF 85×55\)/);
+  assert.match(html, /Planche A4, taille réelle, traits de coupe/);
+
+  const source = read('src/ui/card-canvas.js');
+  assert.match(source, /PRINT_CARD_WIDTH_MM = 85/);
+  assert.match(source, /PRINT_CARD_HEIGHT_MM = 55/);
+  assert.match(source, /PRINT_DPI = 300/);
+  assert.match(source, /PRINT_PAGE_WIDTH_MM = 210/);
+  assert.match(source, /PRINT_PAGE_HEIGHT_MM = 297/);
+  assert.match(source, /function buildPrintablePdfBytes/);
+  assert.match(source, /application\/pdf/);
+  assert.match(source, /_85x55mm\.pdf/);
+  assert.match(source, /getPrintSpecs/);
+
+  const main = read('src/main.js');
+  assert.match(main, /PDF imprimable/);
 }
 
 const tests = [
@@ -202,7 +226,8 @@ const tests = [
   ['css atmosphere', testCssAtmosphere],
   ['theme banner colors', testThemeBannerColors],
   ['card templates catalog', testCardTemplatesCatalog],
-  ['profile card markup', testProfileCardMarkup]
+  ['profile card markup', testProfileCardMarkup],
+  ['printable card export', testPrintableCardExport]
 ];
 
 let failed = 0;
