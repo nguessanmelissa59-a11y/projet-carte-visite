@@ -1181,17 +1181,11 @@ html.dark .qr-frame {
 }
 
 .contact-row__label {
-  margin: 0 0 0.2rem;
+  margin: 0;
   font-size: 0.6875rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--ink-muted);
-}
-
-.contact-row__label--legacy {
-  margin: 0;
-  font-size: 0.6875rem;
   color: var(--ink-muted);
 }
 

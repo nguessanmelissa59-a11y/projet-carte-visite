@@ -678,7 +678,7 @@
         photoBase64: '',
         qrLogoUrl: '',
         qrLogoBase64: '',
-        theme: 'obsidian',
+        theme: 'forest',
         cardTemplate: 'editorial',
         autoDownload: true,
         scans: 0

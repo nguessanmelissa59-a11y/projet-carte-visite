@@ -1,0 +1,26 @@
+<!doctype html>
+<meta charset="utf-8">
+<body style="margin:0;background:#888">
+<pre id="m" style="margin:0;padding:4px;font:14px monospace;background:#fff">mesure en cours</pre>
+<iframe id="f" src="/" style="display:block;border:0"></iframe>
+<script>
+  const params = new URLSearchParams(location.search);
+  const width = Number(params.get('w')) || 360;
+  const frame = document.getElementById('f');
+  frame.style.width = `${width}px`;
+  frame.style.height = `${Number(params.get('h')) || 3600}px`;
+  frame.addEventListener('load', () => {
+    setTimeout(() => {
+      const doc = frame.contentDocument;
+      if (params.get('tab') === 'card') doc.getElementById('tabPreviewCard').click();
+      setTimeout(() => {
+        const root = doc.documentElement;
+        const form = doc.querySelector('.form-panel').getBoundingClientRect();
+        const preview = doc.querySelector('.preview-panel').getBoundingClientRect();
+        document.getElementById('m').textContent =
+          `w=${width} scrollWidth=${root.scrollWidth} clientWidth=${root.clientWidth} ` +
+          `formBottom=${Math.round(form.bottom)} previewBottom=${Math.round(preview.bottom)}`;
+      }, 1500);
+    }, 2500);
+  });
+</script>

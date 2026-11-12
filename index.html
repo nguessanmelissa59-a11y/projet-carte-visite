@@ -33,20 +33,21 @@
 
   <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
-<body class="app-shell antialiased selection:bg-zinc-900 selection:text-white dark:selection:bg-zinc-100 dark:selection:text-zinc-900">
+<body class="app-shell antialiased selection:bg-[#0c543c] selection:text-white dark:selection:bg-[#3d9a74] dark:selection:text-[#0e1014]">
 
   <header id="editorHeader" class="studio-header sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-3">
       <div class="flex items-center gap-2.5 min-w-0">
-        <div class="brand-mark shrink-0" aria-hidden="true">EM</div>
+        <div class="brand-mark shrink-0" aria-hidden="true">EV</div>
         <div class="min-w-0 flex items-center gap-2 flex-wrap">
           <span class="font-display font-semibold text-base tracking-tight">EVC</span>
+          <span class="beta-chip" title="Version bêta">Bêta</span>
           <span id="backendStatusLabel" class="status-chip" data-state="offline">Initialisation...</span>
         </div>
       </div>
 
       <div class="flex items-center gap-2 shrink-0 flex-wrap justify-end">
-        <a id="btnAccountLink" href="/auth" class="btn btn-secondary h-11 min-h-11 px-3 text-sm no-underline">
+        <a id="btnAccountLink" href="/auth" class="btn btn-ink h-11 min-h-11 px-3 text-sm no-underline">
           <i data-lucide="user-round" class="w-3.5 h-3.5"></i>
           <span class="hidden sm:inline" id="accountLinkLabel">Se connecter</span>
         </a>
