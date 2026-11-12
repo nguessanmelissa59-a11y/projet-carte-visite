@@ -31,6 +31,19 @@ const AUTH_EXPOSE_OTP =
   process.env.AUTH_EXPOSE_OTP === '1' ||
   (!IS_PRODUCTION && process.env.AUTH_EXPOSE_OTP !== '0');
 
+const ADMIN_EMAILS = String(process.env.ADMIN_EMAILS || '')
+  .split(',')
+  .map((email) => email.trim().toLowerCase())
+  .filter(Boolean);
+
+function isAdminEmail(email) {
+  const normalized = String(email || '')
+    .trim()
+    .toLowerCase();
+  if (!normalized) return false;
+  return ADMIN_EMAILS.includes(normalized);
+}
+
 function getLanIpAddress() {
   return CACHED_LAN_IP;
 }
@@ -49,5 +62,7 @@ module.exports = {
   OTP_MAX_PER_WINDOW,
   OTP_MAX_ATTEMPTS,
   AUTH_EXPOSE_OTP,
+  ADMIN_EMAILS,
+  isAdminEmail,
   getLanIpAddress
 };

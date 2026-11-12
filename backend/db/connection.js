@@ -81,9 +81,11 @@ function ensureColumn(tableName, columnName, columnSql) {
 }
 
 ensureColumn('cards', 'user_id', 'user_id TEXT');
+ensureColumn('users', 'role', "role TEXT NOT NULL DEFAULT 'user'");
 
 db.exec(`
   CREATE INDEX IF NOT EXISTS idx_cards_user_id ON cards(user_id);
+  CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
 `);
 
 function newId(prefix) {
