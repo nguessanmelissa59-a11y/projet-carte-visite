@@ -29,32 +29,32 @@ html.dark {
 
 html[data-card-theme='obsidian'] {
   --accent: #18181b;
-  --ambient-a: rgba(24, 24, 27, 0.14);
-  --ambient-b: rgba(82, 82, 91, 0.16);
+  --ambient-a: rgba(24, 24, 27, 0.22);
+  --ambient-b: rgba(82, 82, 91, 0.2);
 }
 
 html[data-card-theme='forest'] {
   --accent: #064e3b;
-  --ambient-a: rgba(6, 78, 59, 0.16);
-  --ambient-b: rgba(16, 185, 129, 0.12);
+  --ambient-a: rgba(6, 78, 59, 0.28);
+  --ambient-b: rgba(16, 185, 129, 0.18);
 }
 
 html[data-card-theme='cobalt'] {
   --accent: #1e3a8a;
-  --ambient-a: rgba(30, 58, 138, 0.16);
-  --ambient-b: rgba(59, 130, 246, 0.12);
+  --ambient-a: rgba(30, 58, 138, 0.28);
+  --ambient-b: rgba(59, 130, 246, 0.16);
 }
 
 html[data-card-theme='bronze'] {
   --accent: #78350f;
-  --ambient-a: rgba(120, 53, 15, 0.16);
-  --ambient-b: rgba(217, 119, 6, 0.12);
+  --ambient-a: rgba(120, 53, 15, 0.28);
+  --ambient-b: rgba(217, 119, 6, 0.16);
 }
 
 html[data-card-theme='bordeaux'] {
   --accent: #7f1d1d;
-  --ambient-a: rgba(127, 29, 29, 0.16);
-  --ambient-b: rgba(225, 29, 72, 0.1);
+  --ambient-a: rgba(127, 29, 29, 0.28);
+  --ambient-b: rgba(225, 29, 72, 0.14);
 }
 
 html.dark[data-card-theme='obsidian'] {
@@ -80,10 +80,11 @@ body.app-shell {
   color: var(--ink);
   background-color: var(--surface);
   background-image:
-    radial-gradient(ellipse 70% 50% at 8% -10%, var(--ambient-a), transparent 55%),
-    radial-gradient(ellipse 55% 45% at 92% 8%, var(--ambient-b), transparent 50%),
-    radial-gradient(ellipse 40% 30% at 50% 100%, var(--accent-soft), transparent 60%),
-    linear-gradient(180deg, transparent 0%, var(--surface) 42%);
+    radial-gradient(ellipse 80% 55% at 6% -8%, var(--ambient-a), transparent 58%),
+    radial-gradient(ellipse 60% 50% at 96% 4%, var(--ambient-b), transparent 52%),
+    radial-gradient(ellipse 50% 40% at 70% 70%, var(--accent-soft), transparent 62%),
+    radial-gradient(ellipse 45% 35% at 20% 85%, var(--ambient-b), transparent 65%),
+    linear-gradient(165deg, color-mix(in srgb, var(--surface) 70%, #ebe6dc) 0%, var(--surface) 48%);
   background-attachment: fixed;
   transition: background-color 0.25s ease, color 0.2s ease;
 }

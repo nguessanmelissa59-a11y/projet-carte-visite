@@ -57,18 +57,19 @@ window.VCardApp.QrView = (function () {
       },
       (err) => {
         if (!statusBadge) return;
+        statusBadge.className = 'status-chip';
         if (err) {
           statusBadge.textContent = 'Trop long';
-          statusBadge.className = 'px-2 py-0.5 text-[11px] rounded font-mono bg-rose-500/10 text-rose-600';
+          statusBadge.dataset.state = 'offline';
         } else if (qrMode === 'vcard') {
           statusBadge.textContent = 'vCard Hors-ligne';
-          statusBadge.className = 'px-2 py-0.5 text-[11px] rounded font-mono bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300';
+          delete statusBadge.dataset.state;
         } else if (ApiService && ApiService.isAvailable()) {
           statusBadge.textContent = 'QR Court (SQLite)';
-          statusBadge.className = 'px-2 py-0.5 text-[11px] rounded font-mono bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200';
+          statusBadge.dataset.state = 'online';
         } else {
           statusBadge.textContent = 'Lien Autonome';
-          statusBadge.className = 'px-2 py-0.5 text-[11px] rounded font-mono bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300';
+          delete statusBadge.dataset.state;
         }
       }
     );
