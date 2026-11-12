@@ -92,6 +92,18 @@
     });
   }
 
+  function handleDownloadCardImage() {
+    if (!CardCanvasExporter) return;
+    ProfileCardUI.showToast('Génération de la carte de visite en cours...');
+    CardCanvasExporter.downloadCardImage(state, qrMode, (ok, fileName) => {
+      if (ok) {
+        ProfileCardUI.showToast(`Carte de visite téléchargée (${fileName})`);
+      } else {
+        ProfileCardUI.showToast('Erreur lors de la génération de la carte');
+      }
+    });
+  }
+
   function updateBackendStatusUI(backendStatus) {
     const modeIndicator = document.getElementById('backendStatusLabel');
     const scanCounterWrap = document.getElementById('scanCounterWrap');
