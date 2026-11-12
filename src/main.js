@@ -54,6 +54,7 @@
   async function initBackendConnection(cardIdParam, isScanEvent) {
     const backendStatus = await ApiService.checkBackend();
     updateBackendStatusUI(backendStatus);
+    updateAuthChrome();
 
     if (!backendStatus.available) return;
 
@@ -65,15 +66,40 @@
         renderAll(true);
         triggerAutoDownloadIfEnabled();
       }
-    } else if (!isPublicScanView) {
-      const existing = await ApiService.fetchCardBySlug(state.slug || 'koffi-kouadio', false);
-      if (existing) {
-        state = { ...state, ...existing };
-        populateForm();
-      } else {
-        await ApiService.saveCard(state);
+      return;
+    }
+
+    if (isPublicScanView) return;
+
+    if (ApiService.isAuthenticated()) {
+      const myCards = await ApiService.fetchMyCards();
+      if (myCards.length) {
+        const preferred =
+          myCards.find((card) => card.slug === state.slug) || myCards[0];
+        const serverCard = await ApiService.fetchCardBySlug(preferred.slug, false);
+        if (serverCard) {
+          state = { ...DEMO_DATA, ...serverCard };
+          populateForm();
+        }
       }
       renderAll(true);
+      return;
+    }
+
+    renderAll(true);
+  }
+
+  function updateAuthChrome() {
+    const user = ApiService.getCurrentUser();
+    const accountLabel = document.getElementById('accountLinkLabel');
+    const authHint = document.getElementById('authSaveHint');
+    if (accountLabel) {
+      accountLabel.textContent = user
+        ? user.firstName || user.email.split('@')[0]
+        : 'Compte';
+    }
+    if (authHint) {
+      authHint.classList.toggle('hidden', Boolean(user) || !ApiService.isAvailable());
     }
   }
 
@@ -177,7 +203,7 @@
       QrView.renderCanvas(state, qrMode);
     }, 120);
 
-    if (!ApiService.isAvailable()) return;
+    if (!ApiService.isAvailable() || !ApiService.isAuthenticated()) return;
     if (saveTimeout) clearTimeout(saveTimeout);
     saveTimeout = setTimeout(async () => {
       try {
@@ -323,6 +349,11 @@
           ProfileCardUI.showToast('Brouillon enregistré localement');
           return;
         }
+        if (!ApiService.isAuthenticated()) {
+          ProfileCardUI.showToast('Connectez-vous pour enregistrer en base');
+          window.location.href = '/auth.html';
+          return;
+        }
         try {
           const saved = await ApiService.saveCard(state);
           if (saved) {
@@ -332,8 +363,8 @@
             renderAll(true);
             ProfileCardUI.showToast(`Carte synchronisée (/c/${saved.slug})`);
           }
-        } catch {
-          ProfileCardUI.showToast('Erreur de sauvegarde serveur');
+        } catch (err) {
+          ProfileCardUI.showToast(err.message || 'Erreur de sauvegarde serveur');
         }
       });
     }
