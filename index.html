@@ -287,19 +287,33 @@
         </div>
 
         <div class="panel panel-pad p-5 sm:p-6 reveal reveal-delay-3">
-          <div class="flex items-center justify-between mb-4 gap-2">
-            <span class="text-xs font-medium text-[color:var(--ink-muted)]">Aperçu profil</span>
+          <div class="flex items-center justify-between mb-4 gap-2 flex-wrap">
+            <div class="mode-toggle" role="group" aria-label="Type d'aperçu">
+              <button type="button" id="tabPreviewMobile" class="is-active text-xs">Page mobile</button>
+              <button type="button" id="tabPreviewCard" class="text-xs">Carte virtuelle</button>
+            </div>
+
             <button id="btnOpenFullPreview" type="button" class="btn btn-ghost text-xs min-h-9">
               <span>Plein écran</span>
               <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
             </button>
           </div>
 
-          <div class="phone-shell">
+          <div id="previewMobileContainer" class="phone-shell">
             <div class="phone-notch" aria-hidden="true"></div>
             <div class="phone-screen custom-scrollbar">
               <div id="mockupProfileMount"></div>
             </div>
+          </div>
+
+          <div id="previewCardContainer" class="hidden space-y-3">
+            <div class="rounded-xl overflow-hidden border border-[color:var(--line)] shadow-sm bg-white p-1">
+              <canvas id="virtualCardPreviewCanvas" class="w-full h-auto block rounded-lg"></canvas>
+            </div>
+            <button id="btnDownloadFromCardPreview" type="button" class="btn btn-primary w-full text-xs">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i>
+              <span>Télécharger cette carte (PNG HD)</span>
+            </button>
           </div>
         </div>
 
