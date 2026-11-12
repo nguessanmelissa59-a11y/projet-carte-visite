@@ -1,6 +1,6 @@
 (function () {
-  const ApiService = window.VCardApp.ApiService;
-  const StorageService = window.VCardApp.StorageService;
+  const ApiService = window.VCardApp && window.VCardApp.ApiService;
+  const StorageService = window.VCardApp && window.VCardApp.StorageService;
 
   let pending = {
     email: '',
@@ -8,6 +8,15 @@
   };
 
   document.addEventListener('DOMContentLoaded', async () => {
+    if (!ApiService || !StorageService) {
+      const el = document.getElementById('authMessage');
+      if (el) {
+        el.textContent =
+          'Scripts non chargés. Ouvrez http://localhost:3000/auth (serveur npm start).';
+      }
+      return;
+    }
+
     StorageService.initTheme();
     bindThemeToggle();
     bindForms();

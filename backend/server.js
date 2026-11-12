@@ -138,5 +138,5 @@ server.listen(PORT, HOST, () => {
   console.log(`Serveur vCard Studio actif :`);
   console.log(`- Local (PC)      : http://localhost:${PORT}`);
   console.log(`- Reseau (Mobile) : http://${lanIp}:${PORT}`);
-  console.log(`- Auth OTP        : http://localhost:${PORT}/auth.html`);
+  console.log(`- Auth OTP        : http://localhost:${PORT}/auth`);
 });
