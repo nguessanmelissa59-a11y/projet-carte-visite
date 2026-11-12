@@ -294,23 +294,27 @@
               <p class="text-sm font-medium text-[color:var(--ink-muted)] m-0 mb-2">Choisir un modèle</p>
               <div id="cardTemplatePicker" class="card-template-picker" role="listbox" aria-label="Modèles de carte"></div>
             </div>
-            <div class="flex flex-wrap items-center justify-between gap-2">
-              <div class="mode-toggle" role="group" aria-label="Face de la carte">
-                <button type="button" id="tabCardRecto" class="is-active text-sm">Recto</button>
-                <button type="button" id="tabCardVerso" class="text-sm">Verso</button>
-              </div>
-              <p id="cardFaceHint" class="text-xs text-[color:var(--ink-muted)] m-0">Face avant · identité</p>
-            </div>
-            <div class="print-card-preview rounded-xl overflow-hidden border border-[color:var(--line)] bg-[color:var(--surface)]">
-              <canvas id="virtualCardPreviewCanvas" class="w-full h-auto block max-w-full"></canvas>
+            <div class="print-faces" aria-label="Aperçu recto et verso">
+              <figure class="print-face">
+                <figcaption>Recto · 85×55 mm</figcaption>
+                <div class="print-card-preview">
+                  <canvas id="virtualCardPreviewCanvas" class="w-full h-auto block max-w-full"></canvas>
+                </div>
+              </figure>
+              <figure class="print-face">
+                <figcaption>Verso · 85×55 mm</figcaption>
+                <div class="print-card-preview">
+                  <canvas id="virtualCardVersoCanvas" class="w-full h-auto block max-w-full"></canvas>
+                </div>
+              </figure>
             </div>
             <button id="btnDownloadFromCardPreview" type="button" class="btn btn-primary w-full text-sm">
               <i data-lucide="printer" class="w-3.5 h-3.5 shrink-0"></i>
-              <span>PDF recto + verso 85×55 mm</span>
+              <span>Télécharger le PDF (après aperçu)</span>
             </button>
             <p class="text-xs text-[color:var(--ink-muted)] m-0">
-              2 pages A4 (recto puis verso), taille réelle, traits de coupe.
-              Fond perdu 3&nbsp;mm / marges 4&nbsp;mm. Imprimer à 100&nbsp;%.
+              Vérifiez recto et verso ci-dessus avant téléchargement.
+              2 pages A4, taille réelle, traits de coupe. Fond perdu 3&nbsp;mm / marges 4&nbsp;mm.
             </p>
           </div>
         </div>
@@ -345,8 +349,8 @@
               </button>
 
               <button id="btnDownloadCardPng" type="button" class="btn btn-secondary w-full text-sm">
-                <i data-lucide="printer" class="w-3.5 h-3.5 shrink-0"></i>
-                <span>PDF recto + verso 85×55 mm</span>
+                <i data-lucide="eye" class="w-3.5 h-3.5 shrink-0"></i>
+                <span>Aperçu PDF 85×55 mm</span>
               </button>
 
               <button id="btnTestVcfEditor" type="button" class="btn btn-ghost w-full text-sm">
@@ -406,9 +410,9 @@
       </button>
 
       <div class="flex items-center gap-1.5 flex-wrap justify-end">
-        <button id="btnDownloadCardPublic" type="button" class="btn btn-secondary h-11 min-h-11 px-3 text-sm" title="Télécharger l’image">
-          <i data-lucide="credit-card" class="w-3.5 h-3.5"></i>
-          <span>Image</span>
+        <button id="btnDownloadCardPublic" type="button" class="btn btn-secondary h-11 min-h-11 px-3 text-sm" title="Aperçu PDF imprimable">
+          <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+          <span>Aperçu PDF</span>
         </button>
         <button id="btnSharePublic" type="button" class="btn btn-secondary h-11 min-h-11 px-3 text-sm">
           <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
