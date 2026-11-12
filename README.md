@@ -58,6 +58,33 @@ npm start
 
 Le serveur demarre sur `http://localhost:3000` et affiche egalement l'adresse IP reseau locale (`http://192.168.x.x:3000`) utilisee automatiquement dans le QR Code pour permettre le scan direct depuis un smartphone connecte au meme Wi-Fi.
 
+## Admin React (`/admin`)
+
+Interface d'administration (stats, cartes, utilisateurs / roles) reservee aux comptes `admin`.
+
+1. Definir les e-mails bootstrap (obligatoire pour le premier admin) :
+
+```powershell
+$env:ADMIN_EMAILS="toi@exemple.com"
+```
+
+Ou copier `.env.example` et exporter les variables avant `npm start`.
+
+2. Construire le front admin :
+
+```powershell
+npm run admin:install
+npm run admin:build
+```
+
+3. Ouvrir `http://localhost:3000/admin` apres connexion OTP avec un e-mail listé dans `ADMIN_EMAILS`.
+
+Dev hot-reload admin (proxy API vers le port 3000) :
+
+```powershell
+npm run admin:dev
+```
+
 ## Synchronisation Git
 
 * Envoi ponctuel : `.\scripts\push.ps1 "description"`
