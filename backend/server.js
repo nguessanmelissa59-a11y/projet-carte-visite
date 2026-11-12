@@ -9,6 +9,15 @@ const {
   handleSaveCard,
   handleDownloadVcf
 } = require('./controllers/card.controller');
+const {
+  handleRegister,
+  handleLogin,
+  handleVerifyOtp,
+  handleMe,
+  handleLogout,
+  handleUpdateProfile,
+  handleMyCards
+} = require('./controllers/auth.controller');
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -54,20 +63,41 @@ const server = http.createServer((req, res) => {
 
   if (req.method === 'OPTIONS') {
     res.writeHead(204, {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type'
+      'Access-Control-Allow-Origin': req.headers.origin || '',
+      'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Credentials': 'true'
     });
     res.end();
     return;
   }
 
-  // 1. Server Info API
   if (req.method === 'GET' && pathname === '/api/info') {
     return handleGetServerInfo(req, res);
   }
 
-  // 2. Cards REST API
+  if (req.method === 'POST' && pathname === '/api/auth/register') {
+    return handleRegister(req, res);
+  }
+  if (req.method === 'POST' && pathname === '/api/auth/login') {
+    return handleLogin(req, res);
+  }
+  if (req.method === 'POST' && pathname === '/api/auth/verify') {
+    return handleVerifyOtp(req, res);
+  }
+  if (req.method === 'GET' && pathname === '/api/auth/me') {
+    return handleMe(req, res);
+  }
+  if (req.method === 'POST' && pathname === '/api/auth/logout') {
+    return handleLogout(req, res);
+  }
+  if (req.method === 'PATCH' && pathname === '/api/auth/profile') {
+    return handleUpdateProfile(req, res);
+  }
+  if (req.method === 'GET' && pathname === '/api/me/cards') {
+    return handleMyCards(req, res);
+  }
+
   if (req.method === 'GET' && pathname === '/api/cards') {
     return handleListCards(req, res);
   }
@@ -87,8 +117,6 @@ const server = http.createServer((req, res) => {
     return handleGetCard(req, res, cardMatch[1], isScan);
   }
 
-  // 3. Short QR Code Routes:
-  // /c/:slug -> Opens public profile page for this card & increments scan counter
   const shortProfileMatch = pathname.match(/^\/c\/([a-zA-Z0-9_-]+)$/);
   if (req.method === 'GET' && shortProfileMatch) {
     const slug = shortProfileMatch[1];
@@ -97,20 +125,18 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // /v/:slug -> Directly serves the .vcf file & increments scan counter
   const shortVcfMatch = pathname.match(/^\/v\/([a-zA-Z0-9_-]+)$/);
   if (req.method === 'GET' && shortVcfMatch) {
     return handleDownloadVcf(req, res, shortVcfMatch[1], true);
   }
 
-  // 4. Static Assets & Frontend SPA
   serveStaticFile(req, res, pathname);
 });
 
 server.listen(PORT, HOST, () => {
   const lanIp = getLanIpAddress();
-  console.log(`Serveur EVC Melissa actif :`);
+  console.log(`Serveur vCard Studio actif :`);
   console.log(`- Local (PC)      : http://localhost:${PORT}`);
   console.log(`- Reseau (Mobile) : http://${lanIp}:${PORT}`);
+  console.log(`- Auth OTP        : http://localhost:${PORT}/auth.html`);
 });
-
