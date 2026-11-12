@@ -551,6 +551,28 @@ html.dark[data-card-theme='obsidian'] .btn-primary {
   }
 }
 
+.share-band-stage {
+  align-items: start;
+}
+
+@media (min-width: 768px) {
+  .share-band-stage {
+    grid-template-columns: auto 1fr;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  .share-band-stage .qr-frame {
+    margin-inline: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .share-band-stage {
+    gap: 2rem;
+  }
+}
+
 .qr-frame {
   width: fit-content;
   margin-inline: auto;
@@ -571,7 +593,7 @@ html.dark .qr-frame {
 .phone-shell {
   margin-inline: auto;
   width: 100%;
-  max-width: 22rem;
+  max-width: 20rem;
   padding: 0.7rem;
   border-radius: 1.65rem;
   background:
@@ -579,6 +601,16 @@ html.dark .qr-frame {
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.12) inset,
     0 28px 50px -28px rgba(20, 18, 15, 0.55);
+}
+
+@media (min-width: 1024px) {
+  .phone-shell {
+    max-width: 100%;
+  }
+
+  .phone-screen {
+    max-height: min(32rem, calc(100vh - 12rem));
+  }
 }
 
 .phone-notch {
@@ -959,5 +991,11 @@ html.dark .qr-frame {
 @media (min-width: 1024px) {
   .studio-grid {
     align-items: start;
+  }
+
+  .studio-grid > aside {
+    max-height: calc(100vh - 5.5rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 }
