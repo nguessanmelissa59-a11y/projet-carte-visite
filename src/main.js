@@ -342,6 +342,16 @@
       });
     }
 
+    const btnDownloadCardPng = document.getElementById('btnDownloadCardPng');
+    if (btnDownloadCardPng) {
+      btnDownloadCardPng.addEventListener('click', handleDownloadCardImage);
+    }
+
+    const btnDownloadCardPublic = document.getElementById('btnDownloadCardPublic');
+    if (btnDownloadCardPublic) {
+      btnDownloadCardPublic.addEventListener('click', handleDownloadCardImage);
+    }
+
     const btnDownloadQrPng = document.getElementById('btnDownloadQrPng');
     if (btnDownloadQrPng) {
       btnDownloadQrPng.addEventListener('click', () => {
