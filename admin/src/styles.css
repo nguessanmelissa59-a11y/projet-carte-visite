@@ -1,11 +1,11 @@
 :root {
-  --surface: #f3efe4;
-  --surface-elevated: #fcfcf8;
-  --ink: #0c1818;
-  --ink-muted: #5b616c;
-  --line: rgba(12, 24, 24, 0.12);
-  --accent: #0c543c;
-  --accent-soft: rgba(12, 84, 60, 0.12);
+  --surface: #f6f0e2;
+  --surface-elevated: #fffdf7;
+  --ink: #0a1714;
+  --ink-muted: #4f5a55;
+  --line: rgba(10, 23, 20, 0.14);
+  --accent: #0a6b45;
+  --accent-soft: rgba(10, 107, 69, 0.16);
   --danger: #8b3a3a;
   --danger-soft: rgba(139, 58, 58, 0.1);
   --radius: 1rem;

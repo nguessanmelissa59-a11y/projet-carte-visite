@@ -58,7 +58,7 @@ window.VCardApp.CardCanvasExporter = (function () {
 
   function getAccent(state) {
     const palette = (THEME_PALETTES && THEME_PALETTES[state.theme]) || {};
-    return palette.qrDark || palette.bannerColor || '#0c543c';
+    return palette.qrDark || palette.bannerColor || '#0a6b45';
   }
 
   function getDisplayUrl(state, qrMode) {
@@ -1046,7 +1046,7 @@ window.VCardApp.CardCanvasExporter = (function () {
     const textMax = 460;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';
-    ctx.fillStyle = '#0c1818';
+    ctx.fillStyle = '#0a1714';
     const title = 'Scannez pour enregistrer le contact';
     const titleSize = fitText(
       ctx,

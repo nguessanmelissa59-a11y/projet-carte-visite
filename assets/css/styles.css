@@ -259,9 +259,9 @@ html.dark[data-card-theme='obsidian'] .brand-mark {
   min-height: 1.35rem;
   padding: 0.1rem 0.45rem;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, #9c542f 22%, transparent);
+  border: 1px solid color-mix(in srgb, #c45c1f 28%, transparent);
   background: var(--info-warm);
-  color: #763221;
+  color: #a11f35;
   font-family: var(--font-body);
   font-size: 0.6875rem;
   font-weight: 600;
@@ -381,7 +381,7 @@ html.dark[data-card-theme='obsidian'] .easy-steps li.is-active span {
 
 .easy-banner {
   padding: 0.75rem 0.9rem;
-  border: 1px solid color-mix(in srgb, #9c542f 18%, transparent);
+  border: 1px solid color-mix(in srgb, #c45c1f 24%, transparent);
   border-radius: 0.75rem;
   background: var(--info-warm);
   color: var(--ink);

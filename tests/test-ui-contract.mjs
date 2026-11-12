@@ -102,8 +102,8 @@ function testCssAtmosphere() {
   const css = read('assets/css/styles.css');
   for (const token of [
     '--accent',
-    '--surface: #f3efe4',
-    '--accent: #0c543c',
+    '--surface: #f6f0e2',
+    '--accent: #0a6b45',
     '--info-warm',
     '.beta-chip',
     '.btn-ink',
@@ -146,7 +146,7 @@ function testThemeBannerColors() {
     assert.match(palettes[theme].bannerColor, /^#[0-9a-fA-F]{6}$/);
   }
 
-  assert.equal(palettes.forest.bannerColor, '#0c543c');
+  assert.equal(palettes.forest.bannerColor, '#0a6b45');
   assert.equal(sandbox.window.VCardApp.Config.DEMO_DATA.theme, 'forest');
 }
 
@@ -212,7 +212,7 @@ function testProfileCardMarkup() {
 
   assert.match(html, /profile-card/);
   assert.match(html, /profile-card__banner/);
-  assert.match(html, /background:#0c543c/);
+  assert.match(html, /background:#0a6b45/);
   assert.match(html, /Koffi Kouadio/);
   assert.match(html, /data-action="save-vcard"/);
   assert.match(html, /data-action="download-card-image"/);

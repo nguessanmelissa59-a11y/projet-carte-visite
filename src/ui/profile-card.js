@@ -29,7 +29,7 @@ window.VCardApp.ProfileCardUI = (function () {
     const portfolioHref = normalizeUrl(dataObj.portfolioUrl);
     const cleanPhone = (dataObj.phone || '').replace(/[^\d+]/g, '');
     const cleanWhatsapp = (dataObj.whatsapp || dataObj.phone || '').replace(/[^\d]/g, '');
-    const bannerColor = palette.bannerColor || '#0c543c';
+    const bannerColor = palette.bannerColor || '#0a6b45';
 
     const avatarMarkup = avatarSrc
       ? `<img src="${escapeHtml(avatarSrc)}" alt="${escapeHtml(fullName)}" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
