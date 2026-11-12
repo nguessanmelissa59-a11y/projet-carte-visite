@@ -171,13 +171,30 @@ html.dark[data-card-theme='obsidian'] .brand-mark {
   overflow: hidden;
 }
 
+.editor-strip {
+  margin: 0 0 1.25rem;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.editor-strip .easy-steps {
+  border-top: 0;
+  border-bottom: 0;
+}
+
+.editor-strip .easy-banner {
+  border-top: 1px solid var(--line);
+  border-bottom: 0;
+  padding: 0.65rem 0;
+}
+
 .easy-steps {
   list-style: none;
   margin: 0;
-  padding: 0.85rem 0;
+  padding: 0.65rem 0;
   display: grid;
   grid-template-columns: 1fr;
-  gap: 0.65rem;
+  gap: 0.5rem;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
