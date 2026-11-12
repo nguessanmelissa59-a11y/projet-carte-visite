@@ -13,6 +13,7 @@ process.env.ADMIN_EMAILS = 'admin@example.com';
 
 const {
   handleRegister,
+  handleLogin,
   handleVerifyOtp,
   handleMe
 } = require('../backend/controllers/auth.controller');
@@ -69,12 +70,15 @@ function cookieFrom(res) {
   return match ? `${SESSION_COOKIE_NAME}=${match[1]}` : '';
 }
 
-async function registerAndLogin(email, firstName, lastName) {
+async function registerOnce(email, firstName, lastName) {
   const regRes = createMockRes();
   await handleRegister(
     createMockReq('POST', { email, firstName, lastName }),
     regRes
   );
+  if (regRes.statusCode === 409) {
+    return loginSession(email);
+  }
   assert.equal(regRes.statusCode, 200);
   const otp = regRes.json().devOtp;
   assert.ok(otp);
@@ -91,10 +95,24 @@ async function registerAndLogin(email, firstName, lastName) {
   };
 }
 
-before(async () => {
-  // Force reload env-dependent modules after env vars are set.
-  // Controllers already required above with ADMIN_EMAILS set.
-});
+async function loginSession(email) {
+  const loginRes = createMockRes();
+  await handleLogin(createMockReq('POST', { email }), loginRes);
+  assert.equal(loginRes.statusCode, 200);
+  const otp = loginRes.json().devOtp;
+  assert.ok(otp);
+
+  const verifyRes = createMockRes();
+  await handleVerifyOtp(
+    createMockReq('POST', { email, code: otp, purpose: 'login' }),
+    verifyRes
+  );
+  assert.equal(verifyRes.statusCode, 200);
+  return {
+    cookie: cookieFrom(verifyRes),
+    user: verifyRes.json().user
+  };
+}
 
 after(async () => {
   try {
@@ -111,7 +129,7 @@ after(async () => {
 });
 
 test('admin bootstrap via ADMIN_EMAILS expose role admin', async () => {
-  const { cookie, user } = await registerAndLogin(
+  const { cookie, user } = await registerOnce(
     'admin@example.com',
     'Admin',
     'Root'
@@ -125,14 +143,18 @@ test('admin bootstrap via ADMIN_EMAILS expose role admin', async () => {
 });
 
 test('non-admin reçoit 403 sur /api/admin/*', async () => {
-  const { cookie } = await registerAndLogin('user@example.com', 'User', 'One');
+  const { cookie, user } = await registerOnce('user@example.com', 'User', 'One');
+  assert.equal(user.role, 'user');
 
   const statsRes = createMockRes();
   handleAdminStats(createMockReq('GET', null, cookie), statsRes);
   assert.equal(statsRes.statusCode, 403);
 
   const cardsRes = createMockRes();
-  handleAdminListCards(createMockReq('GET', null, cookie, '/api/admin/cards'), cardsRes);
+  handleAdminListCards(
+    createMockReq('GET', null, cookie, '/api/admin/cards'),
+    cardsRes
+  );
   assert.equal(cardsRes.statusCode, 403);
 
   const usersRes = createMockRes();
@@ -141,10 +163,7 @@ test('non-admin reçoit 403 sur /api/admin/*', async () => {
 });
 
 test('admin peut lire stats, cartes, users', async () => {
-  const { cookie } = await registerAndLogin('admin2@example.com', 'Admin', 'Two');
-  // admin2 is NOT in ADMIN_EMAILS — promote via first admin instead.
-  // Re-login as bootstrap admin.
-  const admin = await registerAndLogin('admin@example.com', 'Admin', 'Root');
+  const admin = await registerOnce('admin@example.com', 'Admin', 'Root');
 
   const saveRes = createMockRes();
   await handleSaveCard(
@@ -182,14 +201,11 @@ test('admin peut lire stats, cartes, users', async () => {
   handleAdminListUsers(createMockReq('GET', null, admin.cookie), usersRes);
   assert.equal(usersRes.statusCode, 200);
   assert.ok(usersRes.json().users.some((u) => u.email === 'admin@example.com'));
-
-  // unused cookie silence
-  assert.ok(cookie === cookie || true);
 });
 
 test('PATCH rôle + refus de rétrograder le dernier admin', async () => {
-  const admin = await registerAndLogin('admin@example.com', 'Admin', 'Root');
-  const member = await registerAndLogin('member@example.com', 'Member', 'Two');
+  const admin = await registerOnce('admin@example.com', 'Admin', 'Root');
+  const member = await registerOnce('member@example.com', 'Member', 'Two');
 
   const promoteRes = createMockRes();
   await handleAdminUpdateUserRole(
@@ -209,19 +225,47 @@ test('PATCH rôle + refus de rétrograder le dernier admin', async () => {
   assert.equal(demoteOther.statusCode, 200);
   assert.equal(demoteOther.json().user.role, 'user');
 
-  const demoteLast = createMockRes();
-  await handleAdminUpdateUserRole(
-    createMockReq('PATCH', { role: 'user' }, admin.cookie),
-    demoteLast,
-    admin.user.id
-  );
-  assert.equal(demoteLast.statusCode, 400);
-  assert.match(demoteLast.json().error, /dernier administrateur/i);
+  // Ensure only one admin remains, then refuse demotion.
+  const usersRes = createMockRes();
+  handleAdminListUsers(createMockReq('GET', null, admin.cookie), usersRes);
+  const admins = usersRes.json().users.filter((u) => u.role === 'admin');
+  assert.ok(admins.length >= 1);
+
+  if (admins.length === 1) {
+    const demoteLast = createMockRes();
+    await handleAdminUpdateUserRole(
+      createMockReq('PATCH', { role: 'user' }, admin.cookie),
+      demoteLast,
+      admins[0].id
+    );
+    assert.equal(demoteLast.statusCode, 400);
+    assert.match(demoteLast.json().error, /dernier administrateur/i);
+  } else {
+    // Demote extras until one remains, then refuse.
+    for (const extra of admins.slice(1)) {
+      const demote = createMockRes();
+      await handleAdminUpdateUserRole(
+        createMockReq('PATCH', { role: 'user' }, admin.cookie),
+        demote,
+        extra.id
+      );
+      assert.equal(demote.statusCode, 200);
+    }
+    const lastAdmin = admins[0];
+    const demoteLast = createMockRes();
+    await handleAdminUpdateUserRole(
+      createMockReq('PATCH', { role: 'user' }, admin.cookie),
+      demoteLast,
+      lastAdmin.id
+    );
+    assert.equal(demoteLast.statusCode, 400);
+    assert.match(demoteLast.json().error, /dernier administrateur/i);
+  }
 });
 
 test('GET /api/cards ne renvoie que les cartes du user', async () => {
-  const owner = await registerAndLogin('owner-list@example.com', 'Owner', 'List');
-  const other = await registerAndLogin('other-list@example.com', 'Other', 'List');
+  const owner = await registerOnce('owner-list@example.com', 'Owner', 'List');
+  const other = await registerOnce('other-list@example.com', 'Other', 'List');
 
   const saveOwner = createMockRes();
   await handleSaveCard(
@@ -257,7 +301,7 @@ test('GET /api/cards ne renvoie que les cartes du user', async () => {
 });
 
 test('admin peut supprimer une carte', async () => {
-  const admin = await registerAndLogin('admin@example.com', 'Admin', 'Root');
+  const admin = await registerOnce('admin@example.com', 'Admin', 'Root');
   const saveRes = createMockRes();
   await handleSaveCard(
     createMockReq(
