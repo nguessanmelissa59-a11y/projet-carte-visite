@@ -3,7 +3,7 @@ const {
   getCardBySlug,
   incrementScans,
   upsertCard,
-  listCards
+  listCardsByUserId
 } = require('../db/repository');
 const { buildVCard30 } = require('../services/vcard-builder');
 const { sendJson, readJsonBody } = require('../http/json');
@@ -28,7 +28,8 @@ function handleListCards(req, res) {
   if (!session) {
     return sendJson(res, 401, { error: 'Authentification requise' });
   }
-  const cards = listCards().filter((card) => card.userId === session.userId);
+  // Liste personnelle uniquement — la liste globale est /api/admin/cards.
+  const cards = listCardsByUserId(session.userId);
   sendJson(res, 200, { cards });
 }
 
