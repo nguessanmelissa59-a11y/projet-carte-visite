@@ -136,6 +136,51 @@ window.VCardApp.Config = {
       badgeBg: 'bg-rose-50 text-rose-950 border-rose-200 dark:bg-rose-950/45 dark:text-rose-200 dark:border-rose-700',
       iconColor: 'text-[#e11d48] dark:text-rose-300',
       qrDark: '#be123c'
+    },
+    teal: {
+      label: 'Sarcelle',
+      bannerColor: '#0f766e',
+      headerBg: 'bg-[#0f766e]',
+      btnBg: 'bg-[#0f766e] hover:bg-[#0d9488] text-white',
+      badgeBg: 'bg-teal-50 text-teal-950 border-teal-200 dark:bg-teal-950/45 dark:text-teal-200 dark:border-teal-700',
+      iconColor: 'text-[#0f766e] dark:text-teal-300',
+      qrDark: '#115e59'
+    },
+    gold: {
+      label: 'Or',
+      bannerColor: '#a16207',
+      headerBg: 'bg-[#a16207]',
+      btnBg: 'bg-[#a16207] hover:bg-[#854d0e] text-white',
+      badgeBg: 'bg-amber-50 text-amber-950 border-amber-200 dark:bg-amber-950/45 dark:text-amber-200 dark:border-amber-700',
+      iconColor: 'text-[#a16207] dark:text-amber-300',
+      qrDark: '#854d0e'
+    },
+    navy: {
+      label: 'Marine',
+      bannerColor: '#1e3a5f',
+      headerBg: 'bg-[#1e3a5f]',
+      btnBg: 'bg-[#1e3a5f] hover:bg-[#152a45] text-white',
+      badgeBg: 'bg-slate-100 text-slate-900 border-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700',
+      iconColor: 'text-[#1e3a5f] dark:text-slate-300',
+      qrDark: '#152a45'
+    },
+    plum: {
+      label: 'Prune',
+      bannerColor: '#9f1239',
+      headerBg: 'bg-[#9f1239]',
+      btnBg: 'bg-[#9f1239] hover:bg-[#881337] text-white',
+      badgeBg: 'bg-rose-50 text-rose-950 border-rose-200 dark:bg-rose-950/45 dark:text-rose-200 dark:border-rose-700',
+      iconColor: 'text-[#9f1239] dark:text-rose-300',
+      qrDark: '#881337'
+    },
+    indigo: {
+      label: 'Indigo',
+      bannerColor: '#3730a3',
+      headerBg: 'bg-[#3730a3]',
+      btnBg: 'bg-[#3730a3] hover:bg-[#312e81] text-white',
+      badgeBg: 'bg-indigo-50 text-indigo-950 border-indigo-200 dark:bg-indigo-950/45 dark:text-indigo-200 dark:border-indigo-700',
+      iconColor: 'text-[#3730a3] dark:text-indigo-300',
+      qrDark: '#312e81'
     }
   },
 
