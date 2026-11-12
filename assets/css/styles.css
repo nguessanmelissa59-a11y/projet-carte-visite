@@ -597,6 +597,33 @@ html.dark .qr-frame {
   transform: translateY(1px);
 }
 
+.profile-card__cta-secondary {
+  width: 100%;
+  min-height: 2.6rem;
+  margin-top: 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 550;
+  cursor: pointer;
+  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  color: var(--ink);
+  transition: background 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+}
+
+.profile-card__cta-secondary:hover {
+  background: var(--line);
+  border-color: color-mix(in srgb, var(--ink) 25%, transparent);
+}
+
+.profile-card__cta-secondary:active {
+  transform: translateY(1px);
+}
+
 .action-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
