@@ -720,7 +720,7 @@ html.dark .qr-frame {
 .phone-shell {
   margin-inline: auto;
   width: 100%;
-  max-width: 20rem;
+  max-width: 22rem;
   padding: 0.55rem;
   border-radius: 0.75rem;
   background: var(--ink);
@@ -737,7 +737,7 @@ html.dark .qr-frame {
 .phone-notch {
   width: 5.5rem;
   height: 0.35rem;
-  margin: 0.15rem auto 0.65rem;
+  margin: 0.15rem auto 0.55rem;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.18);
 }
@@ -751,8 +751,8 @@ html.dark .qr-frame {
 }
 
 @media (min-width: 1024px) {
-  .phone-screen {
-    max-height: min(32rem, calc(100vh - 12rem));
+  .preview-panel .phone-screen {
+    max-height: min(36rem, calc(100vh - 9.5rem));
   }
 }
 
