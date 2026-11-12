@@ -10,13 +10,12 @@
   document.addEventListener('DOMContentLoaded', async () => {
     StorageService.initTheme();
     bindThemeToggle();
-    bindTabs();
     bindForms();
     if (window.lucide) window.lucide.createIcons();
 
     const status = await ApiService.checkBackend();
     if (!status.available) {
-      setAuthMessage('Serveur indisponible. Lancez `npm start` pour activer l’authentification.');
+      setAuthMessage('Le serveur n’est pas démarré. Lancez npm start puis réessayez.');
       return;
     }
     await renderSessionState();
@@ -31,32 +30,39 @@
     });
   }
 
-  function bindTabs() {
-    const tabRegister = document.getElementById('tabRegister');
-    const tabLogin = document.getElementById('tabLogin');
-    const registerForm = document.getElementById('registerForm');
-    const loginForm = document.getElementById('loginForm');
+  function setStep(step) {
+    [1, 2, 3].forEach((n) => {
+      const el = document.getElementById(`stepBadge${n}`);
+      if (!el) return;
+      el.classList.toggle('is-active', n === step);
+      el.classList.toggle('is-done', n < step);
+    });
+  }
 
-    function showRegister() {
-      tabRegister.classList.add('is-active');
-      tabLogin.classList.remove('is-active');
-      tabRegister.setAttribute('aria-selected', 'true');
-      tabLogin.setAttribute('aria-selected', 'false');
-      registerForm.classList.remove('hidden');
-      loginForm.classList.add('hidden');
+  function showIdentityStep() {
+    document.getElementById('authStepIdentity').classList.remove('hidden');
+    document.getElementById('otpForm').classList.add('hidden');
+    setStep(1);
+  }
+
+  function showCodeStep(data) {
+    document.getElementById('authStepIdentity').classList.add('hidden');
+    const otpForm = document.getElementById('otpForm');
+    otpForm.classList.remove('hidden');
+    setStep(2);
+
+    const hint = document.getElementById('otpHint');
+    const devHint = document.getElementById('devOtpHint');
+    hint.textContent = `Un code a été préparé pour ${data.email || pending.email}.`;
+    if (data.devOtp) {
+      devHint.classList.remove('hidden');
+      devHint.textContent = `Code local de test : ${data.devOtp}`;
+      document.getElementById('otpCode').value = data.devOtp;
+    } else {
+      devHint.classList.add('hidden');
+      devHint.textContent = '';
     }
-
-    function showLogin() {
-      tabLogin.classList.add('is-active');
-      tabRegister.classList.remove('is-active');
-      tabLogin.setAttribute('aria-selected', 'true');
-      tabRegister.setAttribute('aria-selected', 'false');
-      loginForm.classList.remove('hidden');
-      registerForm.classList.add('hidden');
-    }
-
-    tabRegister.addEventListener('click', showRegister);
-    tabLogin.addEventListener('click', showLogin);
+    document.getElementById('otpCode').focus();
   }
 
   function bindForms() {
@@ -69,32 +75,30 @@
         const email = document.getElementById('regEmail').value.trim();
         const data = await ApiService.register({ email, firstName, lastName });
         pending = { email: data.email, purpose: 'register' };
-        revealOtpStep(data);
-        setAuthMessage(data.message || 'Code envoyé.');
+        showCodeStep(data);
+        setAuthMessage('Entrez le code pour activer votre compte.');
       } catch (err) {
-        setAuthMessage(err.message || 'Erreur d’inscription');
+        setAuthMessage(err.message || 'Impossible de créer le compte');
       }
     });
 
     document.getElementById('loginForm').addEventListener('submit', async (event) => {
       event.preventDefault();
-      setAuthMessage('Envoi du code…');
+      setAuthMessage('Vérification…');
       try {
         const email = document.getElementById('loginEmail').value.trim();
         const data = await ApiService.login({ email });
         pending = { email: data.email || email, purpose: 'login' };
-        if (data.otpIssued) {
-          revealOtpStep(data);
-        }
-        setAuthMessage(data.message || 'Si un compte existe, un code a été préparé.');
+        showCodeStep(data);
+        setAuthMessage(data.message || 'Entrez le code reçu.');
       } catch (err) {
-        setAuthMessage(err.message || 'Erreur de connexion');
+        setAuthMessage(err.message || 'Connexion impossible');
       }
     });
 
     document.getElementById('otpForm').addEventListener('submit', async (event) => {
       event.preventDefault();
-      setAuthMessage('Vérification…');
+      setAuthMessage('Validation…');
       try {
         const code = document.getElementById('otpCode').value.trim();
         await ApiService.verifyOtp({
@@ -102,12 +106,21 @@
           code,
           purpose: pending.purpose
         });
-        setAuthMessage('Session ouverte.');
-        await renderSessionState();
+        setStep(3);
+        setAuthMessage('Connexion réussie.');
+        window.location.href = '/';
       } catch (err) {
-        setAuthMessage(err.message || 'OTP invalide');
+        setAuthMessage(err.message || 'Code incorrect');
       }
     });
+
+    const backBtn = document.getElementById('btnBackToEmail');
+    if (backBtn) {
+      backBtn.addEventListener('click', () => {
+        showIdentityStep();
+        setAuthMessage('');
+      });
+    }
 
     document.getElementById('profileForm').addEventListener('submit', async (event) => {
       event.preventDefault();
@@ -127,26 +140,9 @@
       await ApiService.logout();
       setSessionMessage('');
       await renderSessionState();
-      setAuthMessage('Déconnecté.');
+      showIdentityStep();
+      setAuthMessage('Vous êtes déconnecté.');
     });
-  }
-
-  function revealOtpStep(data) {
-    const otpForm = document.getElementById('otpForm');
-    const hint = document.getElementById('otpHint');
-    const devHint = document.getElementById('devOtpHint');
-    otpForm.classList.remove('hidden');
-    hint.textContent = `Un code a été préparé pour ${data.email || pending.email}. Valable ${data.expiresInSec || 600} s.`;
-    if (data.devOtp) {
-      devHint.classList.remove('hidden');
-      devHint.textContent = `Mode local : code = ${data.devOtp}`;
-      document.getElementById('otpCode').value = data.devOtp;
-    } else {
-      devHint.classList.add('hidden');
-      devHint.textContent = '';
-    }
-    document.getElementById('otpCode').focus();
-    if (window.lucide) window.lucide.createIcons({ root: otpForm });
   }
 
   async function renderSessionState() {
@@ -157,12 +153,15 @@
     if (!user) {
       guest.classList.remove('hidden');
       session.classList.add('hidden');
+      showIdentityStep();
       return;
     }
 
     guest.classList.add('hidden');
     session.classList.remove('hidden');
-    document.getElementById('sessionTitle').textContent = `${user.firstName} ${user.lastName}`.trim() || 'Compte';
+    setStep(3);
+    document.getElementById('sessionTitle').textContent =
+      `${user.firstName} ${user.lastName}`.trim() || 'Compte';
     document.getElementById('sessionEmail').textContent = user.email;
     document.getElementById('profileFirstName').value = user.firstName || '';
     document.getElementById('profileLastName').value = user.lastName || '';
@@ -183,17 +182,15 @@
         li.innerHTML = `
           <div class="min-w-0">
             <strong class="block truncate">${escapeHtml(title)}</strong>
-            <span class="text-xs font-mono text-[color:var(--ink-muted)]">/c/${escapeHtml(card.slug)}</span>
+            <span class="text-xs text-[color:var(--ink-muted)]">Lien public prêt</span>
           </div>
-          <a class="btn btn-ghost h-11 min-h-11 px-3 text-xs no-underline" href="/?edit=${encodeURIComponent(card.slug)}">
+          <a class="btn btn-secondary h-11 min-h-11 px-3 text-sm no-underline" href="/?edit=${encodeURIComponent(card.slug)}">
             Modifier
           </a>
         `;
         list.appendChild(li);
       });
     }
-
-    if (window.lucide) window.lucide.createIcons({ root: session });
   }
 
   function setAuthMessage(text) {
