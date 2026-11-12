@@ -665,6 +665,330 @@ window.VCardApp.CardCanvasExporter = (function () {
     });
   }
 
+  async function drawLagoon(ctx, state, qrMode) {
+    ctx.fillStyle = '#ecfeff';
+    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+    const band = ctx.createLinearGradient(0, 0, WIDTH, 0);
+    band.addColorStop(0, '#0f766e');
+    band.addColorStop(1, '#155e75');
+    ctx.fillStyle = band;
+    ctx.fillRect(0, 0, WIDTH, 150);
+
+    ctx.fillStyle = 'rgba(103, 232, 249, 0.35)';
+    ctx.beginPath();
+    ctx.ellipse(980, 40, 180, 120, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    await drawAvatar(ctx, state, 72, 88, 116, {
+      radius: 58,
+      fill: '#0f766e',
+      ring: '#ffffff',
+      textColor: '#ecfeff'
+    });
+
+    const name = getFullName(state);
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#134e4a';
+    fitText(ctx, name, 500, 36, 22, (s) => `700 ${s}px 'Syne', sans-serif`);
+    ctx.fillText(name, 220, 270);
+    if (state.jobTitle) {
+      ctx.fillStyle = '#0f766e';
+      ctx.font = "500 18px 'DM Sans', sans-serif";
+      ctx.fillText(state.jobTitle, 220, 304);
+    }
+
+    drawContactRows(ctx, collectContacts(state), 72, 350, {
+      labelColor: '#5eead4',
+      valueColor: '#115e59',
+      gap: 48,
+      maxWidth: 540
+    });
+
+    await drawQrPanel(ctx, state, qrMode, '#0f766e', {
+      x: 700,
+      y: 190,
+      w: 340,
+      h: 420,
+      bg: '#ffffff',
+      border: '#99f6e4',
+      titleColor: '#134e4a',
+      subColor: '#0f766e'
+    });
+  }
+
+  async function drawSlate(ctx, state, qrMode) {
+    ctx.fillStyle = '#f1f5f9';
+    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+    ctx.fillStyle = '#334155';
+    ctx.fillRect(0, 0, 28, HEIGHT);
+
+    ctx.strokeStyle = '#cbd5e1';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 8; i += 1) {
+      const y = 80 + i * 70;
+      ctx.beginPath();
+      ctx.moveTo(60, y);
+      ctx.lineTo(680, y);
+      ctx.stroke();
+    }
+
+    await drawAvatar(ctx, state, 70, 70, 108, {
+      radius: 14,
+      fill: '#334155',
+      textColor: '#f8fafc'
+    });
+
+    const name = getFullName(state);
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#0f172a';
+    fitText(ctx, name, 500, 36, 22, (s) => `700 ${s}px 'Syne', sans-serif`);
+    ctx.fillText(name, 206, 115);
+    if (state.jobTitle) {
+      ctx.fillStyle = '#64748b';
+      ctx.font = "500 18px 'DM Sans', sans-serif";
+      ctx.fillText(state.jobTitle, 206, 148);
+    }
+    if (state.organization) {
+      ctx.fillStyle = '#334155';
+      ctx.font = "600 13px 'IBM Plex Mono', monospace";
+      ctx.fillText(state.organization.toUpperCase(), 206, 176);
+    }
+
+    drawContactRows(ctx, collectContacts(state), 70, 250, {
+      labelColor: '#94a3b8',
+      valueColor: '#1e293b',
+      gap: 52,
+      maxWidth: 560
+    });
+
+    await drawQrPanel(ctx, state, qrMode, '#334155', {
+      x: 710,
+      y: 70,
+      w: 330,
+      h: 520,
+      bg: '#ffffff',
+      border: '#cbd5e1',
+      titleColor: '#0f172a',
+      subColor: '#64748b'
+    });
+  }
+
+  async function drawSunset(ctx, state, qrMode) {
+    ctx.fillStyle = '#fff7ed';
+    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+    const sky = ctx.createLinearGradient(0, 0, 0, 240);
+    sky.addColorStop(0, '#fb923c');
+    sky.addColorStop(0.55, '#ea580c');
+    sky.addColorStop(1, '#9a3412');
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, WIDTH, 220);
+
+    ctx.fillStyle = '#fff7ed';
+    ctx.beginPath();
+    ctx.moveTo(0, 190);
+    ctx.quadraticCurveTo(280, 250, 560, 200);
+    ctx.quadraticCurveTo(820, 160, WIDTH, 210);
+    ctx.lineTo(WIDTH, 240);
+    ctx.lineTo(0, 240);
+    ctx.closePath();
+    ctx.fill();
+
+    await drawAvatar(ctx, state, 72, 150, 118, {
+      radius: 59,
+      fill: '#9a3412',
+      ring: '#ffffff',
+      textColor: '#fff7ed'
+    });
+
+    const name = getFullName(state);
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#7c2d12';
+    fitText(ctx, name, 500, 36, 22, (s) => `700 ${s}px 'Syne', sans-serif`);
+    ctx.fillText(name, 220, 310);
+    if (state.jobTitle) {
+      ctx.fillStyle = '#c2410c';
+      ctx.font = "500 18px 'DM Sans', sans-serif";
+      ctx.fillText(state.jobTitle, 220, 344);
+    }
+
+    drawContactRows(ctx, collectContacts(state), 72, 390, {
+      labelColor: '#ea580c',
+      valueColor: '#7c2d12',
+      gap: 46,
+      maxWidth: 540
+    });
+
+    await drawQrPanel(ctx, state, qrMode, '#9a3412', {
+      x: 700,
+      y: 260,
+      w: 340,
+      h: 350,
+      bg: '#ffffff',
+      border: '#fdba74',
+      titleColor: '#7c2d12',
+      subColor: '#c2410c'
+    });
+  }
+
+  async function drawSumi(ctx, state, qrMode) {
+    ctx.fillStyle = '#fafafa';
+    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+    ctx.fillStyle = '#111111';
+    ctx.fillRect(0, 0, WIDTH, 8);
+    ctx.fillStyle = '#b91c1c';
+    ctx.fillRect(0, 8, WIDTH, 4);
+
+    await drawAvatar(ctx, state, 70, 70, 112, {
+      radius: 8,
+      fill: '#111111',
+      textColor: '#fafafa'
+    });
+
+    const name = getFullName(state);
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#111111';
+    fitText(ctx, name, 500, 38, 22, (s) => `700 ${s}px 'Syne', sans-serif`);
+    ctx.fillText(name, 210, 118);
+    if (state.jobTitle) {
+      ctx.fillStyle = '#525252';
+      ctx.font = "400 18px 'DM Sans', sans-serif";
+      ctx.fillText(state.jobTitle, 210, 152);
+    }
+    if (state.organization) {
+      ctx.fillStyle = '#b91c1c';
+      ctx.font = "600 13px 'IBM Plex Mono', monospace";
+      ctx.fillText(state.organization.toUpperCase(), 210, 180);
+    }
+
+    ctx.strokeStyle = '#e5e5e5';
+    ctx.beginPath();
+    ctx.moveTo(70, 220);
+    ctx.lineTo(680, 220);
+    ctx.stroke();
+
+    drawContactRows(ctx, collectContacts(state), 70, 260, {
+      labelColor: '#a3a3a3',
+      valueColor: '#171717',
+      gap: 50,
+      maxWidth: 560
+    });
+
+    await drawQrPanel(ctx, state, qrMode, '#111111', {
+      x: 710,
+      y: 70,
+      w: 330,
+      h: 520,
+      bg: '#ffffff',
+      border: '#d4d4d4',
+      titleColor: '#111111',
+      subColor: '#b91c1c'
+    });
+  }
+
+  async function drawArctic(ctx, state, qrMode) {
+    ctx.fillStyle = '#f8fafc';
+    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+    ctx.fillStyle = '#e2e8f0';
+    ctx.beginPath();
+    ctx.moveTo(0, HEIGHT);
+    ctx.lineTo(0, 420);
+    ctx.lineTo(420, HEIGHT);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = '#bae6fd';
+    ctx.beginPath();
+    ctx.moveTo(WIDTH, 0);
+    ctx.lineTo(WIDTH, 260);
+    ctx.lineTo(720, 0);
+    ctx.closePath();
+    ctx.fill();
+
+    await drawAvatar(ctx, state, 72, 72, 110, {
+      radius: 18,
+      fill: '#0284c7',
+      textColor: '#f0f9ff'
+    });
+
+    const name = getFullName(state);
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#0f172a';
+    fitText(ctx, name, 500, 36, 22, (s) => `700 ${s}px 'Syne', sans-serif`);
+    ctx.fillText(name, 210, 118);
+    if (state.jobTitle) {
+      ctx.fillStyle = '#0284c7';
+      ctx.font = "500 18px 'DM Sans', sans-serif";
+      ctx.fillText(state.jobTitle, 210, 152);
+    }
+
+    drawContactRows(ctx, collectContacts(state), 72, 250, {
+      labelColor: '#64748b',
+      valueColor: '#1e293b',
+      gap: 52,
+      maxWidth: 560
+    });
+
+    await drawQrPanel(ctx, state, qrMode, '#0ea5e9', {
+      x: 710,
+      y: 70,
+      w: 330,
+      h: 520,
+      bg: '#ffffff',
+      border: '#bae6fd',
+      titleColor: '#0f172a',
+      subColor: '#0284c7'
+    });
+  }
+
+  async function drawMetro(ctx, state, qrMode) {
+    ctx.fillStyle = '#fafafa';
+    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+    ctx.fillStyle = '#18181b';
+    ctx.fillRect(0, 0, 420, HEIGHT);
+    ctx.fillStyle = '#fef08a';
+    ctx.fillRect(420, 0, 18, HEIGHT);
+
+    await drawAvatar(ctx, state, 56, 70, 112, {
+      radius: 8,
+      fill: '#fef08a',
+      textColor: '#18181b'
+    });
+
+    const name = getFullName(state);
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#fafafa';
+    fitText(ctx, name, 280, 30, 18, (s) => `800 ${s}px 'Syne', sans-serif`);
+    ctx.fillText(name, 56, 230);
+    if (state.jobTitle) {
+      ctx.fillStyle = '#fef08a';
+      ctx.font = "500 15px 'DM Sans', sans-serif";
+      const title = state.jobTitle.length > 34 ? `${state.jobTitle.slice(0, 32)}…` : state.jobTitle;
+      ctx.fillText(title, 56, 260);
+    }
+
+    const leftItems = collectContacts(state).slice(0, 4);
+    drawContactRows(ctx, leftItems, 56, 320, {
+      labelColor: '#a1a1aa',
+      valueColor: '#f4f4f5',
+      gap: 50,
+      maxWidth: 320
+    });
+
+    await drawQrPanel(ctx, state, qrMode, '#18181b', {
+      x: 500,
+      y: 70,
+      w: 520,
+      h: 520,
+      bg: '#ffffff',
+      border: '#e4e4e7',
+      titleColor: '#18181b',
+      subColor: '#71717a'
+    });
+  }
+
   const RENDERERS = {
     editorial: drawEditorial,
     minimal: drawMinimal,
@@ -673,7 +997,13 @@ window.VCardApp.CardCanvasExporter = (function () {
     eco: drawEco,
     prestige: drawPrestige,
     nocturne: drawNocturne,
-    atelier: drawAtelier
+    atelier: drawAtelier,
+    lagoon: drawLagoon,
+    slate: drawSlate,
+    sunset: drawSunset,
+    sumi: drawSumi,
+    arctic: drawArctic,
+    metro: drawMetro
   };
 
   async function generateCardCanvas(state, qrMode) {
