@@ -2,7 +2,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { test, before, after } = require('node:test');
+const { test, after } = require('node:test');
 
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'vcard-admin-'));
 process.env.DB_DIR = tmpDir;
