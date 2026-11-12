@@ -315,7 +315,7 @@
   function renderAll(forceQr = false) {
     const editorAvatar = document.getElementById('editorAvatarPreview');
     const btnRemovePhoto = document.getElementById('btnRemovePhoto');
-    const themeKey = state.theme || 'obsidian';
+    const themeKey = state.theme || 'forest';
 
     document.documentElement.dataset.cardTheme = themeKey;
 
@@ -417,7 +417,7 @@
 
     document.querySelectorAll('#themeColorPicker .theme-swatch').forEach((btn) => {
       btn.addEventListener('click', () => {
-        state.theme = btn.getAttribute('data-theme') || 'obsidian';
+        state.theme = btn.getAttribute('data-theme') || 'forest';
         renderAll(true);
         schedulePersistence();
       });

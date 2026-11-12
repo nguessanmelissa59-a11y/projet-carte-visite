@@ -597,7 +597,7 @@ html.dark[data-card-theme='obsidian'] .easy-steps li.is-active span {
 }
 
 html.dark .form-input {
-  background-color: color-mix(in srgb, var(--surface) 88%, #000);
+  background-color: color-mix(in srgb, var(--surface-elevated) 92%, #000);
   border-color: color-mix(in srgb, var(--ink) 14%, transparent);
 }
 

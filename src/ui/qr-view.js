@@ -161,7 +161,7 @@ window.VCardApp.QrView = (function () {
       return;
     }
 
-    const palette = THEME_PALETTES[state.theme] || THEME_PALETTES.obsidian;
+    const palette = THEME_PALETTES[state.theme] || THEME_PALETTES.forest;
     const payload = resolvePayload(state, qrMode);
     const logoSrc = getLogoSrc(state);
     const signature = `${qrMode}|${state.theme}|${payload}|${logoSignature(state)}`;
@@ -233,7 +233,7 @@ window.VCardApp.QrView = (function () {
     }
 
     const offscreen = document.createElement('canvas');
-    const palette = THEME_PALETTES[state.theme] || THEME_PALETTES.obsidian;
+    const palette = THEME_PALETTES[state.theme] || THEME_PALETTES.forest;
     const payload = resolvePayload(state, qrMode);
     const logoSrc = getLogoSrc(state);
 
