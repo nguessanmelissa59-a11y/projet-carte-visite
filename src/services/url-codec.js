@@ -120,3 +120,4 @@ window.VCardApp.UrlCodec = (function () {
     buildPublicUrl
   };
 })();
+

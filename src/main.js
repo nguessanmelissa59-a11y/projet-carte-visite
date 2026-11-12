@@ -310,3 +310,4 @@
     if (btnThemeTogglePublic) btnThemeTogglePublic.addEventListener('click', StorageService.toggleTheme);
   }
 })();
+

@@ -104,3 +104,4 @@ window.VCardApp.VCardService = (function () {
     downloadVCard
   };
 })();
+

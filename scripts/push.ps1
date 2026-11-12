@@ -29,3 +29,4 @@ if ($remotes -contains "origin") {
 } else {
   Write-Host "Commit cree localement. Aucun depot distant 'origin' configure."
 }
+

@@ -59,3 +59,4 @@ Avant de finaliser une refonte :
 1. Verifier qu'aucun fichier `.js`, `.css` ou `.ps1` ne traine a la racine.
 2. Verifier que tous les chemins relatifs dans `index.html`, `.vscode/tasks.json` et `docs/` pointent vers les nouveaux sous-dossiers (`assets/`, `src/`, `scripts/`).
 3. Verifier l'absence totale d'emojis dans le code, les scripts et la documentation.
+

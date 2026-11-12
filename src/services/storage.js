@@ -67,3 +67,4 @@ window.VCardApp.StorageService = (function () {
     resizeImageToBase64
   };
 })();
+

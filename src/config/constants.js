@@ -82,3 +82,4 @@ window.VCardApp.Config = {
     'photoUrl'
   ]
 };
+

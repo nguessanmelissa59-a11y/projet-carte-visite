@@ -94,3 +94,4 @@ window.VCardApp.QrView = (function () {
     downloadHighResPng
   };
 })();
+

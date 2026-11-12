@@ -248,3 +248,4 @@ window.VCardApp.ProfileCardUI = (function () {
     showToast
   };
 })();
+
