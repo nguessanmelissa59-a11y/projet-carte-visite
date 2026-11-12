@@ -173,7 +173,7 @@ window.VCardApp.CardCanvasExporter = (function () {
     }
 
     ctx.fillStyle = textColor;
-    ctx.font = `bold ${Math.round(size * 0.32)}px 'Syne', 'DM Sans', sans-serif`;
+    ctx.font = `bold ${Math.round(size * 0.32)}px 'Fraunces', 'Figtree', serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(getInitials(state), x + size / 2, y + size / 2 + 1);
@@ -189,10 +189,10 @@ window.VCardApp.CardCanvasExporter = (function () {
     items.forEach((item) => {
       ctx.textAlign = 'left';
       ctx.fillStyle = labelColor;
-      ctx.font = "600 11px 'DM Sans', sans-serif";
+      ctx.font = "600 11px 'Figtree', sans-serif";
       ctx.fillText(item.label.toUpperCase(), x, y);
       ctx.fillStyle = valueColor;
-      fitText(ctx, item.value, options.maxWidth || 580, 16, 12, (s) => `500 ${s}px 'DM Sans', sans-serif`);
+      fitText(ctx, item.value, options.maxWidth || 580, 16, 12, (s) => `500 ${s}px 'Figtree', sans-serif`);
       ctx.fillText(item.value, x, y + 22);
       y += gap;
     });
@@ -223,10 +223,10 @@ window.VCardApp.CardCanvasExporter = (function () {
 
     ctx.textAlign = 'center';
     ctx.fillStyle = titleColor;
-    ctx.font = "bold 14px 'Syne', 'DM Sans', sans-serif";
+    ctx.font = "bold 14px 'Fraunces', 'Figtree', serif";
     ctx.fillText('SCANNER LE QR CODE', x + w / 2, boxY + box + 42);
     ctx.fillStyle = subColor;
-    ctx.font = "400 12px 'DM Sans', sans-serif";
+    ctx.font = "400 12px 'Figtree', sans-serif";
     ctx.fillText('Pour enregistrer les contacts', x + w / 2, boxY + box + 64);
 
     const pillW = 220;
@@ -259,16 +259,16 @@ window.VCardApp.CardCanvasExporter = (function () {
     const name = getFullName(state);
     ctx.textAlign = 'left';
     ctx.fillStyle = '#09090b';
-    fitText(ctx, name, 490, 34, 22, (s) => `bold ${s}px 'Syne', sans-serif`);
+    fitText(ctx, name, 490, 34, 22, (s) => `bold ${s}px 'Fraunces', serif`);
     ctx.fillText(name, 186, 96);
     if (state.jobTitle) {
       ctx.fillStyle = '#52525b';
-      fitText(ctx, state.jobTitle, 490, 20, 14, (s) => `500 ${s}px 'DM Sans', sans-serif`);
+      fitText(ctx, state.jobTitle, 490, 20, 14, (s) => `500 ${s}px 'Figtree', sans-serif`);
       ctx.fillText(state.jobTitle, 186, 128);
     }
     if (state.organization) {
       ctx.fillStyle = accentHex;
-      ctx.font = "600 15px 'DM Sans', sans-serif";
+      ctx.font = "600 15px 'Figtree', sans-serif";
       ctx.fillText(state.organization.toUpperCase(), 186, 154);
     }
 
@@ -313,16 +313,16 @@ window.VCardApp.CardCanvasExporter = (function () {
     const name = getFullName(state);
     ctx.textAlign = 'left';
     ctx.fillStyle = '#1c1917';
-    fitText(ctx, name, 520, 40, 24, (s) => `700 ${s}px 'Syne', sans-serif`);
+    fitText(ctx, name, 520, 40, 24, (s) => `700 ${s}px 'Fraunces', serif`);
     ctx.fillText(name, 240, 140);
     if (state.jobTitle) {
       ctx.fillStyle = '#78716c';
-      ctx.font = "400 20px 'DM Sans', sans-serif";
+      ctx.font = "400 20px 'Figtree', sans-serif";
       ctx.fillText(state.jobTitle, 240, 176);
     }
     if (state.organization) {
       ctx.fillStyle = '#a8a29e';
-      ctx.font = "500 14px 'DM Sans', sans-serif";
+      ctx.font = "500 14px 'Figtree', sans-serif";
       ctx.fillText(state.organization, 240, 206);
     }
 
@@ -381,11 +381,11 @@ window.VCardApp.CardCanvasExporter = (function () {
     const name = getFullName(state);
     ctx.textAlign = 'left';
     ctx.fillStyle = '#f8fafc';
-    fitText(ctx, name, 430, 34, 22, (s) => `700 ${s}px 'Syne', sans-serif`);
+    fitText(ctx, name, 430, 34, 22, (s) => `700 ${s}px 'Fraunces', serif`);
     ctx.fillText(name, 198, 112);
     if (state.jobTitle) {
       ctx.fillStyle = '#94a3b8';
-      ctx.font = "400 18px 'DM Sans', sans-serif";
+      ctx.font = "400 18px 'Figtree', sans-serif";
       ctx.fillText(state.jobTitle, 198, 144);
     }
     if (state.organization) {
@@ -441,11 +441,11 @@ window.VCardApp.CardCanvasExporter = (function () {
     const name = getFullName(state);
     ctx.textAlign = 'left';
     ctx.fillStyle = '#1c1917';
-    fitText(ctx, name, 520, 38, 24, (s) => `800 ${s}px 'Syne', sans-serif`);
+    fitText(ctx, name, 520, 38, 24, (s) => `800 ${s}px 'Fraunces', serif`);
     ctx.fillText(name, 220, 280);
     if (state.jobTitle) {
       ctx.fillStyle = '#9a3412';
-      ctx.font = "500 18px 'DM Sans', sans-serif";
+      ctx.font = "500 18px 'Figtree', sans-serif";
       ctx.fillText(state.jobTitle, 220, 314);
     }
 
@@ -494,16 +494,16 @@ window.VCardApp.CardCanvasExporter = (function () {
     const name = getFullName(state);
     ctx.textAlign = 'left';
     ctx.fillStyle = '#1f2a24';
-    fitText(ctx, name, 500, 36, 22, (s) => `700 ${s}px 'Syne', sans-serif`);
+    fitText(ctx, name, 500, 36, 22, (s) => `700 ${s}px 'Fraunces', serif`);
     ctx.fillText(name, 230, 132);
     if (state.jobTitle) {
       ctx.fillStyle = '#4d7c5a';
-      ctx.font = "500 18px 'DM Sans', sans-serif";
+      ctx.font = "500 18px 'Figtree', sans-serif";
       ctx.fillText(state.jobTitle, 230, 166);
     }
     if (state.organization) {
       ctx.fillStyle = '#c26d3e';
-      ctx.font = "600 14px 'DM Sans', sans-serif";
+      ctx.font = "600 14px 'Figtree', sans-serif";
       ctx.fillText(state.organization, 230, 194);
     }
 
@@ -548,11 +548,11 @@ window.VCardApp.CardCanvasExporter = (function () {
     const name = getFullName(state);
     ctx.textAlign = 'left';
     ctx.fillStyle = '#f5e6b8';
-    fitText(ctx, name, 500, 38, 24, (s) => `600 ${s}px 'Syne', serif`);
+    fitText(ctx, name, 500, 38, 24, (s) => `600 ${s}px 'Fraunces', serif`);
     ctx.fillText(name, 240, 140);
     if (state.jobTitle) {
       ctx.fillStyle = '#c9a227';
-      ctx.font = "400 18px 'DM Sans', sans-serif";
+      ctx.font = "400 18px 'Figtree', sans-serif";
       ctx.fillText(state.jobTitle, 240, 176);
     }
     if (state.organization) {
@@ -595,11 +595,11 @@ window.VCardApp.CardCanvasExporter = (function () {
     const name = getFullName(state);
     ctx.textAlign = 'left';
     ctx.fillStyle = '#fafafa';
-    fitText(ctx, name, 500, 36, 22, (s) => `700 ${s}px 'Syne', sans-serif`);
+    fitText(ctx, name, 500, 36, 22, (s) => `700 ${s}px 'Fraunces', serif`);
     ctx.fillText(name, 200, 115);
     if (state.jobTitle) {
       ctx.fillStyle = '#a1a1aa';
-      ctx.font = "400 18px 'DM Sans', sans-serif";
+      ctx.font = "400 18px 'Figtree', sans-serif";
       ctx.fillText(state.jobTitle, 200, 148);
     }
 
@@ -638,11 +638,11 @@ window.VCardApp.CardCanvasExporter = (function () {
     const name = getFullName(state);
     ctx.textAlign = 'left';
     ctx.fillStyle = '#2a2118';
-    fitText(ctx, name, 500, 36, 22, (s) => `700 ${s}px 'Syne', sans-serif`);
+    fitText(ctx, name, 500, 36, 22, (s) => `700 ${s}px 'Fraunces', serif`);
     ctx.fillText(name, 210, 118);
     if (state.jobTitle) {
       ctx.fillStyle = '#8b5e3c';
-      ctx.font = "500 18px 'DM Sans', sans-serif";
+      ctx.font = "500 18px 'Figtree', sans-serif";
       ctx.fillText(state.jobTitle, 210, 152);
     }
 
@@ -690,11 +690,11 @@ window.VCardApp.CardCanvasExporter = (function () {
     const name = getFullName(state);
     ctx.textAlign = 'left';
     ctx.fillStyle = '#134e4a';
-    fitText(ctx, name, 500, 36, 22, (s) => `700 ${s}px 'Syne', sans-serif`);
+    fitText(ctx, name, 500, 36, 22, (s) => `700 ${s}px 'Fraunces', serif`);
     ctx.fillText(name, 220, 270);
     if (state.jobTitle) {
       ctx.fillStyle = '#0f766e';
-      ctx.font = "500 18px 'DM Sans', sans-serif";
+      ctx.font = "500 18px 'Figtree', sans-serif";
       ctx.fillText(state.jobTitle, 220, 304);
     }
 
@@ -742,11 +742,11 @@ window.VCardApp.CardCanvasExporter = (function () {
     const name = getFullName(state);
     ctx.textAlign = 'left';
     ctx.fillStyle = '#0f172a';
-    fitText(ctx, name, 500, 36, 22, (s) => `700 ${s}px 'Syne', sans-serif`);
+    fitText(ctx, name, 500, 36, 22, (s) => `700 ${s}px 'Fraunces', serif`);
     ctx.fillText(name, 206, 115);
     if (state.jobTitle) {
       ctx.fillStyle = '#64748b';
-      ctx.font = "500 18px 'DM Sans', sans-serif";
+      ctx.font = "500 18px 'Figtree', sans-serif";
       ctx.fillText(state.jobTitle, 206, 148);
     }
     if (state.organization) {
@@ -805,11 +805,11 @@ window.VCardApp.CardCanvasExporter = (function () {
     const name = getFullName(state);
     ctx.textAlign = 'left';
     ctx.fillStyle = '#7c2d12';
-    fitText(ctx, name, 500, 36, 22, (s) => `700 ${s}px 'Syne', sans-serif`);
+    fitText(ctx, name, 500, 36, 22, (s) => `700 ${s}px 'Fraunces', serif`);
     ctx.fillText(name, 220, 310);
     if (state.jobTitle) {
       ctx.fillStyle = '#c2410c';
-      ctx.font = "500 18px 'DM Sans', sans-serif";
+      ctx.font = "500 18px 'Figtree', sans-serif";
       ctx.fillText(state.jobTitle, 220, 344);
     }
 
@@ -849,11 +849,11 @@ window.VCardApp.CardCanvasExporter = (function () {
     const name = getFullName(state);
     ctx.textAlign = 'left';
     ctx.fillStyle = '#111111';
-    fitText(ctx, name, 500, 38, 22, (s) => `700 ${s}px 'Syne', sans-serif`);
+    fitText(ctx, name, 500, 38, 22, (s) => `700 ${s}px 'Fraunces', serif`);
     ctx.fillText(name, 210, 118);
     if (state.jobTitle) {
       ctx.fillStyle = '#525252';
-      ctx.font = "400 18px 'DM Sans', sans-serif";
+      ctx.font = "400 18px 'Figtree', sans-serif";
       ctx.fillText(state.jobTitle, 210, 152);
     }
     if (state.organization) {
@@ -916,11 +916,11 @@ window.VCardApp.CardCanvasExporter = (function () {
     const name = getFullName(state);
     ctx.textAlign = 'left';
     ctx.fillStyle = '#0f172a';
-    fitText(ctx, name, 500, 36, 22, (s) => `700 ${s}px 'Syne', sans-serif`);
+    fitText(ctx, name, 500, 36, 22, (s) => `700 ${s}px 'Fraunces', serif`);
     ctx.fillText(name, 210, 118);
     if (state.jobTitle) {
       ctx.fillStyle = '#0284c7';
-      ctx.font = "500 18px 'DM Sans', sans-serif";
+      ctx.font = "500 18px 'Figtree', sans-serif";
       ctx.fillText(state.jobTitle, 210, 152);
     }
 
@@ -960,11 +960,11 @@ window.VCardApp.CardCanvasExporter = (function () {
     const name = getFullName(state);
     ctx.textAlign = 'left';
     ctx.fillStyle = '#fafafa';
-    fitText(ctx, name, 280, 30, 18, (s) => `800 ${s}px 'Syne', sans-serif`);
+    fitText(ctx, name, 280, 30, 18, (s) => `800 ${s}px 'Fraunces', serif`);
     ctx.fillText(name, 56, 230);
     if (state.jobTitle) {
       ctx.fillStyle = '#fef08a';
-      ctx.font = "500 15px 'DM Sans', sans-serif";
+      ctx.font = "500 15px 'Figtree', sans-serif";
       const title = state.jobTitle.length > 34 ? `${state.jobTitle.slice(0, 32)}…` : state.jobTitle;
       ctx.fillText(title, 56, 260);
     }

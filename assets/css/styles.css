@@ -623,13 +623,11 @@ html.dark .qr-frame {
   margin-inline: auto;
   width: 100%;
   max-width: 20rem;
-  padding: 0.7rem;
-  border-radius: 1.65rem;
-  background:
-    linear-gradient(160deg, color-mix(in srgb, var(--ink) 88%, #444) 0%, color-mix(in srgb, var(--ink) 96%, #000) 100%);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.12) inset,
-    0 28px 50px -28px rgba(20, 18, 15, 0.55);
+  padding: 0.55rem;
+  border-radius: 0.75rem;
+  background: var(--ink);
+  border: 1px solid color-mix(in srgb, var(--ink) 80%, #fff);
+  box-shadow: none;
 }
 
 @media (min-width: 1024px) {
@@ -647,7 +645,7 @@ html.dark .qr-frame {
 }
 
 .phone-screen {
-  border-radius: 1.15rem;
+  border-radius: 0.45rem;
   overflow: hidden;
   background: var(--surface-elevated);
   max-height: 34rem;
@@ -665,10 +663,10 @@ html.dark .qr-frame {
   align-items: center;
   gap: 0.35rem;
   min-height: 1.5rem;
-  padding: 0.15rem 0.55rem;
-  border-radius: 999px;
+  padding: 0.15rem 0.45rem;
+  border-radius: 0.25rem;
   border: 1px solid var(--line);
-  background: color-mix(in srgb, var(--surface-elevated) 80%, transparent);
+  background: transparent;
   font-family: var(--font-mono);
   font-size: 0.6875rem;
   color: var(--ink-muted);
