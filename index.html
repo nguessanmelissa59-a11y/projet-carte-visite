@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="fr" class="scroll-smooth">
+<html lang="fr" class="scroll-smooth" data-card-theme="obsidian">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
   <title>vCard Studio — Édition & QR Code Dynamique</title>
   <meta name="description" content="Générateur de carte de visite numérique vCard 3.0 et QR Code dynamique." />
-  <meta name="theme-color" content="#18181b" />
+  <meta name="theme-color" content="#14120f" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=IBM+Plex+Mono:wght@400;500&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -18,9 +18,9 @@
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
-            display: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
-            mono: ['JetBrains Mono', 'ui-monospace', 'monospace']
+            sans: ['DM Sans', 'system-ui', 'sans-serif'],
+            display: ['Syne', 'DM Sans', 'sans-serif'],
+            mono: ['IBM Plex Mono', 'ui-monospace', 'monospace']
           }
         }
       }
@@ -33,32 +33,33 @@
 
   <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
-<body class="bg-[#F7F7F5] text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 min-h-screen transition-colors duration-200 antialiased selection:bg-zinc-900 selection:text-white dark:selection:bg-zinc-100 dark:selection:text-zinc-900">
+<body class="app-shell antialiased selection:bg-zinc-900 selection:text-white dark:selection:bg-zinc-100 dark:selection:text-zinc-900">
 
-  <!-- NAVIGATION BAR -->
-  <header id="editorHeader" class="sticky top-0 z-40 bg-white/95 dark:bg-zinc-950/95 backdrop-blur border-b border-zinc-200 dark:border-zinc-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4">
-      <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center">
+  <header id="editorHeader" class="studio-header sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="brand-mark shrink-0" aria-hidden="true">
           <i data-lucide="qr-code" class="w-4 h-4"></i>
         </div>
-        <div class="flex items-center gap-2.5">
-          <span class="font-display font-bold text-base tracking-tight">vCard Studio</span>
-          <span id="backendStatusLabel" class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">Initialisation...</span>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="font-display font-bold text-base tracking-tight">vCard Studio</span>
+            <span id="backendStatusLabel" class="status-chip" data-state="offline">Initialisation...</span>
+          </div>
         </div>
       </div>
 
-      <div class="flex items-center gap-2">
-        <button id="btnTogglePreviewMode" type="button" class="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-medium bg-zinc-100 hover:bg-zinc-200/80 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 border border-zinc-200/80 dark:border-zinc-800 transition-colors">
+      <div class="flex items-center gap-2 shrink-0">
+        <button id="btnTogglePreviewMode" type="button" class="btn btn-secondary h-9 min-h-9 px-3 text-xs">
           <i data-lucide="smartphone" class="w-3.5 h-3.5"></i>
-          <span>Vue Scan</span>
+          <span class="hidden sm:inline">Vue Scan</span>
         </button>
 
-        <button id="btnFillDemo" type="button" class="hidden md:inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors">
+        <button id="btnFillDemo" type="button" class="btn btn-ghost hidden md:inline-flex text-xs">
           <span>Données par défaut</span>
         </button>
 
-        <button id="btnThemeToggle" type="button" aria-label="Basculer le thème" class="h-9 w-9 inline-flex items-center justify-center rounded-lg bg-zinc-100 hover:bg-zinc-200/80 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200/80 dark:border-zinc-800 transition-colors">
+        <button id="btnThemeToggle" type="button" aria-label="Basculer le thème" class="btn btn-secondary h-9 w-9 min-h-9 p-0">
           <i data-lucide="moon" class="w-3.5 h-3.5 dark:hidden"></i>
           <i data-lucide="sun" class="w-3.5 h-3.5 hidden dark:block"></i>
         </button>
@@ -66,25 +67,35 @@
     </div>
   </header>
 
-  <!-- ===================================================================== -->
-  <!-- VIEW 1: EDITOR & QR STUDIO                                            -->
-  <!-- ===================================================================== -->
-  <main id="editorView" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+  <main id="editorView" class="studio-main max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <div class="panel-intro reveal mb-6 sm:mb-8">
+      <div>
+        <p class="eyebrow">Studio contact</p>
+        <h1 class="font-display text-2xl sm:text-3xl font-bold tracking-tight m-0">
+          Concevez une fiche nette, scannable, à jour.
+        </h1>
+        <p class="text-sm sm:text-[0.95rem] text-[color:var(--ink-muted)] mt-2 max-w-xl m-0">
+          Identité, coordonnées et QR dynamique synchronisés. L’aperçu mobile suit chaque modification.
+        </p>
+      </div>
+    </div>
 
-      <!-- LEFT COLUMN: FORM (7 cols) -->
-      <section class="lg:col-span-7">
-        <div class="bg-white dark:bg-zinc-900 rounded-xl p-6 sm:p-8 border border-zinc-200 dark:border-zinc-800">
-          <div class="flex flex-wrap items-center justify-between gap-2 pb-5 mb-6 border-b border-zinc-200/80 dark:border-zinc-800">
+    <div class="studio-grid grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+
+      <section class="lg:col-span-7 reveal reveal-delay-1">
+        <div class="panel panel-pad p-5 sm:p-7 md:p-8">
+          <div class="flex flex-wrap items-start justify-between gap-3 pb-5 mb-6 border-b border-[color:var(--line)]">
             <div>
-              <h1 class="font-display text-lg font-bold tracking-tight text-zinc-900 dark:text-zinc-50">Configuration de la fiche contact</h1>
-              <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Les modifications mettent à jour la base SQLite et le QR Code en temps réel.</p>
+              <h2 class="font-display text-lg font-bold tracking-tight m-0">Configuration</h2>
+              <p class="text-sm text-[color:var(--ink-muted)] mt-1 m-0">
+                Les changements mettent à jour SQLite et le QR en temps réel.
+              </p>
             </div>
-            <div class="flex items-center gap-3">
-              <button id="btnClearForm" type="button" class="text-xs font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors">
+            <div class="flex items-center gap-2">
+              <button id="btnClearForm" type="button" class="btn btn-ghost text-xs">
                 Vider
               </button>
-              <button id="btnSaveServer" type="button" class="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-medium bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-900 transition-colors">
+              <button id="btnSaveServer" type="button" class="btn btn-primary h-9 min-h-9 px-3 text-xs">
                 <i data-lucide="save" class="w-3.5 h-3.5"></i>
                 <span>Enregistrer</span>
               </button>
@@ -92,201 +103,198 @@
           </div>
 
           <form id="vcardForm" class="space-y-6" onsubmit="return false;">
-            <!-- Short Slug & Theme Row -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 p-4 rounded-lg bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200/80 dark:border-zinc-800">
+            <div class="inset-block grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
-                <div class="flex items-center justify-between mb-1">
-                  <label for="slug" class="block text-xs font-medium text-zinc-700 dark:text-zinc-300">Identifiant court du QR Code (Slug)</label>
-                  <span id="scanCounterWrap" class="hidden text-[11px] font-mono text-zinc-500 dark:text-zinc-400">
-                    Scans : <strong id="scanCountValue" class="text-zinc-900 dark:text-zinc-100">0</strong>
+                <div class="flex items-center justify-between mb-1.5 gap-2">
+                  <label for="slug" class="block text-xs font-medium text-[color:var(--ink-muted)]">Identifiant court (slug)</label>
+                  <span id="scanCounterWrap" class="hidden text-[11px] font-mono text-[color:var(--ink-muted)]">
+                    Scans : <strong id="scanCountValue" class="text-[color:var(--ink)]">0</strong>
                   </span>
                 </div>
-                <div class="flex items-center">
-                  <span class="inline-flex items-center px-2.5 h-[38px] rounded-l-lg border border-r-0 border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 font-mono text-xs">/c/</span>
-                  <input id="slug" name="slug" type="text" placeholder="koffi-kouadio" class="form-input rounded-l-none font-mono text-xs" />
+                <div class="flex items-stretch">
+                  <span class="slug-prefix">/c/</span>
+                  <input id="slug" name="slug" type="text" placeholder="koffi-kouadio" class="form-input rounded-l-none font-mono text-sm" />
                 </div>
-                <p class="text-[11px] text-zinc-400 dark:text-zinc-500 mt-1">Garde le QR Code compact et modifiable après impression.</p>
+                <p class="text-xs text-[color:var(--ink-muted)] mt-1.5 m-0">Garde le QR compact et modifiable après impression.</p>
               </div>
 
-              <!-- Mineral Palette Picker -->
               <div>
-                <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-2">Teinte éditoriale</label>
-                <div id="themeColorPicker" class="flex items-center gap-2.5 pt-0.5">
-                  <button type="button" data-theme="obsidian" class="theme-swatch w-7 h-7 rounded-md bg-zinc-900 border border-zinc-700 transition" title="Noir Obsidienne"></button>
-                  <button type="button" data-theme="forest" class="theme-swatch w-7 h-7 rounded-md bg-[#064e3b] transition" title="Vert Foret"></button>
-                  <button type="button" data-theme="cobalt" class="theme-swatch w-7 h-7 rounded-md bg-[#1e3a8a] transition" title="Bleu Cobalt"></button>
-                  <button type="button" data-theme="bronze" class="theme-swatch w-7 h-7 rounded-md bg-[#78350f] transition" title="Terre & Bronze"></button>
-                  <button type="button" data-theme="bordeaux" class="theme-swatch w-7 h-7 rounded-md bg-[#7f1d1d] transition" title="Bordeaux"></button>
+                <label class="block text-xs font-medium text-[color:var(--ink-muted)] mb-2">Teinte éditoriale</label>
+                <div id="themeColorPicker" class="flex items-center gap-2.5 pt-1 flex-wrap">
+                  <button type="button" data-theme="obsidian" class="theme-swatch bg-zinc-900" title="Noir Obsidienne" aria-label="Thème obsidienne"></button>
+                  <button type="button" data-theme="forest" class="theme-swatch bg-[#064e3b]" title="Vert Foret" aria-label="Thème forêt"></button>
+                  <button type="button" data-theme="cobalt" class="theme-swatch bg-[#1e3a8a]" title="Bleu Cobalt" aria-label="Thème cobalt"></button>
+                  <button type="button" data-theme="bronze" class="theme-swatch bg-[#78350f]" title="Terre & Bronze" aria-label="Thème bronze"></button>
+                  <button type="button" data-theme="bordeaux" class="theme-swatch bg-[#7f1d1d]" title="Bordeaux" aria-label="Thème bordeaux"></button>
                 </div>
               </div>
             </div>
 
-            <!-- Photo Row -->
-            <div class="p-4 rounded-lg bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200/80 dark:border-zinc-800">
-              <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-2">Photographie / Portrait (Optionnel)</label>
+            <div class="inset-block">
+              <label class="block text-xs font-medium text-[color:var(--ink-muted)] mb-2">Photographie / Portrait</label>
               <div class="flex items-center gap-3.5">
-                <div id="editorAvatarPreview" class="w-12 h-12 rounded-lg bg-zinc-900 dark:bg-zinc-800 text-white font-display font-semibold text-sm flex items-center justify-center overflow-hidden shrink-0 border border-zinc-200 dark:border-zinc-700">
+                <div id="editorAvatarPreview" class="w-12 h-12 rounded-xl bg-[color:var(--accent)] text-white font-display font-semibold text-sm flex items-center justify-center overflow-hidden shrink-0 border border-[color:var(--line)]">
                   KK
                 </div>
                 <div class="flex-1 min-w-0 flex flex-col sm:flex-row gap-2">
                   <div class="flex items-center gap-1.5 shrink-0">
-                    <label for="photoUpload" class="cursor-pointer inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-medium bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 hover:border-zinc-900 dark:hover:border-zinc-400 transition-colors">
+                    <label for="photoUpload" class="btn btn-secondary h-11 min-h-11 px-3 text-xs cursor-pointer">
                       <i data-lucide="upload" class="w-3.5 h-3.5"></i>
-                      <span>Importer un fichier</span>
+                      <span>Importer</span>
                     </label>
                     <input id="photoUpload" type="file" accept="image/*" class="hidden" />
-                    <button id="btnRemovePhoto" type="button" class="hidden h-9 px-2.5 rounded-lg text-xs text-zinc-500 hover:text-rose-600 border border-zinc-200 dark:border-zinc-800 transition-colors" title="Retirer la photo">
+                    <button id="btnRemovePhoto" type="button" class="hidden btn btn-secondary h-11 w-11 min-h-11 p-0 text-[color:var(--ink-muted)]" title="Retirer la photo" aria-label="Retirer la photo">
                       <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                     </button>
                   </div>
-                  <input id="photoUrl" name="photoUrl" type="url" placeholder="Ou URL directe d'une image (https://...)" class="form-input text-xs h-9" />
+                  <input id="photoUrl" name="photoUrl" type="url" placeholder="Ou URL directe (https://...)" class="form-input text-sm" />
                 </div>
               </div>
             </div>
 
-            <!-- Identity Section -->
             <div class="space-y-3">
-              <h2 class="text-xs font-semibold text-zinc-900 dark:text-zinc-100 border-b border-zinc-100 dark:border-zinc-800/80 pb-1.5">Identité et fonction</h2>
+              <div class="section-label">
+                <span class="idx">01</span>
+                <h2>Identité et fonction</h2>
+              </div>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label for="firstName" class="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">Prénom</label>
+                  <label for="firstName" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">Prénom</label>
                   <input id="firstName" name="firstName" type="text" required placeholder="Koffi" class="form-input" />
                 </div>
                 <div>
-                  <label for="lastName" class="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">Nom</label>
+                  <label for="lastName" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">Nom</label>
                   <input id="lastName" name="lastName" type="text" required placeholder="Kouadio" class="form-input" />
                 </div>
                 <div>
-                  <label for="jobTitle" class="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">Titre professionnel</label>
+                  <label for="jobTitle" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">Titre professionnel</label>
                   <input id="jobTitle" name="jobTitle" type="text" placeholder="Directeur Technique" class="form-input" />
                 </div>
                 <div>
-                  <label for="organization" class="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">Organisation / Entreprise</label>
+                  <label for="organization" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">Organisation</label>
                   <input id="organization" name="organization" type="text" placeholder="NovaTech Africa" class="form-input" />
                 </div>
               </div>
             </div>
 
-            <!-- Contact Info Section -->
             <div class="space-y-3">
-              <h2 class="text-xs font-semibold text-zinc-900 dark:text-zinc-100 border-b border-zinc-100 dark:border-zinc-800/80 pb-1.5">Coordonnées téléphoniques et courriel</h2>
+              <div class="section-label">
+                <span class="idx">02</span>
+                <h2>Coordonnées</h2>
+              </div>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label for="phone" class="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">Téléphone (format international)</label>
-                  <input id="phone" name="phone" type="tel" placeholder="+225 07 08 09 10 11" class="form-input font-mono text-xs" />
+                  <label for="phone" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">Téléphone</label>
+                  <input id="phone" name="phone" type="tel" placeholder="+225 07 08 09 10 11" class="form-input font-mono text-sm" />
                 </div>
                 <div>
-                  <label for="whatsapp" class="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">WhatsApp</label>
-                  <input id="whatsapp" name="whatsapp" type="tel" placeholder="+225 07 08 09 10 11" class="form-input font-mono text-xs" />
+                  <label for="whatsapp" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">WhatsApp</label>
+                  <input id="whatsapp" name="whatsapp" type="tel" placeholder="+225 07 08 09 10 11" class="form-input font-mono text-sm" />
                 </div>
                 <div>
-                  <label for="email" class="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">Adresse courriel</label>
+                  <label for="email" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">Courriel</label>
                   <input id="email" name="email" type="email" placeholder="nom@entreprise.com" class="form-input" />
                 </div>
                 <div>
-                  <label for="location" class="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">Localisation</label>
+                  <label for="location" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">Localisation</label>
                   <input id="location" name="location" type="text" placeholder="Abidjan, Côte d'Ivoire" class="form-input" />
                 </div>
               </div>
             </div>
 
-            <!-- Links & Bio Section -->
             <div class="space-y-3">
-              <h2 class="text-xs font-semibold text-zinc-900 dark:text-zinc-100 border-b border-zinc-100 dark:border-zinc-800/80 pb-1.5">Liens externes et note</h2>
+              <div class="section-label">
+                <span class="idx">03</span>
+                <h2>Liens et note</h2>
+              </div>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label for="linkedinUrl" class="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">Profil LinkedIn</label>
+                  <label for="linkedinUrl" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">Profil LinkedIn</label>
                   <input id="linkedinUrl" name="linkedinUrl" type="url" placeholder="https://linkedin.com/in/..." class="form-input" />
                 </div>
                 <div>
-                  <label for="portfolioUrl" class="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">Site web / Portfolio</label>
+                  <label for="portfolioUrl" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">Site web / Portfolio</label>
                   <input id="portfolioUrl" name="portfolioUrl" type="url" placeholder="https://..." class="form-input" />
                 </div>
                 <div class="sm:col-span-2">
-                  <label for="bio" class="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">Note de contact (intégrée au fichier .vcf)</label>
+                  <label for="bio" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">Note de contact</label>
                   <textarea id="bio" name="bio" rows="2" maxlength="160" placeholder="Domaine d'expertise ou informations complémentaires." class="form-input resize-none"></textarea>
                 </div>
               </div>
             </div>
 
-            <!-- Auto-download option -->
-            <div class="p-3.5 rounded-lg bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200/80 dark:border-zinc-800 flex items-center justify-between gap-4">
+            <div class="inset-block flex items-center justify-between gap-4">
               <div>
-                <label for="autoDownload" class="text-xs font-semibold text-zinc-900 dark:text-zinc-100 cursor-pointer">Import automatique du fichier .vcf à l'ouverture</label>
-                <p class="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">Déclenche le téléchargement de la fiche contact 1 seconde après le scan du QR Code.</p>
+                <label for="autoDownload" class="text-sm font-semibold cursor-pointer">Import automatique du .vcf</label>
+                <p class="text-xs text-[color:var(--ink-muted)] mt-0.5 m-0">Téléchargement 1 seconde après le scan.</p>
               </div>
-              <input id="autoDownload" name="autoDownload" type="checkbox" checked class="w-4 h-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900 cursor-pointer shrink-0" />
+              <input id="autoDownload" name="autoDownload" type="checkbox" checked class="w-5 h-5 rounded border-[color:var(--line)] text-[color:var(--accent)] focus:ring-[color:var(--accent)] cursor-pointer shrink-0" />
             </div>
           </form>
         </div>
       </section>
 
-      <!-- RIGHT COLUMN: QR STUDIO & LIVE PREVIEW (5 cols) -->
       <aside class="lg:col-span-5 space-y-6 lg:sticky lg:top-20">
 
-        <!-- QR Code Module -->
-        <div class="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-zinc-200 dark:border-zinc-800">
-          <div class="flex items-center justify-between gap-2 mb-4">
+        <div class="panel panel-pad p-5 sm:p-6 reveal reveal-delay-2">
+          <div class="flex flex-wrap items-start justify-between gap-3 mb-4">
             <div>
-              <div class="flex items-center gap-2">
-                <h2 class="font-display font-bold text-sm text-zinc-900 dark:text-zinc-50">QR Code</h2>
-                <span id="qrStatusBadge" class="px-2 py-0.5 text-[11px] rounded font-mono bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">Actif</span>
+              <div class="flex items-center gap-2 flex-wrap">
+                <h2 class="font-display font-bold text-base m-0 tracking-tight">QR Code</h2>
+                <span id="qrStatusBadge" class="status-chip">Actif</span>
               </div>
-              <p class="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">Compatible lecture directe iOS et Android</p>
+              <p class="text-xs text-[color:var(--ink-muted)] mt-1 m-0">Lecture directe iOS et Android</p>
             </div>
 
-            <div class="inline-flex rounded-md p-0.5 bg-zinc-100 dark:bg-zinc-800 text-xs font-medium border border-zinc-200/70 dark:border-zinc-700">
-              <button type="button" id="qrModeUrl" class="px-2.5 py-1 rounded bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-sm transition">Lien Court</button>
-              <button type="button" id="qrModeVcard" class="px-2.5 py-1 rounded text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition">vCard Hors-ligne</button>
+            <div class="mode-toggle" role="group" aria-label="Mode QR">
+              <button type="button" id="qrModeUrl" class="is-active">Lien court</button>
+              <button type="button" id="qrModeVcard">vCard hors-ligne</button>
             </div>
           </div>
 
-          <div class="flex flex-col sm:flex-row items-center gap-5">
-            <div class="p-3 bg-white rounded-lg border border-zinc-200 shrink-0 flex items-center justify-center">
-              <canvas id="qrCanvas" width="200" height="200" class="w-40 h-40"></canvas>
+          <div class="qr-stage">
+            <div class="qr-frame">
+              <canvas id="qrCanvas" width="200" height="200" class="w-40 h-40 block"></canvas>
             </div>
 
-            <div class="flex-1 w-full space-y-2">
-              <button id="btnDownloadCardPng" type="button" class="w-full h-10 px-3.5 rounded-lg font-medium text-xs bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-900 transition-colors flex items-center justify-center gap-2">
-                <i data-lucide="credit-card" class="w-3.5 h-3.5"></i>
-                <span>Télécharger la carte de visite complète</span>
+            <div class="w-full space-y-2">
+              <button id="btnDownloadQrPng" type="button" class="btn btn-primary w-full text-xs sm:text-sm">
+                <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                <span>Télécharger PNG</span>
               </button>
 
-              <button id="btnDownloadQrPng" type="button" class="w-full h-9 px-3.5 rounded-lg font-medium text-xs bg-zinc-100 hover:bg-zinc-200/80 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 transition-colors flex items-center justify-center gap-2">
-                <i data-lucide="qr-code" class="w-3.5 h-3.5"></i>
-                <span>Télécharger le QR Code seul</span>
-              </button>
-
-              <button id="btnCopyLink" type="button" class="w-full h-9 px-3.5 rounded-lg font-medium text-xs border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800/60 text-zinc-700 dark:text-zinc-300 transition-colors flex items-center justify-center gap-2">
+              <button id="btnCopyLink" type="button" class="btn btn-secondary w-full text-xs sm:text-sm">
                 <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                <span id="copyLinkText">Copier le lien du profil</span>
+                <span id="copyLinkText">Copier le lien</span>
               </button>
 
-              <button id="btnTestVcfEditor" type="button" class="w-full h-9 px-3.5 rounded-lg font-medium text-xs border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 text-zinc-600 dark:text-zinc-400 transition-colors flex items-center justify-center gap-2">
+              <button id="btnTestVcfEditor" type="button" class="btn btn-secondary w-full text-xs sm:text-sm">
                 <i data-lucide="file-down" class="w-3.5 h-3.5"></i>
-                <span>Exporter le fichier .vcf</span>
+                <span>Exporter .vcf</span>
               </button>
             </div>
           </div>
 
-          <div class="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-2 text-[11px] font-mono text-zinc-400">
+          <div class="mt-4 pt-3 border-t border-[color:var(--line)] flex items-center justify-between gap-2 text-[11px] font-mono text-[color:var(--ink-muted)]">
             <span class="truncate" id="generatedUrlDisplay">...</span>
-            <span id="payloadSizeDisplay" class="shrink-0 tabular-nums px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">0 octets</span>
+            <span id="payloadSizeDisplay" class="shrink-0 tabular-nums px-1.5 py-0.5 rounded status-chip">0 octets</span>
           </div>
         </div>
 
-        <!-- Live Mobile Frame -->
-        <div class="bg-white dark:bg-zinc-900 rounded-xl p-5 border border-zinc-200 dark:border-zinc-800">
-          <div class="flex items-center justify-between mb-3">
-            <span class="text-xs font-medium text-zinc-500 dark:text-zinc-400">Aperçu de la page de profil</span>
-            <button id="btnOpenFullPreview" type="button" class="text-xs font-medium text-zinc-800 dark:text-zinc-200 hover:underline flex items-center gap-1">
+        <div class="panel panel-pad p-5 sm:p-6 reveal reveal-delay-3">
+          <div class="flex items-center justify-between mb-4 gap-2">
+            <span class="text-xs font-medium text-[color:var(--ink-muted)]">Aperçu profil</span>
+            <button id="btnOpenFullPreview" type="button" class="btn btn-ghost text-xs min-h-9">
               <span>Plein écran</span>
               <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
             </button>
           </div>
 
-          <div class="mx-auto max-w-[340px] rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-sm bg-white dark:bg-zinc-900 max-h-[540px] overflow-y-auto custom-scrollbar">
-            <div id="mockupProfileMount"></div>
+          <div class="phone-shell">
+            <div class="phone-notch" aria-hidden="true"></div>
+            <div class="phone-screen custom-scrollbar">
+              <div id="mockupProfileMount"></div>
+            </div>
           </div>
         </div>
 
@@ -294,36 +302,29 @@
     </div>
   </main>
 
-  <!-- ===================================================================== -->
-  <!-- VIEW 2: PUBLIC PROFILE VIEW (SCAN VIEW)                               -->
-  <!-- ===================================================================== -->
-  <section id="publicProfileView" class="hidden min-h-screen flex flex-col justify-between py-6 px-4 sm:py-12 bg-[#F7F7F5] dark:bg-zinc-950">
-    <div class="max-w-md w-full mx-auto mb-3 flex items-center justify-between">
-      <button id="btnBackToEditor" type="button" class="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-medium bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 transition-colors">
+  <section id="publicProfileView" class="hidden public-stage">
+    <div class="max-w-md w-full mx-auto mb-3 flex items-center justify-between gap-2">
+      <button id="btnBackToEditor" type="button" class="btn btn-secondary h-9 min-h-9 px-3 text-xs">
         <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
         <span>Éditeur</span>
       </button>
 
       <div class="flex items-center gap-1.5">
-        <button id="btnDownloadCardPublic" type="button" class="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-medium bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 transition-colors">
-          <i data-lucide="credit-card" class="w-3.5 h-3.5"></i>
-          <span>Carte PNG</span>
-        </button>
-        <button id="btnSharePublic" type="button" class="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-medium bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300">
+        <button id="btnSharePublic" type="button" class="btn btn-secondary h-9 min-h-9 px-3 text-xs">
           <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
           <span>Partager</span>
         </button>
-        <button id="btnThemeTogglePublic" type="button" aria-label="Thème" class="h-8 w-8 inline-flex items-center justify-center rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300">
+        <button id="btnThemeTogglePublic" type="button" aria-label="Thème" class="btn btn-secondary h-9 w-9 min-h-9 p-0">
           <i data-lucide="moon" class="w-3.5 h-3.5 dark:hidden"></i>
           <i data-lucide="sun" class="w-3.5 h-3.5 hidden dark:block"></i>
         </button>
       </div>
     </div>
 
-    <div id="publicProfileMount" class="max-w-md w-full mx-auto rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-sm bg-white dark:bg-zinc-900"></div>
+    <div id="publicProfileMount" class="max-w-md w-full mx-auto rounded-2xl overflow-hidden panel"></div>
 
     <footer class="max-w-md w-full mx-auto mt-6 text-center">
-      <p class="text-[11px] text-zinc-400 dark:text-zinc-600 font-mono">
+      <p class="text-[11px] text-[color:var(--ink-muted)] font-mono m-0">
         Format standard vCard 3.0 (RFC 2426)
       </p>
     </footer>
@@ -338,7 +339,6 @@
   <script src="src/services/api.js"></script>
   <script src="src/ui/qr-view.js"></script>
   <script src="src/ui/profile-card.js"></script>
-  <script src="src/ui/card-canvas.js"></script>
   <script src="src/main.js"></script>
 </body>
 </html>
