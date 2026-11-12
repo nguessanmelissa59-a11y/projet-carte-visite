@@ -247,12 +247,17 @@
             </div>
 
             <div class="flex-1 w-full space-y-2">
-              <button id="btnDownloadQrPng" type="button" class="w-full h-10 px-3.5 rounded-lg font-medium text-xs bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-900 transition-colors flex items-center justify-center gap-2">
-                <i data-lucide="download" class="w-3.5 h-3.5"></i>
-                <span>Télécharger le QR Code (PNG)</span>
+              <button id="btnDownloadCardPng" type="button" class="w-full h-10 px-3.5 rounded-lg font-medium text-xs bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-900 transition-colors flex items-center justify-center gap-2">
+                <i data-lucide="credit-card" class="w-3.5 h-3.5"></i>
+                <span>Télécharger la carte de visite complète</span>
               </button>
 
-              <button id="btnCopyLink" type="button" class="w-full h-10 px-3.5 rounded-lg font-medium text-xs bg-zinc-100 hover:bg-zinc-200/80 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 transition-colors flex items-center justify-center gap-2">
+              <button id="btnDownloadQrPng" type="button" class="w-full h-9 px-3.5 rounded-lg font-medium text-xs bg-zinc-100 hover:bg-zinc-200/80 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 transition-colors flex items-center justify-center gap-2">
+                <i data-lucide="qr-code" class="w-3.5 h-3.5"></i>
+                <span>Télécharger le QR Code seul</span>
+              </button>
+
+              <button id="btnCopyLink" type="button" class="w-full h-9 px-3.5 rounded-lg font-medium text-xs border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800/60 text-zinc-700 dark:text-zinc-300 transition-colors flex items-center justify-center gap-2">
                 <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                 <span id="copyLinkText">Copier le lien du profil</span>
               </button>
@@ -300,6 +305,10 @@
       </button>
 
       <div class="flex items-center gap-1.5">
+        <button id="btnDownloadCardPublic" type="button" class="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-medium bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 transition-colors">
+          <i data-lucide="credit-card" class="w-3.5 h-3.5"></i>
+          <span>Carte PNG</span>
+        </button>
         <button id="btnSharePublic" type="button" class="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-medium bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300">
           <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
           <span>Partager</span>
