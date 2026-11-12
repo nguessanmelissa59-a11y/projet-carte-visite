@@ -1,37 +1,13 @@
 const { getLanIpAddress, PORT } = require('../config/env');
-const { getCardBySlug, incrementScans, upsertCard, listCards } = require('../db/repository');
+const {
+  getCardBySlug,
+  incrementScans,
+  upsertCard,
+  listCards
+} = require('../db/repository');
 const { buildVCard30 } = require('../services/vcard-builder');
-
-function sendJson(res, statusCode, payload) {
-  const body = JSON.stringify(payload);
-  res.writeHead(statusCode, {
-    'Content-Type': 'application/json; charset=utf-8',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type'
-  });
-  res.end(body);
-}
-
-function readJsonBody(req) {
-  return new Promise((resolve, reject) => {
-    let raw = '';
-    req.on('data', (chunk) => {
-      raw += chunk;
-      if (raw.length > 2 * 1024 * 1024) {
-        reject(new Error('Payload trop volumineux'));
-      }
-    });
-    req.on('end', () => {
-      try {
-        resolve(raw ? JSON.parse(raw) : {});
-      } catch (err) {
-        reject(err);
-      }
-    });
-    req.on('error', reject);
-  });
-}
+const { sendJson, readJsonBody } = require('../http/json');
+const { resolveSessionFromRequest } = require('../services/session-service');
 
 function handleGetServerInfo(req, res) {
   const lanIp = getLanIpAddress();
@@ -39,12 +15,20 @@ function handleGetServerInfo(req, res) {
     status: 'ok',
     lanIp,
     port: PORT,
-    lanOrigin: `http://${lanIp}:${PORT}`
+    lanOrigin: `http://${lanIp}:${PORT}`,
+    auth: {
+      otp: true,
+      sessionCookie: true
+    }
   });
 }
 
 function handleListCards(req, res) {
-  const cards = listCards();
+  const session = resolveSessionFromRequest(req);
+  if (!session) {
+    return sendJson(res, 401, { error: 'Authentification requise' });
+  }
+  const cards = listCards().filter((card) => card.userId === session.userId);
   sendJson(res, 200, { cards });
 }
 
@@ -58,8 +42,21 @@ function handleGetCard(req, res, slug, isScanEvent) {
 
 async function handleSaveCard(req, res) {
   try {
+    const session = resolveSessionFromRequest(req);
+    if (!session) {
+      return sendJson(res, 401, { error: 'Connectez-vous pour enregistrer votre carte' });
+    }
+
     const payload = await readJsonBody(req);
-    const saved = upsertCard(payload);
+    const existing = getCardBySlug(payload.slug || `${payload.firstName}-${payload.lastName}`);
+
+    if (existing && existing.userId && existing.userId !== session.userId) {
+      return sendJson(res, 403, {
+        error: 'Cette carte appartient à un autre compte'
+      });
+    }
+
+    const saved = upsertCard(payload, { userId: session.userId });
     sendJson(res, 200, { card: saved });
   } catch (err) {
     sendJson(res, 400, { error: err.message || 'Requete invalide' });
@@ -95,4 +92,3 @@ module.exports = {
   handleSaveCard,
   handleDownloadVcf
 };
-
