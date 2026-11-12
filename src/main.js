@@ -170,12 +170,12 @@
       ProfileCardUI.showToast('Générateur de carte non disponible');
       return;
     }
-    ProfileCardUI.showToast('Génération de la carte de visite virtuelle...');
+    ProfileCardUI.showToast('Préparation du PDF imprimable (85×55 mm)...');
     exporter.downloadCardImage(state, qrMode, (ok, fileName) => {
       if (ok) {
-        ProfileCardUI.showToast(`Carte virtuelle téléchargée (${fileName})`);
+        ProfileCardUI.showToast(`PDF imprimable prêt (${fileName})`);
       } else {
-        ProfileCardUI.showToast('Erreur lors de la génération de la carte');
+        ProfileCardUI.showToast('Erreur lors de la génération du PDF imprimable');
       }
     });
   }
