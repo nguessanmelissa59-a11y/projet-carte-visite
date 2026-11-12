@@ -1,140 +1,197 @@
 ---
 name: form-fields-security
 description: >-
-  Audit and harden form field security (validation, sanitization, XSS, URL
-  schemes, file upload, slug, length limits, CSRF/CORS). Use when adding or
-  changing form inputs, validating payloads, reviewing card/profile fields,
-  photo upload/URL, email/tel/url inputs, or when the user mentions securite
-  formulaire, validation champs, XSS, sanitize, or input hardening.
+  Audit et durcissement defensif de la securite applicative EVC Melissa :
+  validation/sanitization des champs formulaire et auth, XSS au rendu,
+  schemes URL, upload photo/logo, slug, enum theme/template, sessions OTP
+  et cookies, controle d'acces cartes, CORS, secrets, logs. A utiliser
+  quand on ajoute ou modifie des inputs, payloads API, rendu fiche,
+  auth/OTP/session, upload, ou quand l'utilisateur parle de securite
+  formulaire, XSS, sanitize, CSRF/CORS, hardening, ou validation champs.
 ---
 
-# Securite des champs de formulaire
+# Securite des champs et surface applicative
 
-Skill defensif uniquement. Pas d'exploits, pas de PoC offensifs, pas de payloads
-d'attaque. Objectif : valider, sanitizer, limiter et echapper correctement.
+Skill **defensif uniquement**. Pas d'exploits, pas de PoC offensifs, pas de
+payloads d'attaque. Objectif : valider a l'entree, controler l'acces,
+echapper a la sortie, limiter le transport.
 
-Contexte projet type : formulaire vCard (`#vcardForm`), API JSON
-(`handleSaveCard` / `upsertCard`), rendu DOM (`profile-card.js`), export `.vcf`.
+Stack cible : HTML/CSS/JS vanilla + API Node (`backend/`) + SQLite.
 
 ## Quand charger ce skill
 
-- Ajout / modification d'un champ dans `index.html`, `FORM_FIELDS`, payload API
-- Validation front ou back manquante / incomplete
-- Affichage de donnees utilisateur (`innerHTML`, attributs HTML, `.vcf`)
-- Upload photo, `photoUrl`, `photoBase64`, liens (`linkedinUrl`, `portfolioUrl`)
-- Audit securite du formulaire ou revue avant merge
+- Ajout / modification d'un champ (`index.html`, `FORM_FIELDS`, payload API)
+- Auth (email, nom, OTP), cookie de session, endpoints proteges
+- Affichage de donnees utilisateur (`innerHTML`, attributs, `.vcf`, canvas)
+- Upload `photo*` / `qrLogo*`, URLs (`linkedinUrl`, `portfolioUrl`, `photoUrl`)
+- CORS, headers, secrets, logs, audit avant merge
+
+## Volets couverts
+
+| Volet | Perimetre | Detail |
+|---|---|---|
+| A. Champs carte | `FORM_FIELDS` + `photoBase64` / `qrLogo*` / `theme` / `cardTemplate` / `autoDownload` | [reference.md](reference.md#a-champs-carte) |
+| B. Champs auth | email, prenom/nom, OTP | [reference.md](reference.md#b-champs-auth) |
+| C. Rendu / export | DOM, toasts, canvas, vCard | [reference.md](reference.md#c-rendu--export) |
+| D. Acces / sessions | cookie `HttpOnly`, ownership carte, lectures publiques | [reference.md](reference.md#d-acces--sessions) |
+| E. Transport / ops | CORS, body size, secrets, logs, erreurs | [reference.md](reference.md#e-transport--ops) |
+
+Lire `reference.md` **apres** le protocole, uniquement pour le volet touche.
 
 ## Protocole (ordre fixe)
 
-1. **Inventorier** les champs (HTML + payload JSON + colonnes DB).
-2. **Classer** chaque champ (voir table ci-dessous).
-3. **Verifier les 4 couches** : HTML / JS client / API serveur / rendu / export.
-4. **Corriger** couche serveur d'abord (jamais se fier au seul front).
-5. **Tester** rejet des entrees invalides + absence de XSS au rendu.
-6. **Rapporter** findings avec severite et preuve courte.
+1. **Inventorier** : HTML + `FORM_FIELDS` / auth forms + payload JSON + colonnes DB.
+2. **Classer** chaque champ (table ci-dessous) et chaque endpoint (public / session).
+3. **Verifier les couches** : HTML UX → JS client → API serveur → persistance → rendu / export.
+4. **Corriger serveur d'abord** (jamais se fier au seul front).
+5. **Durcir acces** : ecritures et listes = session + ownership ; lectures scan/vcf = public volontaire.
+6. **Tester** : rejet des entrees invalides, XSS non executable au rendu, 401/403 corrects.
+7. **Rapporter** findings avec severite et preuve courte.
 
-Details par type de champ : [reference.md](reference.md).
+```text
+Security Progress:
+- [ ] Inventaire champs / endpoints
+- [ ] Validation serveur complete (carte + auth)
+- [ ] Escape HTML + vCard verifies
+- [ ] URL / upload whitelist + limites
+- [ ] Session cookie + ownership verifies
+- [ ] CORS / secrets / logs evalues
+- [ ] Tests rejet + non-regression XSS / 401-403
+```
 
-## Classification des champs (EVC Melissa)
+## Classification rapide — carte
 
-| Champ | Classe | Risques principaux |
+| Champ | Classe | Risques |
 |---|---|---|
-| `slug` | identifiant | path/open redirect, collision, injection URL |
-| `firstName`, `lastName`, `jobTitle`, `organization`, `location` | texte libre | XSS, injection vCard, longueur |
-| `bio` | texte long borne | XSS, longueur, note vCard |
-| `email` | email | XSS via `mailto:`, format |
-| `phone`, `whatsapp` | telephone | XSS via `tel:` / `wa.me`, caracteres |
-| `linkedinUrl`, `portfolioUrl`, `photoUrl` | URL | `javascript:`, XSS attribut, SSRF si fetch serveur |
-| `photoUpload` / `photoBase64` | binaire / data-URI | type MIME, taille, XSS via data URI |
-| `theme` | enum | valeurs hors liste |
+| `slug` | identifiant | path, collision, injection URL |
+| `firstName`, `lastName`, `jobTitle`, `organization`, `location` | texte | XSS, injection vCard, longueur |
+| `bio` | texte borne | XSS, longueur |
+| `email` | email | XSS `mailto:`, format |
+| `phone`, `whatsapp` | telephone | XSS `tel:` / `wa.me` |
+| `linkedinUrl`, `portfolioUrl`, `photoUrl`, `qrLogoUrl` | URL | `javascript:`, XSS attribut, SSRF si fetch serveur |
+| `photoBase64`, `qrLogoBase64` | data-URI | MIME, taille, XSS |
+| `theme`, `cardTemplate` | enum | valeur hors liste |
 | `autoDownload` | booleen | type confusion |
+
+## Classification rapide — auth
+
+| Champ | Classe | Risques |
+|---|---|---|
+| `email` | email | enumeration, format, longueur |
+| `firstName`, `lastName` | texte borne | XSS si rendu profil, injection |
+| `code` (OTP) | OTP 6 chiffres | brute-force, fuite via `AUTH_EXPOSE_OTP` |
+
+## Endpoints — posture attendue
+
+| Endpoint | Auth | Notes |
+|---|---|---|
+| `GET /api/cards/:slug`, scan, `.vcf` | public | Donnees de fiche volontairement partagees |
+| `GET /api/cards`, `POST` save, profil | session | Ownership obligatoire sur ecriture |
+| Auth request/verify/logout/me | mixte | Rate-limit OTP ; ne jamais exposer OTP en prod |
 
 ## Regles non negociables
 
-1. **Validation serveur obligatoire** sur tout champ persiste. Le HTML
-   (`type`, `maxlength`, `required`) est une aide UX, pas une barriere.
-2. **Whitelist** plutot que blacklist pour : slug, theme, schemes URL, MIME image.
-3. **Echapper au point de sortie** :
-   - HTML / attributs : `escapeHtml` (ou equivalent) avant `innerHTML`
-   - vCard : `escapeValue` (`;`, `,`, `\`, newlines)
-   - Noms de fichiers telecharges : caracteres alphanumeriques uniquement
-4. **URL** : n'autoriser que `https:` (et `http:` en local si justifie). Rejeter
-   `javascript:`, `data:` (sauf photo data-URI controlee), `vbscript:`, `file:`.
-5. **Upload / base64** : limiter taille, verifier prefixe MIME image, ne jamais
-   injecter un data-URI non valide dans le DOM sans controle.
-6. **Longueurs max** explicites cote serveur (alignées sur le HTML).
-7. **Pas de confiance** dans `Access-Control-Allow-Origin: *` pour des ecritures
-   sensibles en prod : documenter le risque et durcir (origine, auth) si expose.
-8. **Ne jamais** loguer le contenu brut de `photoBase64` ni de donnees perso
-   completes dans les logs.
+1. **Validation serveur** sur tout champ persiste. HTML (`type`, `maxlength`) = UX seule.
+2. **Whitelist** pour slug, theme, cardTemplate, schemes URL, MIME image.
+3. **Echapper a la sortie** : `escapeHtml` avant `innerHTML` ; `escapeValue` vCard ; filename alphanumerique.
+4. **URL** : `https:` seul ( `http:` local documente ). Rejeter `javascript:`, `data:` (sauf data-URI image controlee), `vbscript:`, `file:`.
+5. **Upload / base64** : plafond taille + prefixe MIME image ; pas de `data:text/html` ni SVG scriptable si politique stricte.
+6. **Session** : cookie `HttpOnly` + `SameSite=Lax` + `Secure` en prod ; token opaque ; TTL borne.
+7. **Ownership** : refuse d'ecraser une carte d'un autre `userId` (403).
+8. **CORS** : ne pas reflechir n'importe quelle `Origin` avec credentials en exposition non locale ; whitelist explicite.
+9. **Secrets / PII** : jamais logger OTP, token session, `photoBase64` brut, ni dump profil complet.
+10. **Erreurs** : messages generiques cote API publique ; pas de stack en prod.
 
-## Checklist d'audit (copier et cocher)
+## Checklist d'audit (copier)
 
 ```text
-Form fields security
-- [ ] Inventaire champs HTML = FORM_FIELDS = colonnes / payload
-- [ ] Chaque champ a une regle serveur (type, longueur, format)
-- [ ] Slug : whitelist [a-z0-9-], longueur borne, slugify unique
-- [ ] URLs : scheme https (http local documente), pas de javascript:
-- [ ] Email / tel : format + normalisation, pas d'HTML brut dans href
-- [ ] Bio / textes : maxlength serveur + escape au rendu
-- [ ] Theme : enum fermee
-- [ ] Photo : taille max + MIME image + escape attributs
-- [ ] Payload JSON : limite de taille (deja ~2 Mo) coherente avec photo
+Form + app security
+- [ ] Inventaire HTML = FORM_FIELDS / auth = colonnes / payload
+- [ ] Chaque champ persiste a une regle serveur (type, longueur, format)
+- [ ] Slug : [a-z0-9-], longueur borne, slugify unique
+- [ ] URLs : scheme https, pas de javascript:
+- [ ] Email / tel / OTP : format + bornes
+- [ ] Theme + cardTemplate : enums fermees (cles de Config)
+- [ ] Photo / logo : taille + MIME image
 - [ ] Rendu : aucun innerHTML avec donnee brute
-- [ ] Export vcf : escapeValue sur tous les champs texte
-- [ ] Messages d'erreur generiques (pas de fuite interne)
+- [ ] Export vcf : escapeValue partout
+- [ ] Ecritures / listes : session + ownership
+- [ ] Cookie session : HttpOnly, SameSite, Secure prod
+- [ ] OTP : rate-limit + pas d'exposition en prod
+- [ ] CORS credentials : origines explicites hors LAN
+- [ ] Logs sans secrets / base64 / PII complete
 ```
 
 ## Severites
 
 | Severite | Exemple |
 |---|---|
-| CRITICAL | XSS stocke rendu dans la fiche publique ; `javascript:` en lien |
-| HIGH | Pas de validation serveur ; upload sans limite / MIME |
-| MEDIUM | Longueur non bornee ; CORS `*` sur POST ; enum theme ouverte |
-| LOW | `maxlength` HTML seul ; messages d'erreur trop verbeux |
+| CRITICAL | XSS stocke sur fiche publique ; `javascript:` en lien ; vol de session |
+| HIGH | Pas de validation serveur ; upload sans limite/MIME ; ecrasement carte sans ownership |
+| MEDIUM | Enum ouverte ; CORS permissif + credentials ; OTP expose hors dev ; longueur non bornee |
+| LOW | `maxlength` HTML seul ; messages trop verbeux ; Secure cookie manque en staging |
 
-Format de finding :
+Format finding :
 
 ```text
-[SEVERITE] Champ `<id>` — <impact court>
+[SEVERITE] <surface> — <impact court>
 Fichier:ligne — <preuve>
 Correctif: <action concrete>
 ```
 
 ## Workflow de correction
 
-1. Ajouter / renforcer la validation dans le module serveur
-   (`repository.js` / futur `validators.js` ou `services/validation.js`).
-2. Aligner le front (attributs HTML + feedback UX) sans remplacer le serveur.
-3. Garantir l'escape au rendu (`profile-card.js`, canvas, toasts).
-4. Garantir l'escape vCard (`vcard.js` / `vcard-builder.js`).
-5. Ajouter ou mettre a jour des tests de rejet (entrees invalides) et de
-   non-regression XSS (caracteres `<`, `"`, `javascript:`).
+1. Validation centrale : `backend/services/validation.js` (carte) et
+   `backend/services/auth-validation.js` (auth) — pas de logique dupliquee
+   dans controller / repository.
+2. Brancher validation dans `handleSaveCard` / auth controllers **avant** upsert.
+3. Aligner front (attributs HTML + feedback) sans remplacer le serveur.
+4. Garantir escape rendu (`profile-card.js`, `auth-page.js`, canvas, toasts).
+5. Garantir escape vCard (`vcard.js` / `vcard-builder.js`).
+6. Revoir cookie / CORS / ownership si le perimetre touche auth ou API.
+7. Tests de rejet (entrees invalides) + non-regression XSS / 401 / 403.
 
 ## Definition of Done
 
 `Termine` seulement si :
 
 - chaque champ du perimetre a une regle serveur verifiable ;
-- les sorties HTML et vCard sont echappees ;
-- URLs et upload respectent whitelist + limites ;
-- tests du perimetre executes (ou checklist manuelle documentee si pas encore
-  de harness) ;
-- aucun payload offensif livre dans le depot (fixtures de test = chaines inertes
-  type `<script>` en assertion de rejet uniquement).
+- sorties HTML et vCard echappees ;
+- URLs / upload en whitelist + limites ;
+- endpoints d'ecriture / liste proteges session + ownership ;
+- cookie et CORS evalues pour le mode de deploiement vise ;
+- tests du perimetre executes (ou checklist manuelle documentee) ;
+- aucun payload offensif livre (fixtures = chaines inertes en assertion de rejet).
 
 ## Interdits
 
-- Fournir des exploits, PoC d'attaque, ou guides de contournement.
+- Fournir exploits, PoC d'attaque, guides de contournement.
 - Desactiver l'escape "parce que ca casse le design".
 - Valider uniquement cote client.
-- Utiliser `innerHTML` avec des champs utilisateur non echappes.
-- Accepter un scheme URL hors whitelist "pour plus de flexibilite".
+- `innerHTML` avec champs utilisateur non echappes.
+- Accepter un scheme URL hors whitelist.
+- Logger OTP, tokens, ou data-URI completes.
+- Reflechir `Access-Control-Allow-Origin: <Origin>` + credentials sans whitelist.
+
+## Mapping fichiers
+
+| Couche | Fichiers |
+|---|---|
+| HTML | `index.html` |
+| Config | `src/config/constants.js` |
+| Client | `src/main.js`, `src/services/api.js`, `src/ui/auth-page.js` |
+| Rendu | `src/ui/profile-card.js`, `src/ui/card-canvas.js` |
+| vCard client | `src/services/vcard.js` |
+| API | `backend/server.js`, `backend/controllers/*.js` |
+| Auth | `backend/services/auth-validation.js`, `otp-service.js`, `session-service.js` |
+| Persistance | `backend/db/repository.js`, `auth-repository.js` |
+| vCard serveur | `backend/services/vcard-builder.js` |
+| Validation carte (cible) | `backend/services/validation.js` |
+| Env | `backend/config/env.js` |
 
 ## Ressources
 
-- Regles detaillees par type : [reference.md](reference.md)
-- Design UI des champs : skill `frontend-editorial-design` (hors securite)
-- Architecture dossiers : skill `clean-architecture-standards`
+- Regles detaillees : [reference.md](reference.md)
+- UI des champs : skill `frontend-editorial-design` (hors securite)
+- Architecture : skill `clean-architecture-standards`
+- Cloture tests : skill `test-after-feature` / `run-project-tests`
