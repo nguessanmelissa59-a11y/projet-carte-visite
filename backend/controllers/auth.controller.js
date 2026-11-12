@@ -80,6 +80,7 @@ async function handleRegister(req, res) {
 
     return sendJson(res, 200, {
       ok: true,
+      otpIssued: true,
       message: 'Code OTP envoyé. Vérifiez votre e-mail (ou la console serveur en local).',
       email: otp.email,
       purpose: 'register',

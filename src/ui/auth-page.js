@@ -83,7 +83,7 @@
         const email = document.getElementById('loginEmail').value.trim();
         const data = await ApiService.login({ email });
         pending = { email: data.email || email, purpose: 'login' };
-        if (data.devOtp || data.expiresInSec) {
+        if (data.otpIssued) {
           revealOtpStep(data);
         }
         setAuthMessage(data.message || 'Si un compte existe, un code a été préparé.');
@@ -185,7 +185,7 @@
             <strong class="block truncate">${escapeHtml(title)}</strong>
             <span class="text-xs font-mono text-[color:var(--ink-muted)]">/c/${escapeHtml(card.slug)}</span>
           </div>
-          <a class="btn btn-ghost h-11 min-h-11 px-3 text-xs no-underline" href="/?id=${encodeURIComponent(card.slug)}">
+          <a class="btn btn-ghost h-11 min-h-11 px-3 text-xs no-underline" href="/?edit=${encodeURIComponent(card.slug)}">
             Modifier
           </a>
         `;
