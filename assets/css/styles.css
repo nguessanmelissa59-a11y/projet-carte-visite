@@ -805,9 +805,9 @@ html.dark .qr-frame {
   width: 100%;
   max-width: 22rem;
   padding: 0.55rem;
-  border-radius: 0.75rem;
-  background: var(--ink);
-  border: 1px solid color-mix(in srgb, var(--ink) 80%, #fff);
+  border-radius: 0.5rem;
+  background: #1a1c20;
+  border: 1px solid #2a2d34;
   box-shadow: none;
 }
 
@@ -818,15 +818,15 @@ html.dark .qr-frame {
 }
 
 .phone-notch {
-  width: 5.5rem;
-  height: 0.35rem;
-  margin: 0.15rem auto 0.55rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.18);
+  width: 4.75rem;
+  height: 0.28rem;
+  margin: 0.2rem auto 0.55rem;
+  border-radius: 0.15rem;
+  background: #3a3e48;
 }
 
 .phone-screen {
-  border-radius: 0.45rem;
+  border-radius: 0.35rem;
   overflow: hidden;
   background: var(--surface-elevated);
   max-height: 34rem;
@@ -946,8 +946,10 @@ html.dark .qr-frame {
   overflow: hidden;
 }
 
+.profile-card__banner::before,
 .profile-card__banner::after {
   content: none;
+  display: none;
 }
 
 .profile-card__body {
@@ -1009,7 +1011,8 @@ html.dark .qr-frame {
 }
 
 .profile-card__cta:hover {
-  filter: brightness(1.06);
+  filter: none;
+  opacity: 0.92;
 }
 
 .profile-card__cta:active {
