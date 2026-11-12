@@ -32,7 +32,6 @@ db.exec(`
     theme TEXT NOT NULL DEFAULT 'obsidian',
     auto_download INTEGER NOT NULL DEFAULT 1,
     scans INTEGER NOT NULL DEFAULT 0,
-    user_id TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL
   );
@@ -68,7 +67,6 @@ db.exec(`
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
   );
 
-  CREATE INDEX IF NOT EXISTS idx_cards_user_id ON cards(user_id);
   CREATE INDEX IF NOT EXISTS idx_otp_email ON otp_challenges(email, created_at);
   CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
   CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires_at);
@@ -83,6 +81,10 @@ function ensureColumn(tableName, columnName, columnSql) {
 }
 
 ensureColumn('cards', 'user_id', 'user_id TEXT');
+
+db.exec(`
+  CREATE INDEX IF NOT EXISTS idx_cards_user_id ON cards(user_id);
+`);
 
 function newId(prefix) {
   return `${prefix}_${crypto.randomBytes(12).toString('hex')}`;
