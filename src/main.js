@@ -94,15 +94,26 @@
   }
 
   function handleDownloadCardImage() {
-    if (!CardCanvasExporter) return;
-    ProfileCardUI.showToast('Génération de la carte de visite en cours...');
-    CardCanvasExporter.downloadCardImage(state, qrMode, (ok, fileName) => {
+    const exporter = CardCanvasExporter || window.VCardApp.CardCanvasExporter;
+    if (!exporter) {
+      ProfileCardUI.showToast('Générateur de carte non disponible');
+      return;
+    }
+    ProfileCardUI.showToast('Génération de la carte de visite virtuelle...');
+    exporter.downloadCardImage(state, qrMode, (ok, fileName) => {
       if (ok) {
-        ProfileCardUI.showToast(`Carte de visite téléchargée (${fileName})`);
+        ProfileCardUI.showToast(`Carte virtuelle téléchargée (${fileName})`);
       } else {
         ProfileCardUI.showToast('Erreur lors de la génération de la carte');
       }
     });
+  }
+
+  function updateVirtualCardPreview() {
+    const cardCanvas = document.getElementById('virtualCardPreviewCanvas');
+    const exporter = CardCanvasExporter || window.VCardApp.CardCanvasExporter;
+    if (!cardCanvas || !exporter) return;
+    exporter.renderCardToCanvas(cardCanvas, state, qrMode);
   }
 
   function updateBackendStatusUI(backendStatus) {
