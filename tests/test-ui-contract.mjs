@@ -38,8 +38,8 @@ function testHtmlContracts() {
     assert.match(html, new RegExp(`id="${id}"`), `missing id ${id}`);
   }
 
-  assert.match(html, /family=Syne/);
-  assert.match(html, /family=DM\+Sans/);
+  assert.match(html, /family=Fraunces/);
+  assert.match(html, /family=Figtree/);
   assert.match(html, /class="app-shell/);
   assert.match(html, /phone-shell/);
   assert.match(html, /assets\/css\/styles\.css/);
