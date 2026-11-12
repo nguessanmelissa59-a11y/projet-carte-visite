@@ -145,10 +145,22 @@ html.dark[data-card-theme='obsidian'] .brand-mark {
 }
 
 .panel {
+  position: relative;
   background: color-mix(in srgb, var(--surface-elevated) 92%, transparent);
   border: 1px solid var(--line);
   border-radius: var(--radius-panel);
   box-shadow: var(--shadow-panel);
+  overflow: hidden;
+}
+
+.panel::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--accent), color-mix(in srgb, var(--accent) 35%, transparent));
 }
 
 .panel-intro {
