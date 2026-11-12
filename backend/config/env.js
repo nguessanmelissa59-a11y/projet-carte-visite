@@ -17,8 +17,8 @@ function detectLanIpAddress() {
 const PORT = Number(process.env.PORT) || 3000;
 const HOST = process.env.HOST || '0.0.0.0';
 const PUBLIC_ROOT = path.resolve(__dirname, '..', '..');
-const DB_DIR = path.resolve(__dirname, '..', 'data');
-const DB_PATH = path.join(DB_DIR, 'cards.sqlite');
+const DB_DIR = path.resolve(process.env.DB_DIR || path.join(__dirname, '..', 'data'));
+const DB_PATH = process.env.DB_PATH || path.join(DB_DIR, 'cards.sqlite');
 const CACHED_LAN_IP = detectLanIpAddress();
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const SESSION_COOKIE_NAME = process.env.SESSION_COOKIE_NAME || 'vcard_sid';

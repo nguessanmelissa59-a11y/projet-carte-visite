@@ -1,5 +1,5 @@
 const { sendJson, readJsonBody } = require('../http/json');
-const { OTP_MAX_ATTEMPTS } = require('../config/env');
+const { OTP_MAX_ATTEMPTS, OTP_TTL_MS } = require('../config/env');
 const {
   validateEmail,
   validateName,
@@ -100,13 +100,14 @@ async function handleLogin(req, res) {
 
     const user = getUserByEmail(emailCheck.value);
     if (!user) {
-      // Réponse neutre pour limiter l'énumération de comptes.
+      // Même forme de réponse pour limiter l'énumération de comptes.
       return sendJson(res, 200, {
         ok: true,
-        otpIssued: false,
+        otpIssued: true,
         message: 'Si un compte existe, un code OTP a été préparé.',
         email: emailCheck.value,
-        purpose: 'login'
+        purpose: 'login',
+        expiresInSec: Math.round(require('../config/env').OTP_TTL_MS / 1000)
       });
     }
 
