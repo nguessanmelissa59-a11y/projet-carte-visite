@@ -8,6 +8,16 @@ window.VCardApp.CardCanvasExporter = (function () {
   const WIDTH = 1100;
   const HEIGHT = 660;
 
+  /** Format carte de visite FR / ISO courant (impression). */
+  const PRINT_CARD_WIDTH_MM = 85;
+  const PRINT_CARD_HEIGHT_MM = 55;
+  const PRINT_DPI = 300;
+  const PRINT_CARD_WIDTH_PX = Math.round((PRINT_CARD_WIDTH_MM / 25.4) * PRINT_DPI);
+  const PRINT_CARD_HEIGHT_PX = Math.round((PRINT_CARD_HEIGHT_MM / 25.4) * PRINT_DPI);
+  const PRINT_PAGE_WIDTH_MM = 210;
+  const PRINT_PAGE_HEIGHT_MM = 297;
+  const MM_TO_PT = 72 / 25.4;
+
   function loadImage(src) {
     return new Promise((resolve) => {
       if (!src) return resolve(null);
