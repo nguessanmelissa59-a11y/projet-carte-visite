@@ -93,7 +93,17 @@ before(async () => {
 
 after(async () => {
   await new Promise((resolve) => server.close(resolve));
-  fs.rmSync(tmpDir, { recursive: true, force: true });
+  try {
+    const { db } = require('../backend/db/connection');
+    if (db && typeof db.close === 'function') db.close();
+  } catch {
+    // ignore
+  }
+  try {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  } catch {
+    // Windows peut garder le fichier SQLite verrouillé brièvement.
+  }
 });
 
 test('inscription OTP puis session cookie', async () => {
