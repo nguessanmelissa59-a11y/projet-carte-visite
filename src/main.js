@@ -310,6 +310,12 @@
       btn.classList.toggle('is-active', t === themeKey);
     });
 
+    const btnRemoveQrLogo = document.getElementById('btnRemoveQrLogo');
+    if (btnRemoveQrLogo) {
+      const hasQrLogo = Boolean(state.qrLogoBase64 || state.qrLogoUrl);
+      btnRemoveQrLogo.classList.toggle('hidden', !hasQrLogo);
+    }
+
     updateScanCountBadge();
 
     // Only update the currently visible card mount for maximum speed
@@ -421,6 +427,50 @@
         if (photoUploadInput) photoUploadInput.value = '';
         renderAll(true);
         schedulePersistence();
+      });
+    }
+
+    const qrLogoUpload = document.getElementById('qrLogoUpload');
+    if (qrLogoUpload) {
+      qrLogoUpload.addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        if (!/^image\/(png|jpe?g|webp|gif|svg\+xml)$/i.test(file.type)) {
+          ProfileCardUI.showToast('Format logo non supporté');
+          return;
+        }
+        if (file.size > 2 * 1024 * 1024) {
+          ProfileCardUI.showToast('Logo trop volumineux (max 2 Mo)');
+          return;
+        }
+        StorageService.resizeImageToBase64(file, 160, 160, 0.85, (b64) => {
+          if (!b64 || !/^data:image\//i.test(b64)) {
+            ProfileCardUI.showToast('Impossible de lire le logo');
+            return;
+          }
+          state.qrLogoBase64 = b64;
+          state.qrLogoUrl = '';
+          const qrLogoUrlInput = document.getElementById('qrLogoUrl');
+          if (qrLogoUrlInput) qrLogoUrlInput.value = '';
+          renderAll(true);
+          schedulePersistence();
+          ProfileCardUI.showToast('Logo QR appliqué');
+        });
+      });
+    }
+
+    const btnRemoveQrLogo = document.getElementById('btnRemoveQrLogo');
+    if (btnRemoveQrLogo) {
+      btnRemoveQrLogo.addEventListener('click', () => {
+        state.qrLogoBase64 = '';
+        state.qrLogoUrl = '';
+        const qrLogoUrlInput = document.getElementById('qrLogoUrl');
+        const qrLogoUploadInput = document.getElementById('qrLogoUpload');
+        if (qrLogoUrlInput) qrLogoUrlInput.value = '';
+        if (qrLogoUploadInput) qrLogoUploadInput.value = '';
+        renderAll(true);
+        schedulePersistence();
+        ProfileCardUI.showToast('Logo QR retiré');
       });
     }
 
@@ -596,6 +646,8 @@
           bio: '',
           photoUrl: '',
           photoBase64: '',
+          qrLogoUrl: '',
+          qrLogoBase64: '',
           theme: 'obsidian',
           cardTemplate: 'editorial',
           autoDownload: true,
