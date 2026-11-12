@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
   Surveille le dossier du projet en continu et fait un commit + push automatique sur GitHub dès qu'un fichier est créé, modifié ou supprimé.
 #>
@@ -46,3 +46,4 @@ while ($true) {
 
   Start-Sleep -Seconds $IntervalSeconds
 }
+
