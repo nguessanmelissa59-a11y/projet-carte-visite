@@ -368,6 +368,17 @@
           </div>
 
           <div class="share-band-actions min-w-0">
+            <div id="offlineModeNotice" class="offline-notice" role="status" hidden>
+              <i data-lucide="wifi-off" class="offline-notice__icon" aria-hidden="true"></i>
+              <div class="min-w-0">
+                <p class="offline-notice__title">Mode vCard 3.0 Direct (Hors-ligne)</p>
+                <p class="offline-notice__text">
+                  Vos coordonnées sont inscrites dans le QR lui-même : le scan propose
+                  d’enregistrer le contact sans Internet ni serveur.
+                </p>
+              </div>
+            </div>
+
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <button id="btnCopyLink" type="button" class="btn btn-primary w-full text-sm">
                 <i data-lucide="copy" class="w-3.5 h-3.5"></i>

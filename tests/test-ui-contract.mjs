@@ -51,6 +51,24 @@ function testHtmlContracts() {
   assert.match(html, /virtualCardVersoCanvas/);
   assert.match(html, /printPreviewDialog/);
   assert.match(html, /btnConfirmPrintDownload/);
+  assert.match(html, /src\/services\/field-validation\.js/);
+  assert.match(html, /id="phone"[^>]*type="tel"/s);
+  assert.match(html, /id="email"[^>]*type="email"/s);
+  assert.match(html, /pattern="\^\\\+\\\?\[0-9\\s\(\)\.\-\]\{6,\}"/);
+}
+
+function testFieldValidationClient() {
+  const source = read('src/services/field-validation.js');
+  const sandbox = { window: {} };
+  Function('window', source)(sandbox.window);
+  const fv = sandbox.window.VCardApp.FieldValidation;
+
+  assert.equal(fv.sanitizePhoneInput('12ab34'), '1234');
+  assert.equal(fv.isPhoneValid('+225 07 08 09'), true);
+  assert.equal(fv.isPhoneValid('hello'), false);
+  assert.equal(fv.isEmailValid('a@b.com'), true);
+  assert.equal(fv.isEmailValid('pas-un-mail'), false);
+  assert.equal(fv.normalizeEmail('mailto:Nom@Ex.CI'), 'nom@ex.ci');
 }
 
 function testVendoredQrcodeLibrary() {
@@ -307,6 +325,7 @@ function testEditorPreviewLayout() {
 
 const tests = [
   ['html contracts', testHtmlContracts],
+  ['field validation client', testFieldValidationClient],
   ['editor preview layout', testEditorPreviewLayout],
   ['vendored qrcode library', testVendoredQrcodeLibrary],
   ['qr view guards missing library', testQrViewGuardsMissingLibrary],

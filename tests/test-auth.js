@@ -182,6 +182,40 @@ test('sauvegarde carte réservée au propriétaire connecté', async () => {
   assert.equal(saveRes.json().card.slug, 'owner-test');
   assert.ok(saveRes.json().card.userId);
 
+  const badPhone = createMockRes();
+  await handleSaveCard(
+    createMockReq(
+      'POST',
+      {
+        slug: 'owner-test',
+        firstName: 'Owner',
+        lastName: 'Test',
+        phone: 'texte-interdit'
+      },
+      cookie
+    ),
+    badPhone
+  );
+  assert.equal(badPhone.statusCode, 400);
+  assert.match(String(badPhone.json().error || ''), /Telephone|invalide/i);
+
+  const badEmail = createMockRes();
+  await handleSaveCard(
+    createMockReq(
+      'POST',
+      {
+        slug: 'owner-test',
+        firstName: 'Owner',
+        lastName: 'Test',
+        email: 'pas-une-adresse'
+      },
+      cookie
+    ),
+    badEmail
+  );
+  assert.equal(badEmail.statusCode, 400);
+  assert.match(String(badEmail.json().error || ''), /Email|invalide/i);
+
   const denied = createMockRes();
   await handleSaveCard(
     createMockReq('POST', {

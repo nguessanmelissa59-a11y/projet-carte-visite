@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node --no-warnings backend/server.js",
     "dev": "node --no-warnings --watch backend/server.js",
-    "test": "node --test tests/test-auth.js tests/test-admin.js",
+    "test": "node --test tests/test-auth.js tests/test-admin.js tests/test-validation.js",
     "admin:install": "npm install --prefix admin",
     "admin:build": "npm run build --prefix admin",
     "admin:dev": "npm run dev --prefix admin"
