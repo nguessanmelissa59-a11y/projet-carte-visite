@@ -329,14 +329,14 @@
     if (qrModeUrlBtn && qrModeVcardBtn) {
       qrModeUrlBtn.addEventListener('click', () => {
         qrMode = 'url';
-        qrModeUrlBtn.className = 'px-2.5 py-1 rounded bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-sm transition';
-        qrModeVcardBtn.className = 'px-2.5 py-1 rounded text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition';
+        qrModeUrlBtn.classList.add('is-active');
+        qrModeVcardBtn.classList.remove('is-active');
         QrView.renderCanvas(state, qrMode, true);
       });
       qrModeVcardBtn.addEventListener('click', () => {
         qrMode = 'vcard';
-        qrModeVcardBtn.className = 'px-2.5 py-1 rounded bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-sm transition';
-        qrModeUrlBtn.className = 'px-2.5 py-1 rounded text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition';
+        qrModeVcardBtn.classList.add('is-active');
+        qrModeUrlBtn.classList.remove('is-active');
         QrView.renderCanvas(state, qrMode, true);
       });
     }
