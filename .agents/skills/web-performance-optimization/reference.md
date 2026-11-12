@@ -1,4 +1,4 @@
-# Reference — Web Performance (vCard Studio)
+# Reference — Web Performance (EVC Melissa)
 
 Lire ce fichier seulement pendant l'audit ou l'implementation des correctifs.
 

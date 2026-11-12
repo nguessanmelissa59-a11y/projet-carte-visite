@@ -3,7 +3,7 @@ name: web-performance-optimization
 description: >-
   Audite et optimise la rapidite d'un site web (Core Web Vitals, chargement,
   assets, cache HTTP, JS runtime). Adapte a une stack HTML/CSS/JS vanilla avec
-  serveur Node sans bundler (ex. vCard Studio). A utiliser quand l'utilisateur
+  serveur Node sans bundler (ex. EVC Melissa). A utiliser quand l'utilisateur
   demande optimisation, performance, rapidite, Lighthouse, LCP, INP, CLS,
   poids de page, CDN, cache, lazy-load, ou un site trop lent.
 ---
@@ -33,7 +33,7 @@ Perf Progress:
 - [ ] Responsive 360/768/1024/1280 non regresse
 ```
 
-## Chemins critiques (vCard Studio)
+## Chemins critiques (EVC Melissa)
 
 | Chemin | Fichiers | Priorite |
 |---|---|---|

@@ -23,7 +23,15 @@ window.VCardApp.QrView = (function () {
     const urlDisplay = document.getElementById('generatedUrlDisplay');
     const sizeDisplay = document.getElementById('payloadSizeDisplay');
     const statusBadge = document.getElementById('qrStatusBadge');
-    if (!canvas || !window.QRCode) return;
+    if (!canvas) return;
+    if (!window.QRCode || typeof window.QRCode.toCanvas !== 'function') {
+      if (statusBadge) {
+        statusBadge.textContent = 'Lib QR absente';
+        statusBadge.dataset.state = 'offline';
+      }
+      if (sizeDisplay) sizeDisplay.textContent = '0 octets';
+      return;
+    }
 
     const palette = THEME_PALETTES[state.theme] || THEME_PALETTES.obsidian;
     const payload = resolvePayload(state, qrMode);

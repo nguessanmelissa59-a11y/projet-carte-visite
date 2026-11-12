@@ -1,7 +1,7 @@
 # Reference — validation par type de champ
 
 Lire ce fichier seulement apres le protocole de `SKILL.md`, pour appliquer les
-regles concretes. Valeurs indiquees = cibles recommandees pour vCard Studio ;
+regles concretes. Valeurs indiquees = cibles recommandees pour EVC Melissa ;
 ajuster si le PRD impose autrement, mais documenter l'ecart.
 
 ## Constantes recommandees

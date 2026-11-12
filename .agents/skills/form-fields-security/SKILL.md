@@ -35,7 +35,7 @@ Contexte projet type : formulaire vCard (`#vcardForm`), API JSON
 
 Details par type de champ : [reference.md](reference.md).
 
-## Classification des champs (vCard Studio)
+## Classification des champs (EVC Melissa)
 
 | Champ | Classe | Risques principaux |
 |---|---|---|
