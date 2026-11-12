@@ -88,7 +88,7 @@ window.VCardApp.ProfileCardUI = (function () {
 
           <button type="button" data-action="download-card-image" class="profile-card__cta-secondary">
             <i data-lucide="printer" class="w-4 h-4"></i>
-            <span>PDF recto + verso 85×55 mm</span>
+            <span>Aperçu PDF 85×55 mm</span>
           </button>
 
           <div class="action-grid">

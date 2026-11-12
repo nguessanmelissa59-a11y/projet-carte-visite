@@ -434,6 +434,66 @@
     </footer>
   </section>
 
+  <div
+    id="printPreviewDialog"
+    class="print-preview-dialog hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="printPreviewTitle"
+    hidden
+  >
+    <div class="print-preview-dialog__backdrop" data-print-preview-close tabindex="-1"></div>
+    <div class="print-preview-dialog__panel panel" role="document">
+      <div class="print-preview-dialog__head">
+        <div class="min-w-0">
+          <p class="eyebrow m-0">Impression</p>
+          <h2 id="printPreviewTitle" class="font-display text-lg font-semibold m-0 tracking-tight">
+            Aperçu recto et verso
+          </h2>
+          <p class="text-sm text-[color:var(--ink-muted)] m-0 mt-1">
+            Vérifiez les deux faces, puis téléchargez le PDF 85×55&nbsp;mm.
+          </p>
+        </div>
+        <button
+          type="button"
+          class="btn btn-secondary h-11 w-11 min-h-11 p-0"
+          data-print-preview-close
+          aria-label="Fermer l’aperçu"
+        >
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="print-faces print-faces--dialog" aria-label="Aperçu imprimable">
+        <figure class="print-face">
+          <figcaption>Recto</figcaption>
+          <div class="print-card-preview">
+            <canvas id="printPreviewRectoCanvas" class="w-full h-auto block max-w-full"></canvas>
+          </div>
+        </figure>
+        <figure class="print-face">
+          <figcaption>Verso</figcaption>
+          <div class="print-card-preview">
+            <canvas id="printPreviewVersoCanvas" class="w-full h-auto block max-w-full"></canvas>
+          </div>
+        </figure>
+      </div>
+
+      <div class="print-preview-dialog__actions">
+        <button type="button" class="btn btn-secondary w-full sm:w-auto" data-print-preview-close>
+          Continuer l’édition
+        </button>
+        <button id="btnConfirmPrintDownload" type="button" class="btn btn-primary w-full sm:w-auto">
+          <i data-lucide="printer" class="w-3.5 h-3.5 shrink-0"></i>
+          <span>Télécharger le PDF</span>
+        </button>
+      </div>
+      <p class="text-xs text-[color:var(--ink-muted)] m-0">
+        2 pages A4 (recto puis verso), traits de coupe, fond perdu 3&nbsp;mm / marges 4&nbsp;mm. Imprimer à 100&nbsp;%.
+      </p>
+    </div>
+  </div>
+
   <div id="toastContainer" class="fixed inset-0 z-50 pointer-events-none flex flex-col items-center justify-center gap-2 px-4" aria-live="polite"></div>
 
   <script src="src/config/constants.js"></script>
