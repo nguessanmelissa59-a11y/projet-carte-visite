@@ -307,7 +307,11 @@
           </div>
 
           <div id="previewCardContainer" class="hidden space-y-3">
-            <div class="rounded-xl overflow-hidden border border-[color:var(--line)] shadow-sm bg-white p-1">
+            <div>
+              <p class="text-xs font-medium text-[color:var(--ink-muted)] m-0 mb-2">Modèles de carte virtuelle</p>
+              <div id="cardTemplatePicker" class="card-template-picker" role="listbox" aria-label="Modèles de carte"></div>
+            </div>
+            <div class="rounded-xl overflow-hidden border border-[color:var(--line)] shadow-sm bg-[color:var(--surface-elevated)] p-1">
               <canvas id="virtualCardPreviewCanvas" class="w-full h-auto block rounded-lg"></canvas>
             </div>
             <button id="btnDownloadFromCardPreview" type="button" class="btn btn-primary w-full text-xs">
