@@ -6,6 +6,8 @@ window.VCardApp.QrView = (function () {
   const { generateVCardString } = window.VCardApp.VCardService;
   const ApiService = window.VCardApp.ApiService;
 
+  let lastRenderedSignature = '';
+
   function resolvePayload(state, qrMode) {
     if (qrMode === 'vcard') {
       return generateVCardString(state, false);
@@ -16,15 +18,21 @@ window.VCardApp.QrView = (function () {
     return buildPublicUrl(state, false);
   }
 
-  function renderCanvas(state, qrMode) {
+  function renderCanvas(state, qrMode, force = false) {
     const canvas = document.getElementById('qrCanvas');
     const urlDisplay = document.getElementById('generatedUrlDisplay');
     const sizeDisplay = document.getElementById('payloadSizeDisplay');
     const statusBadge = document.getElementById('qrStatusBadge');
     if (!canvas || !window.QRCode) return;
 
-    const palette = THEME_PALETTES[state.theme] || THEME_PALETTES.indigo;
+    const palette = THEME_PALETTES[state.theme] || THEME_PALETTES.obsidian;
     const payload = resolvePayload(state, qrMode);
+    const signature = `${qrMode}|${state.theme}|${payload}`;
+
+    if (!force && signature === lastRenderedSignature) {
+      return;
+    }
+    lastRenderedSignature = signature;
 
     if (urlDisplay) {
       urlDisplay.textContent = qrMode === 'vcard' ? 'Mode vCard 3.0 Direct (Hors-ligne)' : payload;
@@ -43,7 +51,7 @@ window.VCardApp.QrView = (function () {
         margin: 1,
         errorCorrectionLevel: byteLength > 600 ? 'L' : 'M',
         color: {
-          dark: palette.qrDark || '#0f172a',
+          dark: palette.qrDark || '#18181b',
           light: '#ffffff'
         }
       },
@@ -51,16 +59,16 @@ window.VCardApp.QrView = (function () {
         if (!statusBadge) return;
         if (err) {
           statusBadge.textContent = 'Trop long';
-          statusBadge.className = 'px-2 py-0.5 text-[11px] rounded-full font-semibold bg-rose-500/10 text-rose-600';
+          statusBadge.className = 'px-2 py-0.5 text-[11px] rounded font-mono bg-rose-500/10 text-rose-600';
         } else if (qrMode === 'vcard') {
-          statusBadge.textContent = 'vCard Direct';
-          statusBadge.className = 'px-2 py-0.5 text-[11px] rounded-full font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400';
+          statusBadge.textContent = 'vCard Hors-ligne';
+          statusBadge.className = 'px-2 py-0.5 text-[11px] rounded font-mono bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300';
         } else if (ApiService && ApiService.isAvailable()) {
-          statusBadge.textContent = 'QR Court (Backend)';
-          statusBadge.className = 'px-2 py-0.5 text-[11px] rounded-full font-semibold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400';
+          statusBadge.textContent = 'QR Court (SQLite)';
+          statusBadge.className = 'px-2 py-0.5 text-[11px] rounded font-mono bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200';
         } else {
           statusBadge.textContent = 'Lien Autonome';
-          statusBadge.className = 'px-2 py-0.5 text-[11px] rounded-full font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400';
+          statusBadge.className = 'px-2 py-0.5 text-[11px] rounded font-mono bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300';
         }
       }
     );
@@ -69,7 +77,7 @@ window.VCardApp.QrView = (function () {
   function downloadHighResPng(state, qrMode, onResult) {
     if (!window.QRCode) return;
     const offscreen = document.createElement('canvas');
-    const palette = THEME_PALETTES[state.theme] || THEME_PALETTES.indigo;
+    const palette = THEME_PALETTES[state.theme] || THEME_PALETTES.obsidian;
     const payload = resolvePayload(state, qrMode);
 
     window.QRCode.toCanvas(
@@ -80,7 +88,7 @@ window.VCardApp.QrView = (function () {
         margin: 2,
         errorCorrectionLevel: 'M',
         color: {
-          dark: palette.qrDark || '#0f172a',
+          dark: palette.qrDark || '#18181b',
           light: '#ffffff'
         }
       },

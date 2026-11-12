@@ -17,23 +17,26 @@ window.VCardApp.ApiService = (function () {
   }
 
   async function checkBackend() {
-    if (window.location.protocol === 'file:') {
+    if (window.location.protocol === 'file:' || /\.github\.io$/i.test(window.location.hostname)) {
       backendAvailable = false;
-      return { available: false, origin: '' };
+      return { available: false, origin: window.location.origin };
     }
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 600);
     try {
-      const res = await fetch('/api/info', { method: 'GET' });
+      const res = await fetch('/api/info', { method: 'GET', signal: controller.signal });
+      clearTimeout(timer);
       if (!res.ok) throw new Error('Not available');
       const data = await res.json();
       backendAvailable = true;
 
-      // If opened via localhost, use LAN IP for QR codes so phones on Wi-Fi can scan it
       const isLocalhost =
         window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
       serverOrigin = isLocalhost && data.lanOrigin ? data.lanOrigin : window.location.origin;
 
       return { available: true, origin: serverOrigin, info: data };
     } catch {
+      clearTimeout(timer);
       backendAvailable = false;
       serverOrigin = window.location.origin;
       return { available: false, origin: serverOrigin };
@@ -85,4 +88,3 @@ window.VCardApp.ApiService = (function () {
     getDirectVcfUrl
   };
 })();
-

@@ -11,48 +11,68 @@
   let qrMode = 'url';
   let isPublicScanView = false;
   let saveTimeout = null;
+  let draftTimeout = null;
+  let rafPending = false;
 
-  document.addEventListener('DOMContentLoaded', async () => {
+  document.addEventListener('DOMContentLoaded', () => {
     StorageService.initTheme();
-
-    const backendStatus = await ApiService.checkBackend();
-    updateBackendStatusUI(backendStatus);
 
     const searchParams = new URLSearchParams(window.location.search);
     const cardIdParam = searchParams.get('id');
     const isScanEvent = searchParams.get('scan') === '1';
     const urlPayload = UrlCodec.extractFromCurrentLocation();
 
-    if (cardIdParam && backendStatus.available) {
+    if (urlPayload) {
+      state = { ...DEMO_DATA, ...urlPayload };
+      isPublicScanView = true;
+    } else if (cardIdParam) {
+      state = StorageService.loadDraft();
+      isPublicScanView = true;
+    } else {
+      state = StorageService.loadDraft();
+      isPublicScanView = false;
+    }
+
+    // Immediate synchronous render (0ms wait)
+    populateForm();
+    setViewMode(isPublicScanView);
+    bindEvents();
+    renderAll(true);
+    if (window.lucide) window.lucide.createIcons();
+
+    if (urlPayload) {
+      triggerAutoDownloadIfEnabled();
+    }
+
+    // Asynchronous non-blocking backend sync
+    initBackendConnection(cardIdParam, isScanEvent);
+  });
+
+  async function initBackendConnection(cardIdParam, isScanEvent) {
+    const backendStatus = await ApiService.checkBackend();
+    updateBackendStatusUI(backendStatus);
+
+    if (!backendStatus.available) return;
+
+    if (cardIdParam) {
       const serverCard = await ApiService.fetchCardBySlug(cardIdParam, isScanEvent);
       if (serverCard) {
         state = { ...DEMO_DATA, ...serverCard };
+        populateForm();
+        renderAll(true);
+        triggerAutoDownloadIfEnabled();
       }
-      populateForm();
-      setViewMode(true);
-      triggerAutoDownloadIfEnabled();
-    } else if (urlPayload) {
-      state = { ...DEMO_DATA, ...urlPayload };
-      populateForm();
-      setViewMode(true);
-      triggerAutoDownloadIfEnabled();
-    } else {
-      state = StorageService.loadDraft();
-      if (backendStatus.available) {
-        const existing = await ApiService.fetchCardBySlug(state.slug || 'koffi-kouadio', false);
-        if (existing) {
-          state = { ...state, ...existing };
-        } else {
-          await ApiService.saveCard(state);
-        }
+    } else if (!isPublicScanView) {
+      const existing = await ApiService.fetchCardBySlug(state.slug || 'koffi-kouadio', false);
+      if (existing) {
+        state = { ...state, ...existing };
+        populateForm();
+      } else {
+        await ApiService.saveCard(state);
       }
-      populateForm();
-      setViewMode(false);
+      renderAll(true);
     }
-
-    bindEvents();
-    renderAll();
-  });
+  }
 
   function triggerAutoDownloadIfEnabled() {
     if (!state.autoDownload) return;
@@ -91,7 +111,13 @@
     }
   }
 
-  function scheduleBackendSave() {
+  function schedulePersistence() {
+    if (draftTimeout) clearTimeout(draftTimeout);
+    draftTimeout = setTimeout(() => {
+      StorageService.saveDraft(state);
+      QrView.renderCanvas(state, qrMode);
+    }, 120);
+
     if (!ApiService.isAvailable()) return;
     if (saveTimeout) clearTimeout(saveTimeout);
     saveTimeout = setTimeout(async () => {
@@ -139,19 +165,29 @@
       if (editorHeader) editorHeader.classList.add('hidden');
       if (editorView) editorView.classList.add('hidden');
       if (publicView) publicView.classList.remove('hidden');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: 'auto' });
     } else {
       if (editorHeader) editorHeader.classList.remove('hidden');
       if (editorView) editorView.classList.remove('hidden');
       if (publicView) publicView.classList.add('hidden');
     }
+    renderAll(false);
   }
 
-  function renderAll() {
+  function scheduleRender() {
+    if (rafPending) return;
+    rafPending = true;
+    requestAnimationFrame(() => {
+      rafPending = false;
+      renderAll(false);
+    });
+  }
+
+  function renderAll(forceQr = false) {
     const editorAvatar = document.getElementById('editorAvatarPreview');
     const btnRemovePhoto = document.getElementById('btnRemovePhoto');
 
-    if (editorAvatar) {
+    if (editorAvatar && !isPublicScanView) {
       const src = state.photoBase64 || state.photoUrl;
       if (src) {
         editorAvatar.innerHTML = `<img src="${ProfileCardUI.escapeHtml(src)}" alt="Avatar" class="w-full h-full object-cover" />`;
@@ -173,21 +209,22 @@
 
     updateScanCountBadge();
 
-    const cardMarkup = ProfileCardUI.buildCardHtml(state);
-    const mockupMount = document.getElementById('mockupProfileMount');
-    const publicMount = document.getElementById('publicProfileMount');
-
-    if (mockupMount) mockupMount.innerHTML = cardMarkup;
-    if (publicMount) publicMount.innerHTML = cardMarkup;
-
-    document.querySelectorAll('[data-action="save-vcard"]').forEach((btn) => {
-      btn.addEventListener('click', handleSaveContactAction);
-    });
-
-    if (window.lucide) {
-      window.lucide.createIcons();
+    // Only update the currently visible card mount for maximum speed
+    const activeMount = document.getElementById(isPublicScanView ? 'publicProfileMount' : 'mockupProfileMount');
+    if (activeMount) {
+      activeMount.innerHTML = ProfileCardUI.buildCardHtml(state);
+      const saveBtn = activeMount.querySelector('[data-action="save-vcard"]');
+      if (saveBtn) {
+        saveBtn.addEventListener('click', handleSaveContactAction);
+      }
+      if (window.lucide) {
+        window.lucide.createIcons({ root: activeMount });
+      }
     }
-    QrView.renderCanvas(state, qrMode);
+
+    if (forceQr) {
+      QrView.renderCanvas(state, qrMode, true);
+    }
   }
 
   function bindEvents() {
@@ -207,17 +244,16 @@
           target.dataset.edited = 'true';
         }
 
-        StorageService.saveDraft(state);
-        scheduleBackendSave();
-        renderAll();
+        scheduleRender();
+        schedulePersistence();
       });
     }
 
     const btnSaveServer = document.getElementById('btnSaveServer');
     if (btnSaveServer) {
       btnSaveServer.addEventListener('click', async () => {
+        StorageService.saveDraft(state);
         if (!ApiService.isAvailable()) {
-          StorageService.saveDraft(state);
           ProfileCardUI.showToast('Brouillon enregistré localement');
           return;
         }
@@ -227,7 +263,7 @@
             state.slug = saved.slug;
             state.scans = saved.scans;
             populateForm();
-            renderAll();
+            renderAll(true);
             ProfileCardUI.showToast(`Carte synchronisée (/c/${saved.slug})`);
           }
         } catch {
@@ -239,9 +275,8 @@
     document.querySelectorAll('#themeColorPicker .theme-swatch').forEach((btn) => {
       btn.addEventListener('click', () => {
         state.theme = btn.getAttribute('data-theme') || 'obsidian';
-        StorageService.saveDraft(state);
-        scheduleBackendSave();
-        renderAll();
+        renderAll(true);
+        schedulePersistence();
       });
     });
 
@@ -252,9 +287,8 @@
         if (!file) return;
         StorageService.resizeImageToBase64(file, 180, 180, 0.8, (b64) => {
           state.photoBase64 = b64;
-          StorageService.saveDraft(state);
-          scheduleBackendSave();
-          renderAll();
+          renderAll(true);
+          schedulePersistence();
           ProfileCardUI.showToast('Photo mise à jour');
         });
       });
@@ -269,9 +303,8 @@
         const photoUploadInput = document.getElementById('photoUpload');
         if (photoUrlInput) photoUrlInput.value = '';
         if (photoUploadInput) photoUploadInput.value = '';
-        StorageService.saveDraft(state);
-        scheduleBackendSave();
-        renderAll();
+        renderAll(true);
+        schedulePersistence();
       });
     }
 
@@ -282,13 +315,13 @@
         qrMode = 'url';
         qrModeUrlBtn.className = 'px-2.5 py-1 rounded bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-sm transition';
         qrModeVcardBtn.className = 'px-2.5 py-1 rounded text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition';
-        QrView.renderCanvas(state, qrMode);
+        QrView.renderCanvas(state, qrMode, true);
       });
       qrModeVcardBtn.addEventListener('click', () => {
         qrMode = 'vcard';
         qrModeVcardBtn.className = 'px-2.5 py-1 rounded bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-sm transition';
         qrModeUrlBtn.className = 'px-2.5 py-1 rounded text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition';
-        QrView.renderCanvas(state, qrMode);
+        QrView.renderCanvas(state, qrMode, true);
       });
     }
 
@@ -374,9 +407,8 @@
       btnFillDemo.addEventListener('click', () => {
         state = { ...DEMO_DATA };
         populateForm();
-        StorageService.saveDraft(state);
-        scheduleBackendSave();
-        renderAll();
+        renderAll(true);
+        schedulePersistence();
         ProfileCardUI.showToast('Données par défaut chargées');
       });
     }
@@ -404,8 +436,8 @@
           scans: 0
         };
         populateForm();
-        StorageService.saveDraft(state);
-        renderAll();
+        renderAll(true);
+        schedulePersistence();
         ProfileCardUI.showToast('Formulaire vidé');
       });
     }
