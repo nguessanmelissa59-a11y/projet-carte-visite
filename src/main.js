@@ -117,6 +117,39 @@
     exporter.renderCardToCanvas(cardCanvas, state, qrMode);
   }
 
+  function renderCardTemplatePicker() {
+    const mount = document.getElementById('cardTemplatePicker');
+    if (!mount || !CARD_TEMPLATES) return;
+
+    const activeId = state.cardTemplate || 'editorial';
+    mount.innerHTML = Object.values(CARD_TEMPLATES)
+      .map((tpl) => {
+        const swatches = (tpl.swatch || [])
+          .map((color) => `<span style="background:${ProfileCardUI.escapeHtml(color)}"></span>`)
+          .join('');
+        const activeClass = tpl.id === activeId ? ' is-active' : '';
+        return `
+          <button type="button" class="card-template-option${activeClass}" data-card-template="${ProfileCardUI.escapeHtml(tpl.id)}" role="option" aria-selected="${tpl.id === activeId}">
+            <span class="card-template-swatches" aria-hidden="true">${swatches}</span>
+            <span class="card-template-meta">
+              <strong>${ProfileCardUI.escapeHtml(tpl.label)}</strong>
+              <span>${ProfileCardUI.escapeHtml(tpl.blurb)}</span>
+            </span>
+          </button>
+        `;
+      })
+      .join('');
+  }
+
+  function setCardTemplate(templateId) {
+    const nextId =
+      templateId && CARD_TEMPLATES && CARD_TEMPLATES[templateId] ? templateId : 'editorial';
+    state.cardTemplate = nextId;
+    renderCardTemplatePicker();
+    updateVirtualCardPreview();
+    schedulePersistence();
+  }
+
   function updateBackendStatusUI(backendStatus) {
     const modeIndicator = document.getElementById('backendStatusLabel');
     const scanCounterWrap = document.getElementById('scanCounterWrap');
@@ -431,6 +464,15 @@
 
     if (btnDownloadFromCardPreview) {
       btnDownloadFromCardPreview.addEventListener('click', handleDownloadCardImage);
+    }
+
+    const cardTemplatePicker = document.getElementById('cardTemplatePicker');
+    if (cardTemplatePicker) {
+      cardTemplatePicker.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-card-template]');
+        if (!btn) return;
+        setCardTemplate(btn.getAttribute('data-card-template'));
+      });
     }
 
     if (tabPreviewMobile && tabPreviewCard) {
