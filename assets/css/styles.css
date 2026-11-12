@@ -538,6 +538,30 @@ html.dark[data-card-theme='obsidian'] .easy-steps li.is-active span {
   padding: 0.9rem;
 }
 
+.print-card-preview {
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 85 / 55;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--surface) 88%, #fff), var(--surface));
+}
+
+.print-card-preview canvas {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  display: block;
+}
+
+@media (max-width: 575.98px) {
+  .print-card-preview {
+    border-radius: 0.75rem;
+  }
+}
+
 .share-band {
   margin-top: 1.25rem;
 }

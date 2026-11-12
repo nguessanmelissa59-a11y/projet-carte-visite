@@ -213,14 +213,17 @@ function testProfileCardMarkup() {
   assert.match(html, /Koffi Kouadio/);
   assert.match(html, /data-action="save-vcard"/);
   assert.match(html, /data-action="download-card-image"/);
-  assert.match(html, /PDF imprimable 85×55 mm/);
+  assert.match(html, /PDF recto \+ verso 85×55 mm/);
   assert.doesNotMatch(html, /<script/i);
 }
 
 function testPrintableCardExport() {
   const html = read('index.html');
-  assert.match(html, /PDF imprimable 85×55 mm/);
-  assert.match(html, /Planche A4, taille réelle, traits de coupe/);
+  assert.match(html, /PDF recto \+ verso 85×55 mm/);
+  assert.match(html, /tabCardRecto/);
+  assert.match(html, /tabCardVerso/);
+  assert.match(html, /Fond perdu 3/);
+  assert.match(html, /marges 4/);
 
   const source = read('src/ui/card-canvas.js');
   assert.match(source, /PRINT_CARD_WIDTH_MM = 85/);
@@ -229,12 +232,18 @@ function testPrintableCardExport() {
   assert.match(source, /PRINT_PAGE_WIDTH_MM = 210/);
   assert.match(source, /PRINT_PAGE_HEIGHT_MM = 297/);
   assert.match(source, /function buildPrintablePdfBytes/);
+  assert.match(source, /function generateVersoCanvas/);
+  assert.match(source, /function renderVersoToCanvas/);
+  assert.match(source, /async function drawVerso/);
+  assert.match(source, /Scannez pour enregistrer le contact/);
   assert.match(source, /application\/pdf/);
-  assert.match(source, /_85x55mm\.pdf/);
+  assert.match(source, /recto-verso_85x55mm\.pdf/);
   assert.match(source, /getPrintSpecs/);
 
   const main = read('src/main.js');
-  assert.match(main, /PDF imprimable/);
+  assert.match(main, /PDF recto \+ verso/);
+  assert.match(main, /setCardPreviewSide/);
+  assert.match(main, /renderVersoToCanvas/);
 }
 
 function testToastCentered() {

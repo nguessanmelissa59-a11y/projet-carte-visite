@@ -620,6 +620,15 @@
       btnDownloadFromCardPreview.addEventListener('click', handleDownloadCardImage);
     }
 
+    const tabCardRecto = document.getElementById('tabCardRecto');
+    const tabCardVerso = document.getElementById('tabCardVerso');
+    if (tabCardRecto) {
+      tabCardRecto.addEventListener('click', () => setCardPreviewSide('recto'));
+    }
+    if (tabCardVerso) {
+      tabCardVerso.addEventListener('click', () => setCardPreviewSide('verso'));
+    }
+
     const cardTemplatePicker = document.getElementById('cardTemplatePicker');
     if (cardTemplatePicker) {
       cardTemplatePicker.addEventListener('click', (e) => {
