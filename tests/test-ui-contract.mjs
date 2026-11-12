@@ -73,6 +73,38 @@ function testThemeBannerColors() {
   }
 }
 
+function testCardTemplatesCatalog() {
+  const source = read('src/config/constants.js');
+  const sandbox = { window: {} };
+  Function('window', source)(sandbox.window);
+  const templates = sandbox.window.VCardApp.Config.CARD_TEMPLATES;
+  const required = [
+    'editorial',
+    'minimal',
+    'corporate',
+    'creative',
+    'eco',
+    'prestige',
+    'nocturne',
+    'atelier'
+  ];
+
+  for (const id of required) {
+    assert.ok(templates[id], `missing card template ${id}`);
+    assert.equal(templates[id].id, id);
+    assert.ok(templates[id].label);
+    assert.ok(Array.isArray(templates[id].swatch));
+    assert.ok(templates[id].swatch.length >= 2);
+  }
+
+  assert.equal(sandbox.window.VCardApp.Config.DEMO_DATA.cardTemplate, 'editorial');
+
+  const canvasSource = read('src/ui/card-canvas.js');
+  for (const id of required) {
+    assert.match(canvasSource, new RegExp(`${id}:\\s*draw`), `renderer missing for ${id}`);
+  }
+}
+
 function testProfileCardMarkup() {
   const constants = read('src/config/constants.js');
   const urlCodec = read('src/services/url-codec.js');
@@ -107,6 +139,7 @@ const tests = [
   ['html contracts', testHtmlContracts],
   ['css atmosphere', testCssAtmosphere],
   ['theme banner colors', testThemeBannerColors],
+  ['card templates catalog', testCardTemplatesCatalog],
   ['profile card markup', testProfileCardMarkup]
 ];
 
