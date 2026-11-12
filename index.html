@@ -294,14 +294,24 @@
               <p class="text-sm font-medium text-[color:var(--ink-muted)] m-0 mb-2">Choisir un modèle</p>
               <div id="cardTemplatePicker" class="card-template-picker" role="listbox" aria-label="Modèles de carte"></div>
             </div>
-            <div class="rounded-lg overflow-hidden border border-[color:var(--line)] bg-[color:var(--surface-elevated)]">
-              <canvas id="virtualCardPreviewCanvas" class="w-full h-auto block"></canvas>
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="mode-toggle" role="group" aria-label="Face de la carte">
+                <button type="button" id="tabCardRecto" class="is-active text-sm">Recto</button>
+                <button type="button" id="tabCardVerso" class="text-sm">Verso</button>
+              </div>
+              <p id="cardFaceHint" class="text-xs text-[color:var(--ink-muted)] m-0">Face avant · identité</p>
+            </div>
+            <div class="print-card-preview rounded-xl overflow-hidden border border-[color:var(--line)] bg-[color:var(--surface)]">
+              <canvas id="virtualCardPreviewCanvas" class="w-full h-auto block max-w-full"></canvas>
             </div>
             <button id="btnDownloadFromCardPreview" type="button" class="btn btn-primary w-full text-sm">
               <i data-lucide="printer" class="w-3.5 h-3.5 shrink-0"></i>
-              <span>PDF imprimable 85×55 mm</span>
+              <span>PDF recto + verso 85×55 mm</span>
             </button>
-            <p class="text-xs text-[color:var(--ink-muted)] m-0">Planche A4, taille réelle, traits de coupe. Imprimer à 100&nbsp;%.</p>
+            <p class="text-xs text-[color:var(--ink-muted)] m-0">
+              2 pages A4 (recto puis verso), taille réelle, traits de coupe.
+              Fond perdu 3&nbsp;mm / marges 4&nbsp;mm. Imprimer à 100&nbsp;%.
+            </p>
           </div>
         </div>
       </aside>

@@ -1380,7 +1380,7 @@ window.VCardApp.CardCanvasExporter = (function () {
             'Recto 85 x 55 mm - Fond perdu 3 mm / marges 4 mm - Imprimer a 100%'
         },
         {
-          jpegBytes: canvasToJpegBytes(versoPrint, #0.95),
+          jpegBytes: canvasToJpegBytes(versoPrint, 0.95),
           pixelW: versoPrint.width,
           pixelH: versoPrint.height,
           label:
@@ -1418,7 +1418,9 @@ window.VCardApp.CardCanvasExporter = (function () {
 
   return {
     generateCardCanvas,
+    generateVersoCanvas,
     renderCardToCanvas,
+    renderVersoToCanvas,
     downloadCardImage,
     listTemplates,
     getPrintSpecs
