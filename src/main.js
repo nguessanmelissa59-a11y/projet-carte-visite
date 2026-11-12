@@ -6,6 +6,7 @@
   const ApiService = window.VCardApp.ApiService;
   const QrView = window.VCardApp.QrView;
   const ProfileCardUI = window.VCardApp.ProfileCardUI;
+  const CardCanvasExporter = window.VCardApp.CardCanvasExporter;
 
   let state = { ...DEMO_DATA };
   let qrMode = 'url';
