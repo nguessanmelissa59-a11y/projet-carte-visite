@@ -1,44 +1,17 @@
-const fs = require('node:fs');
-const { DatabaseSync } = require('node:sqlite');
-const { DB_DIR, DB_PATH } = require('../config/env');
-
-if (!fs.existsSync(DB_DIR)) {
-  fs.mkdirSync(DB_DIR, { recursive: true });
-}
-
-const db = new DatabaseSync(DB_PATH);
-
-db.exec(`
-  PRAGMA journal_mode = WAL;
-  PRAGMA synchronous = NORMAL;
-  CREATE TABLE IF NOT EXISTS cards (
-    slug TEXT PRIMARY KEY,
-    first_name TEXT NOT NULL DEFAULT '',
-    last_name TEXT NOT NULL DEFAULT '',
-    job_title TEXT NOT NULL DEFAULT '',
-    organization TEXT NOT NULL DEFAULT '',
-    phone TEXT NOT NULL DEFAULT '',
-    whatsapp TEXT NOT NULL DEFAULT '',
-    email TEXT NOT NULL DEFAULT '',
-    location TEXT NOT NULL DEFAULT '',
-    linkedin_url TEXT NOT NULL DEFAULT '',
-    portfolio_url TEXT NOT NULL DEFAULT '',
-    bio TEXT NOT NULL DEFAULT '',
-    photo_url TEXT NOT NULL DEFAULT '',
-    photo_base64 TEXT NOT NULL DEFAULT '',
-    theme TEXT NOT NULL DEFAULT 'obsidian',
-    auto_download INTEGER NOT NULL DEFAULT 1,
-    scans INTEGER NOT NULL DEFAULT 0,
-    created_at TEXT NOT NULL,
-    updated_at TEXT NOT NULL
-  );
-`);
+const { db } = require('./connection');
 
 const stmtGetBySlug = db.prepare('SELECT * FROM cards WHERE slug = ?');
 const stmtIncrementScans = db.prepare('UPDATE cards SET scans = scans + 1 WHERE slug = ?');
 const stmtListCards = db.prepare(`
-  SELECT slug, first_name, last_name, job_title, organization, theme, scans, updated_at
+  SELECT slug, first_name, last_name, job_title, organization, theme, scans, updated_at, user_id
   FROM cards
+  ORDER BY updated_at DESC
+  LIMIT 50
+`);
+const stmtListCardsByUser = db.prepare(`
+  SELECT slug, first_name, last_name, job_title, organization, theme, scans, updated_at, user_id
+  FROM cards
+  WHERE user_id = ?
   ORDER BY updated_at DESC
   LIMIT 50
 `);
@@ -47,12 +20,12 @@ const stmtUpsertCard = db.prepare(`
     slug, first_name, last_name, job_title, organization,
     phone, whatsapp, email, location, linkedin_url,
     portfolio_url, bio, photo_url, photo_base64, theme,
-    auto_download, scans, created_at, updated_at
+    auto_download, scans, user_id, created_at, updated_at
   ) VALUES (
     ?, ?, ?, ?, ?,
     ?, ?, ?, ?, ?,
     ?, ?, ?, ?, ?,
-    ?, ?, ?, ?
+    ?, ?, ?, ?, ?
   )
   ON CONFLICT(slug) DO UPDATE SET
     first_name = excluded.first_name,
@@ -70,6 +43,7 @@ const stmtUpsertCard = db.prepare(`
     photo_base64 = excluded.photo_base64,
     theme = excluded.theme,
     auto_download = excluded.auto_download,
+    user_id = COALESCE(excluded.user_id, cards.user_id),
     updated_at = excluded.updated_at
 `);
 
@@ -104,6 +78,7 @@ function mapRowToCard(row) {
     theme: row.theme || 'obsidian',
     autoDownload: Boolean(row.auto_download),
     scans: Number(row.scans) || 0,
+    userId: row.user_id || null,
     createdAt: row.created_at,
     updatedAt: row.updated_at
   };
@@ -119,11 +94,12 @@ function incrementScans(slug) {
   return getCardBySlug(cleanSlug);
 }
 
-function upsertCard(payload) {
+function upsertCard(payload, options = {}) {
   const defaultSlug = `${payload.firstName || ''}-${payload.lastName || ''}`;
   const slug = slugify(payload.slug || defaultSlug);
   const now = new Date().toISOString();
   const existing = getCardBySlug(slug);
+  const userId = options.userId !== undefined ? options.userId : payload.userId || null;
 
   stmtUpsertCard.run(
     slug,
@@ -143,6 +119,7 @@ function upsertCard(payload) {
     String(payload.theme || 'obsidian'),
     payload.autoDownload === false ? 0 : 1,
     existing ? existing.scans : 0,
+    userId,
     existing ? existing.createdAt : now,
     now
   );
@@ -159,6 +136,21 @@ function listCards() {
     organization: r.organization,
     theme: r.theme,
     scans: r.scans,
+    userId: r.user_id || null,
+    updatedAt: r.updated_at
+  }));
+}
+
+function listCardsByUserId(userId) {
+  return stmtListCardsByUser.all(userId).map((r) => ({
+    slug: r.slug,
+    firstName: r.first_name,
+    lastName: r.last_name,
+    jobTitle: r.job_title,
+    organization: r.organization,
+    theme: r.theme,
+    scans: r.scans,
+    userId: r.user_id || null,
     updatedAt: r.updated_at
   }));
 }
@@ -190,5 +182,6 @@ module.exports = {
   getCardBySlug,
   incrementScans,
   upsertCard,
-  listCards
+  listCards,
+  listCardsByUserId
 };
