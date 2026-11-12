@@ -1,0 +1,53 @@
+/* Custom Styles for vCard Studio */
+
+.form-input {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(203, 213, 225, 0.85);
+  background-color: #ffffff;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.875rem;
+  color: #0f172a;
+  transition: all 0.2s ease;
+}
+
+.dark .form-input {
+  border-color: rgba(51, 65, 85, 0.85);
+  background-color: #0f172a;
+  color: #f8fafc;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
+}
+
+/* Custom sleek scrollbar inside the phone mockup */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(148, 163, 184, 0.35);
+  border-radius: 9999px;
+}
+
+/* Subtle pulse animation for primary Save Contact CTA */
+@keyframes subtle-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.015);
+  }
+}
+
+.cta-pulse {
+  animation: subtle-pulse 3s infinite ease-in-out;
+}
+
