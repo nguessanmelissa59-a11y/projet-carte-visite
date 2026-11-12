@@ -119,7 +119,18 @@ function testThemeBannerColors() {
   // eslint-disable-next-line no-new-func
   Function('window', source)(sandbox.window);
   const palettes = sandbox.window.VCardApp.Config.THEME_PALETTES;
-  const themes = ['obsidian', 'forest', 'cobalt', 'bronze', 'bordeaux'];
+  const themes = [
+    'obsidian',
+    'forest',
+    'cobalt',
+    'bronze',
+    'bordeaux',
+    'teal',
+    'gold',
+    'navy',
+    'plum',
+    'indigo'
+  ];
 
   for (const theme of themes) {
     assert.ok(palettes[theme], `missing theme ${theme}`);
