@@ -164,6 +164,106 @@ html.dark[data-card-theme='obsidian'] .brand-mark {
   background: linear-gradient(180deg, var(--accent), color-mix(in srgb, var(--accent) 35%, transparent));
 }
 
+.easy-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+}
+
+.easy-steps li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.25rem;
+  padding: 0.35rem 0.75rem 0.35rem 0.4rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-elevated) 88%, transparent);
+  color: var(--ink-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.easy-steps li span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.easy-steps li.is-active {
+  color: var(--ink);
+  border-color: color-mix(in srgb, var(--ink) 28%, transparent);
+}
+
+.easy-steps li.is-active span,
+.easy-steps li.is-done span {
+  background: var(--accent);
+  color: #fff;
+}
+
+html.dark .easy-steps li.is-active span,
+html.dark .easy-steps li.is-done span {
+  color: #14120f;
+}
+
+.easy-steps li.is-done {
+  color: var(--ink);
+}
+
+.easy-banner {
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+  background: color-mix(in srgb, var(--accent-soft) 70%, var(--surface-elevated));
+}
+
+.easy-advanced {
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+  background: color-mix(in srgb, var(--surface) 55%, var(--surface-elevated));
+  padding: 0.15rem 0.9rem 0.15rem;
+}
+
+.easy-advanced > summary {
+  list-style: none;
+  cursor: pointer;
+  min-height: 2.75rem;
+  display: flex;
+  align-items: center;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.easy-advanced > summary::-webkit-details-marker {
+  display: none;
+}
+
+.easy-advanced > summary::after {
+  content: '+';
+  margin-left: auto;
+  font-family: var(--font-mono);
+  color: var(--ink-muted);
+}
+
+.easy-advanced[open] > summary::after {
+  content: '−';
+}
+
+.easy-advanced-body {
+  padding: 0 0 0.95rem;
+}
+
 .panel-intro {
   display: flex;
   flex-wrap: wrap;
