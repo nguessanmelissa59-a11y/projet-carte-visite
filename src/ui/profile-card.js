@@ -189,17 +189,18 @@ window.VCardApp.ProfileCardUI = (function () {
 
     const toast = document.createElement('div');
     toast.className =
-      'pointer-events-auto flex items-center gap-2 px-3.5 py-2.5 rounded-lg bg-[color:var(--ink)] text-[color:var(--surface)] text-xs font-medium shadow-md border border-[color:var(--line)] transition-all duration-200 transform translate-y-2 opacity-0';
+      'pointer-events-auto max-w-[min(22rem,100%)] w-full text-center px-4 py-3 rounded-xl bg-[color:var(--ink)] text-[color:var(--surface)] text-sm font-medium shadow-lg border border-[color:var(--line)] transition-all duration-200 transform translate-y-2 scale-95 opacity-0';
+    toast.setAttribute('role', 'status');
     toast.innerHTML = `<span>${escapeHtml(message)}</span>`;
 
     container.appendChild(toast);
 
     requestAnimationFrame(() => {
-      toast.classList.remove('translate-y-2', 'opacity-0');
+      toast.classList.remove('translate-y-2', 'scale-95', 'opacity-0');
     });
 
     setTimeout(() => {
-      toast.classList.add('translate-y-2', 'opacity-0');
+      toast.classList.add('translate-y-2', 'scale-95', 'opacity-0');
       setTimeout(() => toast.remove(), 250);
     }, 2600);
   }
