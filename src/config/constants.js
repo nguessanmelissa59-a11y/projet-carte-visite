@@ -118,6 +118,8 @@ window.VCardApp.Config = {
     bio: 'Architecture distribuée, sécurité des systèmes et accompagnement technique.',
     photoUrl: '',
     photoBase64: '',
+    qrLogoUrl: '',
+    qrLogoBase64: '',
     theme: 'obsidian',
     cardTemplate: 'editorial',
     autoDownload: true,
@@ -137,6 +139,7 @@ window.VCardApp.Config = {
     'linkedinUrl',
     'portfolioUrl',
     'bio',
-    'photoUrl'
+    'photoUrl',
+    'qrLogoUrl'
   ]
 };
