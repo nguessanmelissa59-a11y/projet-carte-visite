@@ -123,7 +123,46 @@
     }
   }
 
+  function syncStateFromFormField(target) {
+    if (!target || !target.name) return;
+    let value = target.type === 'checkbox' ? target.checked : target.value;
+    if (FieldValidation) {
+      if (target.name === 'phone' || target.name === 'whatsapp') {
+        value = FieldValidation.sanitizePhoneInput(value);
+        if (target.value !== value) target.value = value;
+      }
+      if (target.name === 'email' && typeof value === 'string' && value) {
+        value = FieldValidation.normalizeEmail(value);
+        if (target.value !== value) target.value = value;
+      }
+      FieldValidation.validateField(target);
+    }
+    state[target.name] = value;
+  }
+
+  function ensureFormFieldsValid(showToast) {
+    const form = document.getElementById('vcardForm');
+    if (!FieldValidation || !form) return true;
+    const result = FieldValidation.validateForm(form);
+    if (!result.ok) {
+      if (result.firstInvalid) {
+        result.firstInvalid.focus();
+        result.firstInvalid.reportValidity();
+      }
+      if (showToast) {
+        ProfileCardUI.showToast('Corrigez les champs invalides avant d’enregistrer');
+      }
+      return false;
+    }
+    FORM_FIELDS.forEach((field) => {
+      const el = document.getElementById(field);
+      if (el) state[field] = el.type === 'checkbox' ? el.checked : el.value;
+    });
+    return true;
+  }
+
   async function saveCardToServer() {
+    if (!ensureFormFieldsValid(true)) return;
     StorageService.saveDraft(state);
     if (!ApiService.isAvailable()) {
       ProfileCardUI.showToast('Brouillon enregistré sur cet appareil');
@@ -462,10 +501,12 @@
   function bindEvents() {
     const form = document.getElementById('vcardForm');
     if (form) {
+      if (FieldValidation) FieldValidation.applyLimits(form);
+
       form.addEventListener('input', (e) => {
         const target = e.target;
         if (!target.name) return;
-        state[target.name] = target.type === 'checkbox' ? target.checked : target.value;
+        syncStateFromFormField(target);
 
         if ((target.name === 'firstName' || target.name === 'lastName') && !document.getElementById('slug').dataset.edited) {
           state.slug = ApiService.slugify(`${state.firstName}-${state.lastName}`);
@@ -489,6 +530,37 @@
 
         scheduleRender();
         schedulePersistence();
+      });
+
+      form.addEventListener('blur', (e) => {
+        const target = e.target;
+        if (!target || !target.name || !FieldValidation) return;
+        syncStateFromFormField(target);
+      }, true);
+
+      ['phone', 'whatsapp'].forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('keydown', (e) => {
+          if (e.ctrlKey || e.metaKey || e.altKey) return;
+          const allowedKeys = [
+            'Backspace',
+            'Delete',
+            'Tab',
+            'Escape',
+            'Enter',
+            'ArrowLeft',
+            'ArrowRight',
+            'ArrowUp',
+            'ArrowDown',
+            'Home',
+            'End'
+          ];
+          if (allowedKeys.includes(e.key)) return;
+          if (e.key.length === 1 && /[A-Za-z]/.test(e.key)) {
+            e.preventDefault();
+          }
+        });
       });
     }
 
