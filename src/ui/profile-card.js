@@ -86,10 +86,15 @@ window.VCardApp.ProfileCardUI = (function () {
           }
 
           <!-- Primary CTA -->
-          <div class="mt-5">
+          <div class="mt-5 space-y-2">
             <button type="button" data-action="save-vcard" class="w-full h-11 px-4 rounded-lg font-medium text-sm ${palette.btnBg} transition-colors duration-150 flex items-center justify-center gap-2 cursor-pointer">
               <i data-lucide="user-plus" class="w-4 h-4"></i>
               <span>Enregistrer dans les contacts</span>
+            </button>
+
+            <button type="button" data-action="download-card-image" class="w-full h-9 px-3 rounded-lg font-medium text-xs bg-zinc-100 hover:bg-zinc-200/80 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/80 transition-colors flex items-center justify-center gap-2 cursor-pointer">
+              <i data-lucide="credit-card" class="w-3.5 h-3.5"></i>
+              <span>Télécharger la carte avec QR Code</span>
             </button>
           </div>
 
