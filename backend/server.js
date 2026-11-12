@@ -109,7 +109,7 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, HOST, () => {
   const lanIp = getLanIpAddress();
-  console.log(`Serveur vCard Studio actif :`);
+  console.log(`Serveur EVC Melissa actif :`);
   console.log(`- Local (PC)      : http://localhost:${PORT}`);
   console.log(`- Reseau (Mobile) : http://${lanIp}:${PORT}`);
 });

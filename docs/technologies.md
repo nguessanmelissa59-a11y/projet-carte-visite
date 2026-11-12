@@ -1,6 +1,6 @@
-# Technologies Utilisées — vCard Studio
+# Technologies Utilisées — EVC Melissa
 
-Ce document présente la stack technique Frontend et Backend, les librairies, les standards web et les APIs utilisés dans **vCard Studio**.
+Ce document présente la stack technique Frontend et Backend, les librairies, les standards web et les APIs utilisés dans **EVC Melissa**.
 
 ---
 

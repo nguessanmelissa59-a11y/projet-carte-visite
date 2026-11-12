@@ -1,4 +1,4 @@
-# vCard Studio
+# EVC Melissa
 
 Application web avec backend Node.js et SQLite permettant de generer et gerer des cartes de visite numeriques (vCard 3.0 RFC 2426) via des QR Codes dynamiques courts (`/c/:slug`).
 

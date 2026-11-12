@@ -1,7 +1,7 @@
 {
-  "name": "vcard-studio",
+  "name": "evc-melissa",
   "version": "1.0.0",
-  "description": "Generateur de carte de visite numerique et QR Code dynamique avec backend SQLite",
+  "description": "EVC Melissa — generateur de carte de visite numerique et QR Code dynamique avec backend SQLite",
   "main": "backend/server.js",
   "scripts": {
     "start": "node --no-warnings backend/server.js",
