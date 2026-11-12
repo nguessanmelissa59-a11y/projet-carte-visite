@@ -245,8 +245,28 @@ function testToastCentered() {
   assert.match(profileCard, /text-center/);
 }
 
+function testEditorPreviewLayout() {
+  const indexHtml = read('index.html');
+  const authHtml = read('auth.html');
+  const css = read('assets/css/styles.css');
+
+  for (const html of [indexHtml, authHtml]) {
+    assert.doesNotMatch(html, /scroll-smooth/);
+  }
+  assert.doesNotMatch(css, /scroll-behavior:\s*smooth/);
+
+  const aside = indexHtml.match(/<aside class="([^"]*)"/);
+  assert.ok(aside, 'aside apercu introuvable');
+  assert.doesNotMatch(aside[1], /sticky/);
+
+  assert.match(indexHtml, /studio-grid[^"]*lg:items-stretch/);
+  assert.match(css, /\.preview-panel \.phone-shell:not\(\.hidden\)/);
+  assert.doesNotMatch(css, /\.studio-grid > aside \{[^}]*overflow-y:\s*auto/);
+}
+
 const tests = [
   ['html contracts', testHtmlContracts],
+  ['editor preview layout', testEditorPreviewLayout],
   ['vendored qrcode library', testVendoredQrcodeLibrary],
   ['qr view guards missing library', testQrViewGuardsMissingLibrary],
   ['qr logo overlay', testQrLogoOverlay],
