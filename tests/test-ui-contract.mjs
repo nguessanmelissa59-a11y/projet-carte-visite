@@ -23,7 +23,10 @@ function testHtmlContracts() {
     'backendStatusLabel',
     'btnThemeToggle',
     'qrModeUrl',
-    'qrModeVcard'
+    'qrModeVcard',
+    'cardTemplatePicker',
+    'virtualCardPreviewCanvas',
+    'tabPreviewCard'
   ];
 
   for (const id of requiredIds) {
@@ -35,6 +38,7 @@ function testHtmlContracts() {
   assert.match(html, /class="app-shell/);
   assert.match(html, /phone-shell/);
   assert.match(html, /assets\/css\/styles\.css/);
+  assert.match(html, /Modèles de carte virtuelle/);
 }
 
 function testCssAtmosphere() {
@@ -47,7 +51,9 @@ function testCssAtmosphere() {
     '.reveal',
     '@media (max-width: 575.98px)',
     '@media (min-width: 768px)',
-    '@media (min-width: 1024px)'
+    '@media (min-width: 1024px)',
+    '.card-template-picker',
+    '.card-template-option'
   ]) {
     assert.ok(css.includes(token), `css missing ${token}`);
   }

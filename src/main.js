@@ -521,6 +521,7 @@
       btnFillDemo.addEventListener('click', () => {
         state = { ...DEMO_DATA };
         populateForm();
+        renderCardTemplatePicker();
         renderAll(true);
         schedulePersistence();
         ProfileCardUI.showToast('Données par défaut chargées');
@@ -546,10 +547,12 @@
           photoUrl: '',
           photoBase64: '',
           theme: 'obsidian',
+          cardTemplate: 'editorial',
           autoDownload: true,
           scans: 0
         };
         populateForm();
+        renderCardTemplatePicker();
         renderAll(true);
         schedulePersistence();
         ProfileCardUI.showToast('Formulaire vidé');
