@@ -21,7 +21,7 @@ window.VCardApp.ProfileCardUI = (function () {
   }
 
   function buildCardHtml(dataObj) {
-    const palette = THEME_PALETTES[dataObj.theme] || THEME_PALETTES.obsidian;
+    const palette = THEME_PALETTES[dataObj.theme] || THEME_PALETTES.forest;
     const fullName = `${dataObj.firstName || ''} ${dataObj.lastName || ''}`.trim() || 'Nom du contact';
     const initials = getInitials(dataObj.firstName, dataObj.lastName);
     const avatarSrc = dataObj.photoBase64 || dataObj.photoUrl || '';
@@ -29,7 +29,7 @@ window.VCardApp.ProfileCardUI = (function () {
     const portfolioHref = normalizeUrl(dataObj.portfolioUrl);
     const cleanPhone = (dataObj.phone || '').replace(/[^\d+]/g, '');
     const cleanWhatsapp = (dataObj.whatsapp || dataObj.phone || '').replace(/[^\d]/g, '');
-    const bannerColor = palette.bannerColor || '#18181b';
+    const bannerColor = palette.bannerColor || '#0c543c';
 
     const avatarMarkup = avatarSrc
       ? `<img src="${escapeHtml(avatarSrc)}" alt="${escapeHtml(fullName)}" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
