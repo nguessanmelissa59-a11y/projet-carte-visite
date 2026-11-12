@@ -28,33 +28,38 @@ html.dark {
 }
 
 html[data-card-theme='obsidian'] {
-  --accent: #18181b;
-  --ambient-a: rgba(24, 24, 27, 0.22);
-  --ambient-b: rgba(82, 82, 91, 0.2);
+  --accent: #0c0a09;
+  --accent-soft: rgba(12, 10, 9, 0.1);
+  --ambient-a: rgba(28, 25, 23, 0.34);
+  --ambient-b: rgba(120, 113, 108, 0.28);
 }
 
 html[data-card-theme='forest'] {
-  --accent: #064e3b;
-  --ambient-a: rgba(6, 78, 59, 0.28);
-  --ambient-b: rgba(16, 185, 129, 0.18);
+  --accent: #059669;
+  --accent-soft: rgba(5, 150, 105, 0.14);
+  --ambient-a: rgba(5, 150, 105, 0.42);
+  --ambient-b: rgba(52, 211, 153, 0.32);
 }
 
 html[data-card-theme='cobalt'] {
-  --accent: #1e3a8a;
-  --ambient-a: rgba(30, 58, 138, 0.28);
-  --ambient-b: rgba(59, 130, 246, 0.16);
+  --accent: #2563eb;
+  --accent-soft: rgba(37, 99, 235, 0.14);
+  --ambient-a: rgba(37, 99, 235, 0.4);
+  --ambient-b: rgba(96, 165, 250, 0.3);
 }
 
 html[data-card-theme='bronze'] {
-  --accent: #78350f;
-  --ambient-a: rgba(120, 53, 15, 0.28);
-  --ambient-b: rgba(217, 119, 6, 0.16);
+  --accent: #ea580c;
+  --accent-soft: rgba(234, 88, 12, 0.14);
+  --ambient-a: rgba(234, 88, 12, 0.4);
+  --ambient-b: rgba(251, 146, 60, 0.3);
 }
 
 html[data-card-theme='bordeaux'] {
-  --accent: #7f1d1d;
-  --ambient-a: rgba(127, 29, 29, 0.28);
-  --ambient-b: rgba(225, 29, 72, 0.14);
+  --accent: #e11d48;
+  --accent-soft: rgba(225, 29, 72, 0.14);
+  --ambient-a: rgba(225, 29, 72, 0.4);
+  --ambient-b: rgba(251, 113, 133, 0.28);
 }
 
 html.dark[data-card-theme='obsidian'] {
