@@ -107,7 +107,7 @@ async function handleLogin(req, res) {
         message: 'Si un compte existe, un code OTP a été préparé.',
         email: emailCheck.value,
         purpose: 'login',
-        expiresInSec: Math.round(require('../config/env').OTP_TTL_MS / 1000)
+        expiresInSec: Math.round(OTP_TTL_MS / 1000)
       });
     }
 
