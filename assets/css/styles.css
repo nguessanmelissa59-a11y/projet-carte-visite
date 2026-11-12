@@ -1,92 +1,92 @@
 :root {
-  --surface: #f4f2ee;
-  --surface-elevated: #fffcf8;
-  --ink: #14120f;
-  --ink-muted: #5c574f;
-  --line: rgba(20, 18, 15, 0.1);
-  --accent: #0c0a09;
-  --accent-soft: rgba(12, 10, 9, 0.1);
-  --ambient-a: rgba(24, 24, 27, 0.08);
-  --ambient-b: rgba(120, 113, 98, 0.12);
-  --radius-panel: 1rem;
-  --shadow-panel: 0 1px 0 rgba(20, 18, 15, 0.04), 0 18px 40px -28px rgba(20, 18, 15, 0.35);
-  --font-display: 'Syne', system-ui, sans-serif;
-  --font-body: 'DM Sans', system-ui, sans-serif;
+  --surface: #f3f4f1;
+  --surface-elevated: #ffffff;
+  --ink: #12141a;
+  --ink-muted: #5b616c;
+  --line: rgba(18, 20, 26, 0.12);
+  --accent: #12141a;
+  --accent-soft: rgba(18, 20, 26, 0.08);
+  --ambient-a: rgba(18, 20, 26, 0.05);
+  --ambient-b: rgba(91, 97, 108, 0.08);
+  --radius-panel: 0.5rem;
+  --shadow-panel: none;
+  --font-display: 'Fraunces', 'Times New Roman', serif;
+  --font-body: 'Figtree', system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 }
 
 html.dark {
-  --surface: #0c0b0a;
-  --surface-elevated: #161412;
-  --ink: #f5f1ea;
-  --ink-muted: #a39e94;
-  --line: rgba(245, 241, 234, 0.1);
-  --accent-soft: rgba(245, 241, 234, 0.08);
-  --ambient-a: rgba(245, 241, 234, 0.05);
-  --ambient-b: rgba(120, 113, 98, 0.14);
-  --shadow-panel: 0 1px 0 rgba(255, 255, 255, 0.04), 0 22px 48px -30px rgba(0, 0, 0, 0.85);
+  --surface: #0e1014;
+  --surface-elevated: #161920;
+  --ink: #eef0f3;
+  --ink-muted: #9aa1ad;
+  --line: rgba(238, 240, 243, 0.12);
+  --accent-soft: rgba(238, 240, 243, 0.08);
+  --ambient-a: rgba(238, 240, 243, 0.04);
+  --ambient-b: rgba(154, 161, 173, 0.1);
+  --shadow-panel: none;
 }
 
 html[data-card-theme='obsidian'] {
-  --accent: #0c0a09;
-  --accent-soft: rgba(12, 10, 9, 0.1);
-  --ambient-a: rgba(28, 25, 23, 0.34);
-  --ambient-b: rgba(120, 113, 108, 0.28);
+  --accent: #12141a;
+  --accent-soft: rgba(18, 20, 26, 0.08);
+  --ambient-a: rgba(18, 20, 26, 0.08);
+  --ambient-b: rgba(91, 97, 108, 0.1);
 }
 
 html[data-card-theme='forest'] {
   --accent: #059669;
-  --accent-soft: rgba(5, 150, 105, 0.14);
-  --ambient-a: rgba(5, 150, 105, 0.42);
-  --ambient-b: rgba(52, 211, 153, 0.32);
+  --accent-soft: rgba(5, 150, 105, 0.1);
+  --ambient-a: rgba(5, 150, 105, 0.12);
+  --ambient-b: rgba(16, 185, 129, 0.1);
 }
 
 html[data-card-theme='cobalt'] {
   --accent: #2563eb;
-  --accent-soft: rgba(37, 99, 235, 0.14);
-  --ambient-a: rgba(37, 99, 235, 0.4);
-  --ambient-b: rgba(96, 165, 250, 0.3);
+  --accent-soft: rgba(37, 99, 235, 0.1);
+  --ambient-a: rgba(37, 99, 235, 0.12);
+  --ambient-b: rgba(59, 130, 246, 0.1);
 }
 
 html[data-card-theme='bronze'] {
   --accent: #ea580c;
-  --accent-soft: rgba(234, 88, 12, 0.14);
-  --ambient-a: rgba(234, 88, 12, 0.4);
-  --ambient-b: rgba(251, 146, 60, 0.3);
+  --accent-soft: rgba(234, 88, 12, 0.1);
+  --ambient-a: rgba(234, 88, 12, 0.12);
+  --ambient-b: rgba(251, 146, 60, 0.1);
 }
 
 html[data-card-theme='bordeaux'] {
   --accent: #e11d48;
-  --accent-soft: rgba(225, 29, 72, 0.14);
-  --ambient-a: rgba(225, 29, 72, 0.4);
-  --ambient-b: rgba(251, 113, 133, 0.28);
+  --accent-soft: rgba(225, 29, 72, 0.1);
+  --ambient-a: rgba(225, 29, 72, 0.12);
+  --ambient-b: rgba(244, 63, 94, 0.1);
 }
 
 html.dark[data-card-theme='obsidian'] {
-  --accent: #f5f5f4;
-  --accent-soft: rgba(245, 245, 244, 0.1);
-  --ambient-a: rgba(245, 245, 244, 0.12);
-  --ambient-b: rgba(168, 162, 158, 0.18);
+  --accent: #eef0f3;
+  --accent-soft: rgba(238, 240, 243, 0.1);
+  --ambient-a: rgba(238, 240, 243, 0.06);
+  --ambient-b: rgba(154, 161, 173, 0.1);
 }
 
 html.dark[data-card-theme='forest'] {
-  --ambient-a: rgba(52, 211, 153, 0.28);
-  --ambient-b: rgba(16, 185, 129, 0.22);
+  --ambient-a: rgba(52, 211, 153, 0.12);
+  --ambient-b: rgba(16, 185, 129, 0.1);
 }
 
 html.dark[data-card-theme='cobalt'] {
-  --ambient-a: rgba(96, 165, 250, 0.28);
-  --ambient-b: rgba(59, 130, 246, 0.22);
+  --ambient-a: rgba(96, 165, 250, 0.12);
+  --ambient-b: rgba(59, 130, 246, 0.1);
 }
 
 html.dark[data-card-theme='bronze'] {
-  --ambient-a: rgba(251, 146, 60, 0.28);
-  --ambient-b: rgba(234, 88, 12, 0.22);
+  --ambient-a: rgba(251, 146, 60, 0.12);
+  --ambient-b: rgba(234, 88, 12, 0.1);
 }
 
 html.dark[data-card-theme='bordeaux'] {
-  --ambient-a: rgba(251, 113, 133, 0.28);
-  --ambient-b: rgba(225, 29, 72, 0.22);
+  --ambient-a: rgba(251, 113, 133, 0.12);
+  --ambient-b: rgba(225, 29, 72, 0.1);
 }
 
 *,
@@ -108,34 +108,19 @@ body.app-shell {
   color: var(--ink);
   background-color: var(--surface);
   background-image:
-    radial-gradient(ellipse 80% 55% at 6% -8%, var(--ambient-a), transparent 58%),
-    radial-gradient(ellipse 60% 50% at 96% 4%, var(--ambient-b), transparent 52%),
-    radial-gradient(ellipse 50% 40% at 70% 70%, var(--accent-soft), transparent 62%),
-    radial-gradient(ellipse 45% 35% at 20% 85%, var(--ambient-b), transparent 65%),
-    linear-gradient(165deg, color-mix(in srgb, var(--surface) 70%, #ebe6dc) 0%, var(--surface) 48%);
-  background-attachment: fixed;
-  transition: background-color 0.25s ease, color 0.2s ease;
-}
-
-body.app-shell::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.35;
-  background-image:
-    linear-gradient(rgba(20, 18, 15, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(20, 18, 15, 0.035) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 20%, transparent 75%);
-}
-
-html.dark body.app-shell::before {
-  opacity: 0.22;
-  background-image:
-    linear-gradient(rgba(245, 241, 234, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(245, 241, 234, 0.04) 1px, transparent 1px);
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--ambient-a) 100%, transparent) 0%,
+      transparent 42%
+    ),
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--surface) 92%, var(--accent)) 0,
+      color-mix(in srgb, var(--surface) 92%, var(--accent)) 3px,
+      transparent 3px
+    );
+  background-attachment: scroll;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 body.app-shell > * {
