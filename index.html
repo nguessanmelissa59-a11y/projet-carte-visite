@@ -69,16 +69,29 @@
   </header>
 
   <main id="editorView" class="studio-main max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-    <div class="panel-intro reveal mb-6 sm:mb-8">
+    <div class="panel-intro reveal mb-5 sm:mb-7">
       <div>
         <p class="eyebrow">EVC Melissa</p>
         <h1 class="font-display text-2xl sm:text-3xl font-bold tracking-tight m-0">
-          Concevez une fiche nette, scannable, à jour.
+          Créez votre carte de visite
         </h1>
         <p class="text-base text-[color:var(--ink-muted)] mt-2 max-w-xl m-0">
-          Identité, coordonnées et QR dynamique synchronisés. L’aperçu mobile suit chaque modification.
+          Remplissez vos infos, enregistrez, puis partagez le QR Code.
         </p>
       </div>
+    </div>
+
+    <ol class="easy-steps mb-6 reveal" aria-label="Comment faire">
+      <li class="is-active"><span>1</span> Vos infos</li>
+      <li><span>2</span> Enregistrer</li>
+      <li><span>3</span> Partager le QR</li>
+    </ol>
+
+    <div id="authSaveHint" class="hidden easy-banner mb-5 reveal">
+      <p class="m-0 text-sm sm:text-base">
+        Pour garder et modifier votre carte plus tard,
+        <a href="/auth.html" class="font-semibold underline underline-offset-2">connectez-vous d’abord</a>.
+      </p>
     </div>
 
     <div class="studio-grid grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
@@ -87,152 +100,163 @@
         <div class="panel panel-pad p-5 sm:p-7 md:p-8">
           <div class="flex flex-wrap items-start justify-between gap-3 pb-5 mb-6 border-b border-[color:var(--line)]">
             <div>
-              <h2 class="font-display text-lg font-bold tracking-tight m-0">Configuration</h2>
+              <h2 class="font-display text-lg font-bold tracking-tight m-0">Vos informations</h2>
               <p class="text-sm text-[color:var(--ink-muted)] mt-1 m-0">
-                Les changements mettent à jour SQLite et le QR en temps réel.
-              </p>
-              <p id="authSaveHint" class="hidden text-xs text-[color:var(--ink-muted)] mt-2 m-0">
-                Connectez-vous pour synchroniser votre carte en base et la modifier plus tard.
+                L’aperçu à droite se met à jour tout seul.
               </p>
             </div>
             <div class="flex items-center gap-2 flex-wrap">
-              <button id="btnClearForm" type="button" class="btn btn-ghost text-xs h-11 min-h-11">
-                Vider
+              <button id="btnClearForm" type="button" class="btn btn-ghost text-sm h-11 min-h-11">
+                Recommencer
               </button>
-              <button id="btnSaveServer" type="button" class="btn btn-primary h-11 min-h-11 px-3 text-xs">
+              <button id="btnSaveServer" type="button" class="btn btn-primary h-11 min-h-11 px-4 text-sm">
                 <i data-lucide="save" class="w-3.5 h-3.5"></i>
-                <span>Enregistrer</span>
+                <span>Enregistrer ma carte</span>
               </button>
             </div>
           </div>
 
           <form id="vcardForm" class="space-y-6" onsubmit="return false;">
-            <div class="inset-block grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div>
-                <div class="flex items-center justify-between mb-1.5 gap-2">
-                  <label for="slug" class="block text-xs font-medium text-[color:var(--ink-muted)]">Identifiant court (slug)</label>
-                  <span id="scanCounterWrap" class="hidden text-[11px] font-mono text-[color:var(--ink-muted)]">
-                    Scans : <strong id="scanCountValue" class="text-[color:var(--ink)]">0</strong>
-                  </span>
-                </div>
-                <div class="flex items-stretch">
-                  <span class="slug-prefix">/c/</span>
-                  <input id="slug" name="slug" type="text" placeholder="koffi-kouadio" class="form-input rounded-l-none font-mono text-sm" />
-                </div>
-                <p class="text-xs text-[color:var(--ink-muted)] mt-1.5 m-0">Garde le QR compact et modifiable après impression.</p>
+            <div class="space-y-3">
+              <div class="section-label">
+                <span class="idx">1</span>
+                <h2>Qui êtes-vous ?</h2>
               </div>
-
-              <div>
-                <label class="block text-xs font-medium text-[color:var(--ink-muted)] mb-2">Teinte éditoriale</label>
-                <div id="themeColorPicker" class="flex items-center gap-2.5 pt-1 flex-wrap">
-                  <button type="button" data-theme="obsidian" class="theme-swatch bg-zinc-900" title="Noir Obsidienne" aria-label="Thème obsidienne"></button>
-                  <button type="button" data-theme="forest" class="theme-swatch bg-[#064e3b]" title="Vert Foret" aria-label="Thème forêt"></button>
-                  <button type="button" data-theme="cobalt" class="theme-swatch bg-[#1e3a8a]" title="Bleu Cobalt" aria-label="Thème cobalt"></button>
-                  <button type="button" data-theme="bronze" class="theme-swatch bg-[#78350f]" title="Terre & Bronze" aria-label="Thème bronze"></button>
-                  <button type="button" data-theme="bordeaux" class="theme-swatch bg-[#7f1d1d]" title="Bordeaux" aria-label="Thème bordeaux"></button>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="firstName" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">Prénom</label>
+                  <input id="firstName" name="firstName" type="text" required placeholder="Koffi" class="form-input" />
+                </div>
+                <div>
+                  <label for="lastName" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">Nom</label>
+                  <input id="lastName" name="lastName" type="text" required placeholder="Kouadio" class="form-input" />
+                </div>
+                <div>
+                  <label for="jobTitle" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">Poste</label>
+                  <input id="jobTitle" name="jobTitle" type="text" placeholder="Directeur Technique" class="form-input" />
+                </div>
+                <div>
+                  <label for="organization" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">Entreprise</label>
+                  <input id="organization" name="organization" type="text" placeholder="NovaTech Africa" class="form-input" />
                 </div>
               </div>
             </div>
 
             <div class="inset-block">
-              <label class="block text-xs font-medium text-[color:var(--ink-muted)] mb-2">Photographie / Portrait</label>
+              <label class="block text-sm font-medium text-[color:var(--ink-muted)] mb-2">Photo (optionnel)</label>
               <div class="flex items-center gap-3.5">
                 <div id="editorAvatarPreview" class="w-12 h-12 rounded-xl bg-[color:var(--accent)] text-white font-display font-semibold text-sm flex items-center justify-center overflow-hidden shrink-0 border border-[color:var(--line)]">
                   KK
                 </div>
                 <div class="flex-1 min-w-0 flex flex-col sm:flex-row gap-2">
                   <div class="flex items-center gap-1.5 shrink-0">
-                    <label for="photoUpload" class="btn btn-secondary h-11 min-h-11 px-3 text-xs cursor-pointer">
+                    <label for="photoUpload" class="btn btn-secondary h-11 min-h-11 px-3 text-sm cursor-pointer">
                       <i data-lucide="upload" class="w-3.5 h-3.5"></i>
-                      <span>Importer</span>
+                      <span>Choisir une photo</span>
                     </label>
                     <input id="photoUpload" type="file" accept="image/*" class="hidden" />
                     <button id="btnRemovePhoto" type="button" class="hidden btn btn-secondary h-11 w-11 min-h-11 p-0 text-[color:var(--ink-muted)]" title="Retirer la photo" aria-label="Retirer la photo">
                       <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                     </button>
                   </div>
-                  <input id="photoUrl" name="photoUrl" type="url" placeholder="Ou URL directe (https://...)" class="form-input text-sm" />
+                  <input id="photoUrl" name="photoUrl" type="url" placeholder="Ou coller un lien photo" class="form-input text-sm" />
                 </div>
               </div>
             </div>
 
             <div class="space-y-3">
               <div class="section-label">
-                <span class="idx">01</span>
-                <h2>Identité et fonction</h2>
+                <span class="idx">2</span>
+                <h2>Comment vous joindre ?</h2>
               </div>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label for="firstName" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">Prénom</label>
-                  <input id="firstName" name="firstName" type="text" required placeholder="Koffi" class="form-input" />
-                </div>
-                <div>
-                  <label for="lastName" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">Nom</label>
-                  <input id="lastName" name="lastName" type="text" required placeholder="Kouadio" class="form-input" />
-                </div>
-                <div>
-                  <label for="jobTitle" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">Titre professionnel</label>
-                  <input id="jobTitle" name="jobTitle" type="text" placeholder="Directeur Technique" class="form-input" />
-                </div>
-                <div>
-                  <label for="organization" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">Organisation</label>
-                  <input id="organization" name="organization" type="text" placeholder="NovaTech Africa" class="form-input" />
-                </div>
-              </div>
-            </div>
-
-            <div class="space-y-3">
-              <div class="section-label">
-                <span class="idx">02</span>
-                <h2>Coordonnées</h2>
-              </div>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label for="phone" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">Téléphone</label>
+                  <label for="phone" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">Téléphone</label>
                   <input id="phone" name="phone" type="tel" placeholder="+225 07 08 09 10 11" class="form-input font-mono text-sm" />
                 </div>
                 <div>
-                  <label for="whatsapp" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">WhatsApp</label>
+                  <label for="whatsapp" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">WhatsApp</label>
                   <input id="whatsapp" name="whatsapp" type="tel" placeholder="+225 07 08 09 10 11" class="form-input font-mono text-sm" />
                 </div>
                 <div>
-                  <label for="email" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">Courriel</label>
+                  <label for="email" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">E-mail</label>
                   <input id="email" name="email" type="email" placeholder="nom@entreprise.com" class="form-input" />
                 </div>
                 <div>
-                  <label for="location" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">Localisation</label>
-                  <input id="location" name="location" type="text" placeholder="Abidjan, Côte d'Ivoire" class="form-input" />
+                  <label for="location" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">Ville</label>
+                  <input id="location" name="location" type="text" placeholder="Abidjan" class="form-input" />
                 </div>
               </div>
             </div>
 
             <div class="space-y-3">
               <div class="section-label">
-                <span class="idx">03</span>
-                <h2>Liens et note</h2>
+                <span class="idx">3</span>
+                <h2>Liens (optionnel)</h2>
               </div>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label for="linkedinUrl" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">Profil LinkedIn</label>
+                  <label for="linkedinUrl" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">LinkedIn</label>
                   <input id="linkedinUrl" name="linkedinUrl" type="url" placeholder="https://linkedin.com/in/..." class="form-input" />
                 </div>
                 <div>
-                  <label for="portfolioUrl" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">Site web / Portfolio</label>
+                  <label for="portfolioUrl" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">Site web</label>
                   <input id="portfolioUrl" name="portfolioUrl" type="url" placeholder="https://..." class="form-input" />
                 </div>
                 <div class="sm:col-span-2">
-                  <label for="bio" class="block text-xs font-medium text-[color:var(--ink-muted)] mb-1.5">Note de contact</label>
-                  <textarea id="bio" name="bio" rows="2" maxlength="160" placeholder="Domaine d'expertise ou informations complémentaires." class="form-input resize-none"></textarea>
+                  <label for="bio" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">Petite présentation</label>
+                  <textarea id="bio" name="bio" rows="2" maxlength="160" placeholder="En une phrase, ce que vous faites." class="form-input resize-none"></textarea>
                 </div>
               </div>
             </div>
 
-            <div class="inset-block flex items-center justify-between gap-4">
-              <div>
-                <label for="autoDownload" class="text-sm font-semibold cursor-pointer">Import automatique du .vcf</label>
-                <p class="text-xs text-[color:var(--ink-muted)] mt-0.5 m-0">Téléchargement 1 seconde après le scan.</p>
+            <div class="inset-block">
+              <label class="block text-sm font-medium text-[color:var(--ink-muted)] mb-2">Couleur de la carte</label>
+              <div id="themeColorPicker" class="flex items-center gap-2.5 pt-1 flex-wrap">
+                <button type="button" data-theme="obsidian" class="theme-swatch bg-zinc-900" title="Noir" aria-label="Thème noir"></button>
+                <button type="button" data-theme="forest" class="theme-swatch bg-[#064e3b]" title="Vert" aria-label="Thème vert"></button>
+                <button type="button" data-theme="cobalt" class="theme-swatch bg-[#1e3a8a]" title="Bleu" aria-label="Thème bleu"></button>
+                <button type="button" data-theme="bronze" class="theme-swatch bg-[#78350f]" title="Bronze" aria-label="Thème bronze"></button>
+                <button type="button" data-theme="bordeaux" class="theme-swatch bg-[#7f1d1d]" title="Bordeaux" aria-label="Thème bordeaux"></button>
               </div>
-              <input id="autoDownload" name="autoDownload" type="checkbox" checked class="w-5 h-5 rounded border-[color:var(--line)] text-[color:var(--accent)] focus:ring-[color:var(--accent)] cursor-pointer shrink-0" />
+            </div>
+
+            <details class="easy-advanced">
+              <summary>Options avancées</summary>
+              <div class="easy-advanced-body space-y-4">
+                <div>
+                  <div class="flex items-center justify-between mb-1.5 gap-2">
+                    <label for="slug" class="block text-sm font-medium text-[color:var(--ink-muted)]">Adresse courte de votre lien</label>
+                    <span id="scanCounterWrap" class="hidden text-[11px] font-mono text-[color:var(--ink-muted)]">
+                      Vues : <strong id="scanCountValue" class="text-[color:var(--ink)]">0</strong>
+                    </span>
+                  </div>
+                  <div class="flex items-stretch">
+                    <span class="slug-prefix">/c/</span>
+                    <input id="slug" name="slug" type="text" placeholder="prenom-nom" class="form-input rounded-l-none font-mono text-sm" />
+                  </div>
+                  <p class="text-xs text-[color:var(--ink-muted)] mt-1.5 m-0">Créé automatiquement à partir de votre nom.</p>
+                </div>
+
+                <div class="flex items-center justify-between gap-4">
+                  <div>
+                    <label for="autoDownload" class="text-sm font-medium cursor-pointer">Proposer le contact automatiquement</label>
+                    <p class="text-xs text-[color:var(--ink-muted)] mt-0.5 m-0">Après un scan, proposer d’enregistrer le contact.</p>
+                  </div>
+                  <input id="autoDownload" name="autoDownload" type="checkbox" checked class="w-5 h-5 rounded border-[color:var(--line)] text-[color:var(--accent)] focus:ring-[color:var(--accent)] cursor-pointer shrink-0" />
+                </div>
+
+                <button id="btnFillDemo" type="button" class="btn btn-ghost text-sm h-11 min-h-11">
+                  Remplir avec un exemple
+                </button>
+              </div>
+            </details>
+
+            <div class="pt-2">
+              <button id="btnSaveServerBottom" type="button" class="btn btn-primary h-11 min-h-11 w-full sm:w-auto px-5 text-sm">
+                <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                <span>Enregistrer ma carte</span>
+              </button>
             </div>
           </form>
         </div>
