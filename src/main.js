@@ -164,26 +164,48 @@
     });
   }
 
+  let cardPreviewSide = 'recto';
+
   function handleDownloadCardImage() {
     const exporter = CardCanvasExporter || window.VCardApp.CardCanvasExporter;
     if (!exporter) {
       ProfileCardUI.showToast('Générateur de carte non disponible');
       return;
     }
-    ProfileCardUI.showToast('Préparation du PDF imprimable (85×55 mm)...');
+    ProfileCardUI.showToast('Préparation du PDF recto + verso (85×55 mm)...');
     exporter.downloadCardImage(state, qrMode, (ok, fileName) => {
       if (ok) {
-        ProfileCardUI.showToast(`PDF imprimable prêt (${fileName})`);
+        ProfileCardUI.showToast(`PDF recto + verso prêt (${fileName})`);
       } else {
         ProfileCardUI.showToast('Erreur lors de la génération du PDF imprimable');
       }
     });
   }
 
+  function setCardPreviewSide(side) {
+    cardPreviewSide = side === 'verso' ? 'verso' : 'recto';
+    const tabRecto = document.getElementById('tabCardRecto');
+    const tabVerso = document.getElementById('tabCardVerso');
+    const hint = document.getElementById('cardFaceHint');
+    if (tabRecto) tabRecto.classList.toggle('is-active', cardPreviewSide === 'recto');
+    if (tabVerso) tabVerso.classList.toggle('is-active', cardPreviewSide === 'verso');
+    if (hint) {
+      hint.textContent =
+        cardPreviewSide === 'verso'
+          ? 'Face arrière · QR à scanner'
+          : 'Face avant · identité';
+    }
+    updateVirtualCardPreview();
+  }
+
   function updateVirtualCardPreview() {
     const cardCanvas = document.getElementById('virtualCardPreviewCanvas');
     const exporter = CardCanvasExporter || window.VCardApp.CardCanvasExporter;
     if (!cardCanvas || !exporter) return;
+    if (cardPreviewSide === 'verso' && typeof exporter.renderVersoToCanvas === 'function') {
+      exporter.renderVersoToCanvas(cardCanvas, state, qrMode);
+      return;
+    }
     exporter.renderCardToCanvas(cardCanvas, state, qrMode);
   }
 
