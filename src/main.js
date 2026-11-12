@@ -11,6 +11,7 @@
   let state = { ...DEMO_DATA };
   let qrMode = 'url';
   let isPublicScanView = false;
+  let previewTab = 'mobile';
   let saveTimeout = null;
   let draftTimeout = null;
   let rafPending = false;
