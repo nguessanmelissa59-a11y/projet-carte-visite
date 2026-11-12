@@ -10,6 +10,8 @@ process.env.DB_PATH = path.join(tmpDir, 'test-admin.sqlite');
 process.env.AUTH_EXPOSE_OTP = '1';
 process.env.NODE_ENV = 'test';
 process.env.ADMIN_EMAILS = 'admin@example.com';
+process.env.OTP_MAX_PER_WINDOW = '50';
+process.env.OTP_RESEND_WINDOW_MS = '1000';
 
 const {
   handleRegister,
