@@ -228,6 +228,23 @@ function testPrintableCardExport() {
   assert.match(main, /PDF imprimable/);
 }
 
+function testToastCentered() {
+  const indexHtml = read('index.html');
+  const authHtml = read('auth.html');
+  const profileCard = read('src/ui/profile-card.js');
+
+  for (const html of [indexHtml, authHtml]) {
+    assert.match(html, /id="toastContainer"/);
+    assert.match(html, /fixed inset-0/);
+    assert.match(html, /items-center justify-center/);
+    assert.doesNotMatch(html, /toastContainer"[^>]*bottom-5/);
+  }
+
+  assert.match(profileCard, /function showToast/);
+  assert.match(profileCard, /max-w-\[min\(22rem,100%\)\]/);
+  assert.match(profileCard, /text-center/);
+}
+
 const tests = [
   ['html contracts', testHtmlContracts],
   ['vendored qrcode library', testVendoredQrcodeLibrary],
@@ -237,7 +254,8 @@ const tests = [
   ['theme banner colors', testThemeBannerColors],
   ['card templates catalog', testCardTemplatesCatalog],
   ['profile card markup', testProfileCardMarkup],
-  ['printable card export', testPrintableCardExport]
+  ['printable card export', testPrintableCardExport],
+  ['toast centered', testToastCentered]
 ];
 
 let failed = 0;
