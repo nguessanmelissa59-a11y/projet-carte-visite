@@ -230,6 +230,10 @@
       if (saveBtn) {
         saveBtn.addEventListener('click', handleSaveContactAction);
       }
+      const cardDownloadBtn = activeMount.querySelector('[data-action="download-card-image"]');
+      if (cardDownloadBtn) {
+        cardDownloadBtn.addEventListener('click', handleDownloadCardImage);
+      }
       if (window.lucide) {
         window.lucide.createIcons({ root: activeMount });
       }
