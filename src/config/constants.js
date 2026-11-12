@@ -52,6 +52,42 @@ window.VCardApp.Config = {
       label: 'Atelier',
       blurb: 'Papier chaud, encre',
       swatch: ['#f7f1e8', '#2a2118', '#8b5e3c']
+    },
+    lagoon: {
+      id: 'lagoon',
+      label: 'Lagoon',
+      blurb: 'Sarcelle et écume',
+      swatch: ['#ecfeff', '#0f766e', '#67e8f9']
+    },
+    slate: {
+      id: 'slate',
+      label: 'Ardoise',
+      blurb: 'Bleu-gris architectural',
+      swatch: ['#f1f5f9', '#334155', '#64748b']
+    },
+    sunset: {
+      id: 'sunset',
+      label: 'Sunset',
+      blurb: 'Ambre et corail chaud',
+      swatch: ['#fff7ed', '#ea580c', '#fb923c']
+    },
+    sumi: {
+      id: 'sumi',
+      label: 'Sumi',
+      blurb: 'Encre et vermillon',
+      swatch: ['#fafafa', '#111111', '#b91c1c']
+    },
+    arctic: {
+      id: 'arctic',
+      label: 'Arctic',
+      blurb: 'Glace et acier',
+      swatch: ['#f8fafc', '#0ea5e9', '#1e293b']
+    },
+    metro: {
+      id: 'metro',
+      label: 'Métro',
+      blurb: 'Split géométrique bold',
+      swatch: ['#fef08a', '#18181b', '#fafafa']
     }
   },
 
