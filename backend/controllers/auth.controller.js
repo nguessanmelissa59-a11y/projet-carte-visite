@@ -102,10 +102,10 @@ async function handleLogin(req, res) {
       // Réponse neutre pour limiter l'énumération de comptes.
       return sendJson(res, 200, {
         ok: true,
+        otpIssued: false,
         message: 'Si un compte existe, un code OTP a été préparé.',
         email: emailCheck.value,
-        purpose: 'login',
-        expiresInSec: 600
+        purpose: 'login'
       });
     }
 
@@ -118,6 +118,7 @@ async function handleLogin(req, res) {
 
     return sendJson(res, 200, {
       ok: true,
+      otpIssued: true,
       message: 'Code OTP envoyé. Vérifiez votre e-mail (ou la console serveur en local).',
       email: otp.email,
       purpose: 'login',
