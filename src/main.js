@@ -199,6 +199,9 @@
   function renderAll(forceQr = false) {
     const editorAvatar = document.getElementById('editorAvatarPreview');
     const btnRemovePhoto = document.getElementById('btnRemovePhoto');
+    const themeKey = state.theme || 'obsidian';
+
+    document.documentElement.dataset.cardTheme = themeKey;
 
     if (editorAvatar && !isPublicScanView) {
       const src = state.photoBase64 || state.photoUrl;
@@ -213,11 +216,7 @@
 
     document.querySelectorAll('#themeColorPicker .theme-swatch').forEach((btn) => {
       const t = btn.getAttribute('data-theme');
-      if (t === state.theme) {
-        btn.classList.add('ring-2', 'ring-offset-2', 'ring-zinc-900', 'dark:ring-zinc-100', 'dark:ring-offset-zinc-900');
-      } else {
-        btn.classList.remove('ring-2', 'ring-offset-2', 'ring-zinc-900', 'dark:ring-zinc-100', 'dark:ring-offset-zinc-900');
-      }
+      btn.classList.toggle('is-active', t === themeKey);
     });
 
     updateScanCountBadge();
