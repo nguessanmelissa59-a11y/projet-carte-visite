@@ -4,6 +4,8 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+$repoRoot = (Resolve-Path "$PSScriptRoot\..").Path
+Set-Location $repoRoot
 
 $status = git status --porcelain
 if ([string]::IsNullOrWhiteSpace($status)) {

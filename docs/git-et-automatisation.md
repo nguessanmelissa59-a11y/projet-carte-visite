@@ -22,20 +22,20 @@ git push -u origin main
 
 ## 2. Automatiser les `commit` et `push`
 
-### Méthode 1 : Surveillance automatique (`auto-push.ps1`)
-Le script [auto-push.ps1](file:///c:/Users/Meliisa/Desktop/projet_carte_visite/auto-push.ps1) surveille le dossier du projet et pousse automatiquement chaque modification enregistrée :
+### Méthode 1 : Surveillance automatique (`scripts/auto-push.ps1`)
+Le script `scripts/auto-push.ps1` surveille le dossier du projet et pousse automatiquement chaque modification enregistrée :
 ```powershell
-.\auto-push.ps1
+.\scripts\auto-push.ps1
 ```
 
-### Méthode 2 : Envoi manuel en une commande (`push.ps1`)
-Le script [push.ps1](file:///c:/Users/Meliisa/Desktop/projet_carte_visite/push.ps1) exécute `git add -A`, `git commit` et `git push` :
+### Méthode 2 : Envoi manuel en une commande (`scripts/push.ps1`)
+Le script `scripts/push.ps1` exécute `git add -A`, `git commit` et `git push` :
 ```powershell
-.\push.ps1 "Mise à jour de la carte"
+.\scripts\push.ps1 "refactor: structure modulaire"
 ```
 Ou sans argument (utilise la liste des fichiers modifiés) :
 ```powershell
-.\push.ps1
+.\scripts\push.ps1
 ```
 
 ### Méthode 3 : Automatisation dans Cursor / VS Code

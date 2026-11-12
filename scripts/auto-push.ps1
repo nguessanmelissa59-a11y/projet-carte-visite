@@ -2,8 +2,9 @@ param(
   [int]$IntervalSeconds = 5
 )
 
-Write-Host "Surveillance Git active sur : $PSScriptRoot"
-Set-Location $PSScriptRoot
+$repoRoot = (Resolve-Path "$PSScriptRoot\..").Path
+Set-Location $repoRoot
+Write-Host "Surveillance Git active sur : $repoRoot"
 
 while ($true) {
   try {

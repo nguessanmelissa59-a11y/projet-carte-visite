@@ -1,5 +1,3 @@
-/* Custom Styles for vCard Studio */
-
 .form-input {
   width: 100%;
   border-radius: 0.75rem;
@@ -23,7 +21,6 @@
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
 }
 
-/* Custom sleek scrollbar inside the phone mockup */
 .custom-scrollbar::-webkit-scrollbar {
   width: 5px;
 }
@@ -37,7 +34,6 @@
   border-radius: 9999px;
 }
 
-/* Subtle pulse animation for primary Save Contact CTA */
 @keyframes subtle-pulse {
   0%, 100% {
     transform: scale(1);
@@ -50,4 +46,3 @@
 .cta-pulse {
   animation: subtle-pulse 3s infinite ease-in-out;
 }
-
