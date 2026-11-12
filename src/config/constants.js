@@ -94,93 +94,93 @@ window.VCardApp.Config = {
   THEME_PALETTES: {
     obsidian: {
       label: 'Encre',
-      bannerColor: '#12141a',
-      headerBg: 'bg-slate-950',
-      btnBg: 'bg-slate-950 hover:bg-slate-800 text-white dark:bg-slate-100 dark:hover:bg-white dark:text-slate-950',
-      badgeBg: 'bg-slate-100 text-slate-800 border-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700',
-      iconColor: 'text-slate-800 dark:text-slate-200',
-      qrDark: '#12141a'
+      bannerColor: '#2a2d34',
+      headerBg: 'bg-[#2a2d34]',
+      btnBg: 'bg-[#2a2d34] hover:bg-[#3a3e48] text-white dark:bg-slate-100 dark:hover:bg-white dark:text-slate-950',
+      badgeBg: 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700',
+      iconColor: 'text-slate-700 dark:text-slate-300',
+      qrDark: '#2a2d34'
     },
     forest: {
       label: 'Émeraude',
-      bannerColor: '#059669',
-      headerBg: 'bg-[#059669]',
-      btnBg: 'bg-[#059669] hover:bg-[#047857] text-white',
-      badgeBg: 'bg-emerald-50 text-emerald-900 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-200 dark:border-emerald-700',
-      iconColor: 'text-[#059669] dark:text-emerald-300',
-      qrDark: '#047857'
+      bannerColor: '#5a7d6c',
+      headerBg: 'bg-[#5a7d6c]',
+      btnBg: 'bg-[#5a7d6c] hover:bg-[#4a6a5b] text-white',
+      badgeBg: 'bg-stone-100 text-stone-700 border-stone-200 dark:bg-emerald-950/40 dark:text-emerald-100 dark:border-emerald-800',
+      iconColor: 'text-[#5a7d6c] dark:text-emerald-200',
+      qrDark: '#4a6a5b'
     },
     cobalt: {
       label: 'Azur',
-      bannerColor: '#2563eb',
-      headerBg: 'bg-[#2563eb]',
-      btnBg: 'bg-[#2563eb] hover:bg-[#1d4ed8] text-white',
-      badgeBg: 'bg-blue-50 text-blue-900 border-blue-200 dark:bg-blue-950/50 dark:text-blue-200 dark:border-blue-700',
-      iconColor: 'text-[#2563eb] dark:text-blue-300',
-      qrDark: '#1d4ed8'
+      bannerColor: '#5c7a9e',
+      headerBg: 'bg-[#5c7a9e]',
+      btnBg: 'bg-[#5c7a9e] hover:bg-[#4d6888] text-white',
+      badgeBg: 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800/80 dark:text-slate-100 dark:border-slate-700',
+      iconColor: 'text-[#5c7a9e] dark:text-slate-300',
+      qrDark: '#4d6888'
     },
     bronze: {
       label: 'Ambre',
-      bannerColor: '#ea580c',
-      headerBg: 'bg-[#ea580c]',
-      btnBg: 'bg-[#ea580c] hover:bg-[#c2410c] text-white',
-      badgeBg: 'bg-orange-50 text-orange-950 border-orange-200 dark:bg-orange-950/45 dark:text-orange-200 dark:border-orange-700',
-      iconColor: 'text-[#ea580c] dark:text-orange-300',
-      qrDark: '#c2410c'
+      bannerColor: '#b8845c',
+      headerBg: 'bg-[#b8845c]',
+      btnBg: 'bg-[#b8845c] hover:bg-[#a0714c] text-white',
+      badgeBg: 'bg-orange-50 text-stone-800 border-orange-100 dark:bg-orange-950/35 dark:text-orange-100 dark:border-orange-900',
+      iconColor: 'text-[#b8845c] dark:text-orange-200',
+      qrDark: '#a0714c'
     },
     bordeaux: {
       label: 'Cerise',
-      bannerColor: '#e11d48',
-      headerBg: 'bg-[#e11d48]',
-      btnBg: 'bg-[#e11d48] hover:bg-[#be123c] text-white',
-      badgeBg: 'bg-rose-50 text-rose-950 border-rose-200 dark:bg-rose-950/45 dark:text-rose-200 dark:border-rose-700',
-      iconColor: 'text-[#e11d48] dark:text-rose-300',
-      qrDark: '#be123c'
+      bannerColor: '#a35d6a',
+      headerBg: 'bg-[#a35d6a]',
+      btnBg: 'bg-[#a35d6a] hover:bg-[#8f5060] text-white',
+      badgeBg: 'bg-rose-50 text-stone-800 border-rose-100 dark:bg-rose-950/35 dark:text-rose-100 dark:border-rose-900',
+      iconColor: 'text-[#a35d6a] dark:text-rose-200',
+      qrDark: '#8f5060'
     },
     teal: {
       label: 'Sarcelle',
-      bannerColor: '#0f766e',
-      headerBg: 'bg-[#0f766e]',
-      btnBg: 'bg-[#0f766e] hover:bg-[#0d9488] text-white',
-      badgeBg: 'bg-teal-50 text-teal-950 border-teal-200 dark:bg-teal-950/45 dark:text-teal-200 dark:border-teal-700',
-      iconColor: 'text-[#0f766e] dark:text-teal-300',
-      qrDark: '#115e59'
+      bannerColor: '#5a8a84',
+      headerBg: 'bg-[#5a8a84]',
+      btnBg: 'bg-[#5a8a84] hover:bg-[#4b7570] text-white',
+      badgeBg: 'bg-teal-50 text-stone-800 border-teal-100 dark:bg-teal-950/35 dark:text-teal-100 dark:border-teal-900',
+      iconColor: 'text-[#5a8a84] dark:text-teal-200',
+      qrDark: '#4b7570'
     },
     gold: {
       label: 'Or',
-      bannerColor: '#a16207',
-      headerBg: 'bg-[#a16207]',
-      btnBg: 'bg-[#a16207] hover:bg-[#854d0e] text-white',
-      badgeBg: 'bg-amber-50 text-amber-950 border-amber-200 dark:bg-amber-950/45 dark:text-amber-200 dark:border-amber-700',
-      iconColor: 'text-[#a16207] dark:text-amber-300',
-      qrDark: '#854d0e'
+      bannerColor: '#9a8458',
+      headerBg: 'bg-[#9a8458]',
+      btnBg: 'bg-[#9a8458] hover:bg-[#847049] text-white',
+      badgeBg: 'bg-amber-50 text-stone-800 border-amber-100 dark:bg-amber-950/35 dark:text-amber-100 dark:border-amber-900',
+      iconColor: 'text-[#9a8458] dark:text-amber-200',
+      qrDark: '#847049'
     },
     navy: {
       label: 'Marine',
-      bannerColor: '#1e3a5f',
-      headerBg: 'bg-[#1e3a5f]',
-      btnBg: 'bg-[#1e3a5f] hover:bg-[#152a45] text-white',
-      badgeBg: 'bg-slate-100 text-slate-900 border-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700',
-      iconColor: 'text-[#1e3a5f] dark:text-slate-300',
-      qrDark: '#152a45'
+      bannerColor: '#4a5d73',
+      headerBg: 'bg-[#4a5d73]',
+      btnBg: 'bg-[#4a5d73] hover:bg-[#3d4e61] text-white',
+      badgeBg: 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700',
+      iconColor: 'text-[#4a5d73] dark:text-slate-300',
+      qrDark: '#3d4e61'
     },
     plum: {
       label: 'Prune',
-      bannerColor: '#9f1239',
-      headerBg: 'bg-[#9f1239]',
-      btnBg: 'bg-[#9f1239] hover:bg-[#881337] text-white',
-      badgeBg: 'bg-rose-50 text-rose-950 border-rose-200 dark:bg-rose-950/45 dark:text-rose-200 dark:border-rose-700',
-      iconColor: 'text-[#9f1239] dark:text-rose-300',
-      qrDark: '#881337'
+      bannerColor: '#8a5a68',
+      headerBg: 'bg-[#8a5a68]',
+      btnBg: 'bg-[#8a5a68] hover:bg-[#754c58] text-white',
+      badgeBg: 'bg-rose-50 text-stone-800 border-rose-100 dark:bg-rose-950/35 dark:text-rose-100 dark:border-rose-900',
+      iconColor: 'text-[#8a5a68] dark:text-rose-200',
+      qrDark: '#754c58'
     },
     indigo: {
       label: 'Indigo',
-      bannerColor: '#3730a3',
-      headerBg: 'bg-[#3730a3]',
-      btnBg: 'bg-[#3730a3] hover:bg-[#312e81] text-white',
-      badgeBg: 'bg-indigo-50 text-indigo-950 border-indigo-200 dark:bg-indigo-950/45 dark:text-indigo-200 dark:border-indigo-700',
-      iconColor: 'text-[#3730a3] dark:text-indigo-300',
-      qrDark: '#312e81'
+      bannerColor: '#5f6488',
+      headerBg: 'bg-[#5f6488]',
+      btnBg: 'bg-[#5f6488] hover:bg-[#505574] text-white',
+      badgeBg: 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-indigo-950/35 dark:text-indigo-100 dark:border-indigo-900',
+      iconColor: 'text-[#5f6488] dark:text-indigo-200',
+      qrDark: '#505574'
     }
   },
 
