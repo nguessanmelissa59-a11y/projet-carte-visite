@@ -699,7 +699,7 @@ window.VCardApp.CardCanvasExporter = (function () {
     }
 
     drawContactRows(ctx, collectContacts(state), 72, 350, {
-      labelColor: '#5eead4',
+      labelColor: '#0f766e',
       valueColor: '#115e59',
       gap: 48,
       maxWidth: 540

@@ -139,7 +139,13 @@ function testCardTemplatesCatalog() {
     'eco',
     'prestige',
     'nocturne',
-    'atelier'
+    'atelier',
+    'lagoon',
+    'slate',
+    'sunset',
+    'sumi',
+    'arctic',
+    'metro'
   ];
 
   for (const id of required) {
