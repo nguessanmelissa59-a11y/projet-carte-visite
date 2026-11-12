@@ -4,3 +4,4 @@
 - Adopte un style sobre, direct et naturel, comme celui d'un developpeur humain.
 - Evite les commentaires ou messages de log verbeux et generiques qui trahissent une generation par IA.
 - Utilise des messages de commit concis et standards (ex: `feat: ...`, `fix: ...`, `update: ...`).
+
