@@ -111,15 +111,15 @@
     if (backendStatus.available) {
       if (modeIndicator) {
         modeIndicator.textContent = 'Serveur SQLite actif';
-        modeIndicator.className =
-          'inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 border border-zinc-300 dark:border-zinc-700';
+        modeIndicator.className = 'status-chip';
+        modeIndicator.dataset.state = 'online';
       }
       if (scanCounterWrap) scanCounterWrap.classList.remove('hidden');
     } else {
       if (modeIndicator) {
         modeIndicator.textContent = 'Mode statique autonome';
-        modeIndicator.className =
-          'inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800';
+        modeIndicator.className = 'status-chip';
+        modeIndicator.dataset.state = 'offline';
       }
     }
   }

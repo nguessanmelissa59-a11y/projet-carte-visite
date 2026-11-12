@@ -7,6 +7,7 @@ window.VCardApp.Config = {
   THEME_PALETTES: {
     obsidian: {
       label: 'Noir Obsidienne',
+      bannerColor: '#18181b',
       headerBg: 'bg-zinc-900',
       btnBg: 'bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-900',
       badgeBg: 'bg-zinc-100 text-zinc-800 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:border-zinc-700',
@@ -15,6 +16,7 @@ window.VCardApp.Config = {
     },
     forest: {
       label: 'Vert Foret',
+      bannerColor: '#064e3b',
       headerBg: 'bg-[#064e3b]',
       btnBg: 'bg-[#064e3b] hover:bg-[#065f46] text-white',
       badgeBg: 'bg-emerald-950/5 text-emerald-900 border-emerald-900/15 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/50',
@@ -23,6 +25,7 @@ window.VCardApp.Config = {
     },
     cobalt: {
       label: 'Bleu Cobalt',
+      bannerColor: '#1e3a8a',
       headerBg: 'bg-[#1e3a8a]',
       btnBg: 'bg-[#1e3a8a] hover:bg-[#1d4ed8] text-white',
       badgeBg: 'bg-blue-950/5 text-blue-900 border-blue-900/15 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800/50',
@@ -31,6 +34,7 @@ window.VCardApp.Config = {
     },
     bronze: {
       label: 'Terre & Bronze',
+      bannerColor: '#78350f',
       headerBg: 'bg-[#78350f]',
       btnBg: 'bg-[#78350f] hover:bg-[#92400e] text-white',
       badgeBg: 'bg-amber-950/5 text-amber-900 border-amber-900/15 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/50',
@@ -39,6 +43,7 @@ window.VCardApp.Config = {
     },
     bordeaux: {
       label: 'Bordeaux',
+      bannerColor: '#7f1d1d',
       headerBg: 'bg-[#7f1d1d]',
       btnBg: 'bg-[#7f1d1d] hover:bg-[#991b1b] text-white',
       badgeBg: 'bg-rose-950/5 text-rose-900 border-rose-900/15 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800/50',
