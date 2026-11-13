@@ -30,6 +30,8 @@ const OTP_MAX_ATTEMPTS = Number(process.env.OTP_MAX_ATTEMPTS) || 5;
 const AUTH_EXPOSE_OTP =
   process.env.AUTH_EXPOSE_OTP === '1' ||
   (!IS_PRODUCTION && process.env.AUTH_EXPOSE_OTP !== '0');
+const LOGIN_MAX_ATTEMPTS = Number(process.env.LOGIN_MAX_ATTEMPTS) || 5;
+const LOGIN_LOCK_WINDOW_MS = Number(process.env.LOGIN_LOCK_WINDOW_MS) || 15 * 60 * 1000;
 
 const ADMIN_EMAILS = String(process.env.ADMIN_EMAILS || '')
   .split(',')
@@ -62,6 +64,8 @@ module.exports = {
   OTP_MAX_PER_WINDOW,
   OTP_MAX_ATTEMPTS,
   AUTH_EXPOSE_OTP,
+  LOGIN_MAX_ATTEMPTS,
+  LOGIN_LOCK_WINDOW_MS,
   ADMIN_EMAILS,
   isAdminEmail,
   getLanIpAddress
