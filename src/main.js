@@ -244,6 +244,8 @@
     if (!ensureFormFieldsValid(true)) return;
     StorageService.saveDraft(state);
     if (!ApiService.isAvailable()) {
+      saveState = 'local';
+      updateFlowProgress();
       ProfileCardUI.showToast('Brouillon enregistré sur cet appareil');
       return;
     }
@@ -252,16 +254,24 @@
       window.location.href = '/auth';
       return;
     }
+    saveState = 'saving';
+    updateFlowProgress();
     try {
       const saved = await ApiService.saveCard(state);
       if (saved) {
         state.slug = saved.slug;
         state.scans = saved.scans;
+        markCardSaved(saved);
         populateForm();
         renderAll(true);
         ProfileCardUI.showToast('Carte enregistrée. Vous pouvez partager le QR.');
+      } else {
+        saveState = cardOnServer ? 'dirty' : 'unsaved';
+        updateFlowProgress();
       }
     } catch (err) {
+      saveState = 'error';
+      updateFlowProgress();
       ProfileCardUI.showToast(err.message || 'Enregistrement impossible');
     }
   }
@@ -465,6 +475,9 @@
   }
 
   function schedulePersistence() {
+    markCardDirty();
+    updateFlowProgress();
+
     if (draftTimeout) clearTimeout(draftTimeout);
     draftTimeout = setTimeout(() => {
       StorageService.saveDraft(state);
@@ -474,16 +487,24 @@
     if (!ApiService.isAvailable() || !ApiService.isAuthenticated()) return;
     if (saveTimeout) clearTimeout(saveTimeout);
     saveTimeout = setTimeout(async () => {
+      saveState = 'saving';
+      updateFlowProgress();
       try {
         const saved = await ApiService.saveCard(state);
         if (saved) {
           state.slug = saved.slug;
           state.scans = saved.scans;
+          markCardSaved(saved);
           updateScanCountBadge();
           QrView.renderCanvas(state, qrMode);
+          updateFlowProgress();
+        } else {
+          saveState = cardOnServer ? 'dirty' : 'unsaved';
+          updateFlowProgress();
         }
       } catch {
-        // Silent background sync error
+        saveState = 'error';
+        updateFlowProgress();
       }
     }, 450);
   }
@@ -592,6 +613,8 @@
     if (!isPublicScanView && previewTab === 'card') {
       updateVirtualCardPreview();
     }
+
+    updateFlowProgress();
   }
 
   async function copyTextToClipboard(text) {
@@ -875,6 +898,8 @@
       btnDownloadQrPng.addEventListener('click', () => {
         QrView.downloadHighResPng(state, qrMode, (ok) => {
           if (ok) {
+            sharedOnce = true;
+            updateFlowProgress();
             ProfileCardUI.showToast('QR Code PNG (1024px) exporté');
           } else {
             ProfileCardUI.showToast('Erreur lors de la génération du QR Code');
@@ -896,6 +921,8 @@
             label.textContent = 'Lien copié';
             setTimeout(() => (label.textContent = prev), 2000);
           }
+          sharedOnce = true;
+          updateFlowProgress();
           ProfileCardUI.showToast('Lien copié dans le presse-papiers');
         } catch {
           window.prompt('Copiez ce lien :', url);
