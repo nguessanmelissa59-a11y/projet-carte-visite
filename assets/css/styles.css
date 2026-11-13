@@ -1,26 +1,26 @@
 :root {
-  /* Chrome produit (fixe) : orange néo-brutal. Les pastilles carte gardent --accent. */
+  /* Chrome produit : orange EVC. Pastilles carte = --accent. Surface éditoriale zinc. */
   --brand: #ff6b21;
   --brand-mid: #ff823f;
-  --brand-ink: #111111;
-  --brand-soft: rgba(255, 107, 33, 0.16);
-  --auth-banner: #0b5c3c;
-  --surface: #f4f1ea;
-  --surface-elevated: #fffcf7;
-  --ink: #111111;
-  --ink-muted: #5a5a55;
-  --line: rgba(17, 17, 17, 0.16);
-  --line-strong: #111111;
+  --brand-ink: #18181b;
+  --brand-soft: rgba(255, 107, 33, 0.12);
+  --auth-banner: #065f46;
+  --surface: #f7f7f5;
+  --surface-elevated: #ffffff;
+  --ink: #18181b;
+  --ink-muted: #71717a;
+  --line: #e4e4e7;
+  --line-strong: #d4d4d8;
   --accent: #0a6b45;
-  --accent-soft: rgba(10, 107, 69, 0.16);
+  --accent-soft: rgba(10, 107, 69, 0.12);
   --accent-mid: #0e8556;
-  --info-warm: #ffd7c2;
-  --ambient-a: rgba(255, 107, 33, 0.1);
-  --ambient-b: rgba(255, 215, 194, 0.45);
-  --radius-panel: 0.35rem;
-  --radius-control: 0.2rem;
-  --shadow-panel: 3px 3px 0 var(--line-strong);
-  --shadow-control: 2px 2px 0 var(--line-strong);
+  --info-warm: #fff1e8;
+  --ambient-a: rgba(255, 107, 33, 0.08);
+  --ambient-b: rgba(10, 107, 69, 0.06);
+  --radius-panel: 1rem;
+  --radius-control: 0.5rem;
+  --shadow-panel: 0 1px 2px rgba(24, 24, 27, 0.04), 0 12px 32px rgba(24, 24, 27, 0.06);
+  --shadow-control: 0 1px 2px rgba(24, 24, 27, 0.04);
   --font-display: 'Fraunces', Georgia, serif;
   --font-body: 'Figtree', system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
@@ -29,24 +29,24 @@
 html.dark {
   --brand: #ff6b21;
   --brand-mid: #ff823f;
-  --brand-ink: #111111;
-  --brand-soft: rgba(255, 107, 33, 0.28);
-  --auth-banner: #0b5c3c;
-  --surface: #12110f;
-  --surface-elevated: #1a1916;
-  --ink: #f5f2ea;
-  --ink-muted: #a8a49a;
-  --line: rgba(245, 242, 234, 0.16);
-  --line-strong: #f5f2ea;
+  --brand-ink: #fafafa;
+  --brand-soft: rgba(255, 107, 33, 0.22);
+  --auth-banner: #065f46;
+  --surface: #09090b;
+  --surface-elevated: #121215;
+  --ink: #fafafa;
+  --ink-muted: #a1a1aa;
+  --line: #27272a;
+  --line-strong: #3f3f46;
   /* Pastille forêt : même teinte carte (#0a6b45), pas de menthe séparée. */
   --accent: #0a6b45;
-  --accent-soft: rgba(10, 107, 69, 0.28);
+  --accent-soft: rgba(10, 107, 69, 0.22);
   --accent-mid: #0e8556;
-  --info-warm: rgba(255, 215, 194, 0.2);
-  --ambient-a: rgba(255, 107, 33, 0.14);
-  --ambient-b: rgba(11, 92, 60, 0.12);
-  --shadow-panel: 3px 3px 0 rgba(0, 0, 0, 0.85);
-  --shadow-control: 2px 2px 0 rgba(0, 0, 0, 0.85);
+  --info-warm: rgba(255, 107, 33, 0.12);
+  --ambient-a: rgba(255, 107, 33, 0.1);
+  --ambient-b: rgba(10, 107, 69, 0.1);
+  --shadow-panel: 0 1px 2px rgba(0, 0, 0, 0.35), 0 16px 40px rgba(0, 0, 0, 0.45);
+  --shadow-control: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
 html[data-card-theme='obsidian'] {
