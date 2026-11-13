@@ -71,7 +71,7 @@
     const params = new URLSearchParams(window.location.search);
     const key = params.get('error');
     if (!key) return;
-    if (Object.hasOwn(GOOGLE_ERROR_MESSAGES, key)) {
+    if (Object.prototype.hasOwnProperty.call(GOOGLE_ERROR_MESSAGES, key)) {
       setAuthMessage(GOOGLE_ERROR_MESSAGES[key]);
     }
     params.delete('error');

@@ -511,7 +511,7 @@ function testAuthGoogleButton() {
   assert.match(page, /\/api\/auth\/google\/start\?next=\$\{encodeURIComponent\(next\)\}/);
 
   // Le parametre ?error= sert de cle dans une liste fixe, jamais de texte affiche.
-  assert.match(page, /Object\.hasOwn\(GOOGLE_ERROR_MESSAGES, key\)/);
+  assert.match(page, /hasOwnProperty\.call\(GOOGLE_ERROR_MESSAGES, key\)/);
   assert.match(page, /setAuthMessage\(GOOGLE_ERROR_MESSAGES\[key\]\)/);
   for (const key of ['google_unavailable', 'google_cancelled', 'google_email', 'google_failed']) {
     assert.match(page, new RegExp(`${key}:`), `message manquant pour ${key}`);
