@@ -151,6 +151,8 @@ window.VCardApp.QrView = (function () {
     const statusBadge = document.getElementById('qrStatusBadge');
     const logoPreview = document.getElementById('qrLogoPreview');
     const offlineNotice = document.getElementById('offlineModeNotice');
+    const offlineTeaser = document.getElementById('offlineModeTeaser');
+    const shareSubtitle = document.getElementById('shareBandSubtitle');
 
     if (!canvas) return;
     if (!window.QRCode || typeof window.QRCode.toCanvas !== 'function') {
@@ -192,6 +194,14 @@ window.VCardApp.QrView = (function () {
     }
     if (offlineNotice) {
       offlineNotice.hidden = !isOfflineMode;
+    }
+    if (offlineTeaser) {
+      offlineTeaser.hidden = isOfflineMode;
+    }
+    if (shareSubtitle) {
+      shareSubtitle.textContent = isOfflineMode
+        ? 'QR Contact : fiche enregistrable sans Internet'
+        : 'Choisissez le type de QR, puis scannez ou envoyez';
     }
 
     const byteLength = new Blob([payload]).size;
