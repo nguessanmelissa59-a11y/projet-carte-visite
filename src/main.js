@@ -181,8 +181,13 @@
 
     if (isPublicScanView) return;
 
-    if (!ApiService.isAuthenticated()) {
+    if (editSlugParam && !ApiService.isAuthenticated()) {
       window.location.replace(authRedirectUrl('required'));
+      return;
+    }
+
+    if (!ApiService.isAuthenticated()) {
+      renderAll(true);
       return;
     }
 

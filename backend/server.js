@@ -111,13 +111,9 @@ function serveStaticFile(req, res, pathname, parsedUrl) {
     return;
   }
 
-  if (
-    (safePath === 'index.html' || pathname === '/') &&
-    parsedUrl &&
-    !requireEditorSession(req, res, parsedUrl)
-  ) {
-    return;
-  }
+  // L'éditeur (/) reste accessible sans session (brouillon local).
+  // requireEditorSession sert aux vues protégées / redirections explicites.
+  void requireEditorSession;
 
   fs.stat(fullPath, (err, stats) => {
     if (err || !stats.isFile()) {

@@ -35,7 +35,7 @@
 
   <header class="studio-header sticky top-0 z-40">
     <div class="max-w-lg mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-3">
-      <a href="/" class="flex items-center gap-2.5 min-w-0 no-underline text-[color:var(--ink)]">
+      <a href="/" id="authBrandHome" class="flex items-center gap-2.5 min-w-0 no-underline text-[color:var(--ink)]" title="Retour à l’éditeur">
         <div class="brand-mark shrink-0" aria-hidden="true">EV</div>
         <span class="font-display font-semibold text-base tracking-tight">EVC</span>
         <span class="beta-chip" title="Version bêta">Bêta</span>
@@ -60,6 +60,12 @@
       <h1 class="hero-brand">EVC Melissa</h1>
       <p class="hero-lead" id="authLead">
         Connectez-vous avec mot de passe + code OTP, ou uniquement avec un code e-mail / authenticator.
+      </p>
+      <p class="mt-3 m-0">
+        <a id="authBackToEditor" href="/" class="btn btn-ghost h-11 min-h-11 px-0 text-sm no-underline">
+          <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+          <span>Retour à l’éditeur</span>
+        </a>
       </p>
     </div>
 
