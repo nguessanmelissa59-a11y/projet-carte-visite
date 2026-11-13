@@ -444,11 +444,6 @@ html.dark[data-card-theme='obsidian'] .easy-steps li.is-active > span:first-chil
   color: #fff;
 }
 
-html.dark[data-card-theme='obsidian'] .btn-primary,
-html.dark[data-card-theme='obsidian'] .btn-ink {
-  color: #fff;
-}
-
 .easy-steps li.is-done {
   color: var(--ink);
 }
@@ -1633,6 +1628,7 @@ html.dark .form-input {
 
 .btn-ink:hover {
   background: var(--brand-mid);
+  color: #18181b;
   border-color: color-mix(in srgb, var(--brand) 65%, #000);
 }
 
