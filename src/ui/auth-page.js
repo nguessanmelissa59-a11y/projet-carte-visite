@@ -353,15 +353,27 @@
       const passwordInput = document.getElementById('loginPassword');
       const password = passwordInput.value;
       if (!password) {
-        setAuthMessage('Saisissez votre mot de passe, ou recevez un code par e-mail.');
+        setAuthMessage('Saisissez votre mot de passe, puis validez le code OTP.');
         passwordInput.focus();
         return;
       }
-      setAuthMessage('Connexion…');
+      setAuthMessage('Vérification du mot de passe…');
       try {
         const email = document.getElementById('loginEmail').value.trim();
-        await ApiService.loginWithPassword({ email, password });
+        const data = await ApiService.loginWithPassword({ email, password });
         passwordInput.value = '';
+        if (data.otpIssued) {
+          pending = {
+            email: data.email || email,
+            purpose: 'login',
+            method: data.method === 'authenticator' ? 'authenticator' : 'email'
+          };
+          showCodeStep(data);
+          setAuthMessage(
+            data.message || 'Mot de passe accepté. Entrez le code OTP pour vous connecter.'
+          );
+          return;
+        }
         finishLogin();
       } catch (err) {
         passwordInput.value = '';

@@ -85,7 +85,7 @@ Le mode `lz-string` reste un **repli** pour ouverture statique sans Node.
 | `GET` | `/v/:slug` | `.vcf` court (ouverture Contacts) |
 | `POST` | `/api/auth/register` | Inscription + émission OTP |
 | `POST` | `/api/auth/login` | Connexion + émission OTP |
-| `POST` | `/api/auth/login/password` | Connexion par mot de passe (sans OTP) → session cookie |
+| `POST` | `/api/auth/login/password` | Vérifie le mot de passe puis émet un OTP (2e facteur) — pas de session |
 | `POST` | `/api/auth/verify` | Vérification OTP → session cookie (mot de passe facultatif à définir) |
 | `POST` | `/api/auth/password` | Définir / changer le mot de passe (session requise) |
 | `GET` | `/api/auth/providers` | Moyens disponibles : bouton Google, envoi réel des codes |
@@ -181,7 +181,7 @@ Modules **séparés** : `/auth` (connexion) et `/register` (inscription), avec l
 2. Connexion seule (`/auth` : mot de passe, code e-mail ou code authenticator) ; lien « Créer un compte » si besoin.
 3. Réception OTP e-mail : si `SMTP_USER` / `SMTP_PASS` sont renseignés ; sinon mode local (console serveur / `devOtp`). Authenticator : aucun e-mail, code généré par l’app (Google Authenticator, Authy, etc.).
 4. Vérification → cookie de session. **À l’inscription, le mot de passe est obligatoire** avec le code OTP / TOTP. L’enrôlement authenticator persiste un secret chiffré (`totp_secret`).
-5. Connexions suivantes : mot de passe (sans code), code e-mail ou code authenticator, au choix.
+5. Connexions suivantes : mot de passe **puis** code OTP (e-mail ou authenticator si enrôlé), ou code e-mail / authenticator seuls.
 6. Mot de passe oublié : connexion par code, en saisissant un nouveau mot de passe à l’étape du code.
 7. Accès profil compte, mot de passe et liste des cartes (`/api/me/cards`).
 8. Dans l’éditeur : hint « connectez-vous pour garder et modifier », lien compte dans le header.

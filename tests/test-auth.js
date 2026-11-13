@@ -378,6 +378,27 @@ async function passwordLogin(email, password) {
   return res;
 }
 
+async function passwordLoginWithOtp(email, password) {
+  const step = await passwordLogin(email, password);
+  if (step.statusCode !== 200) return step;
+  const body = step.json();
+  assert.equal(body.otpIssued, true);
+  assert.equal(cookieFrom(step), '');
+  assert.ok(body.devOtp, 'devOtp attendu hors authenticator pour les tests');
+
+  const verifyRes = createMockRes();
+  await handleVerifyOtp(
+    createMockReq('POST', {
+      email,
+      code: body.devOtp,
+      purpose: 'login',
+      method: body.method === 'authenticator' ? 'authenticator' : 'email'
+    }),
+    verifyRes
+  );
+  return verifyRes;
+}
+
 async function setPassword(body, cookie) {
   const res = createMockRes();
   await handleSetPassword(createMockReq('POST', body, cookie), res);
