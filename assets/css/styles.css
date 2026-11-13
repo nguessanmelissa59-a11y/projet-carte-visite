@@ -216,9 +216,24 @@ body.app-shell {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-body.app-shell > * {
+/* Empile le contenu au-dessus du fond ambient, sans casser
+   les overlays viewport (toast, dialogue impression). */
+body.app-shell > *:not(#toastContainer):not(.print-preview-dialog) {
   position: relative;
   z-index: 1;
+}
+
+#toastContainer {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding-inline: 1rem;
+  pointer-events: none;
 }
 
 .font-display {
