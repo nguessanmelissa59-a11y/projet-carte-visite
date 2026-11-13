@@ -1208,9 +1208,16 @@ html.dark .offline-notice {
     gap: 1.25rem;
   }
 
-  .mode-toggle--featured {
+  .qr-mode-switch {
     width: auto;
-    min-width: 18rem;
+    min-width: 19rem;
+    max-width: 24rem;
+    flex-shrink: 0;
+  }
+
+  .mode-toggle--featured {
+    width: 100%;
+    min-width: 0;
   }
 
   .offline-teaser {

@@ -599,6 +599,9 @@ function testOfflineModeNotice() {
   assert.match(html, /qr-mode-spotlight/);
   assert.match(html, /mode-toggle--featured/);
   assert.match(html, /Hors-ligne/);
+  assert.match(html, /Changer de mode/);
+  assert.match(html, /Touchez une option/);
+  assert.match(html, /role="radiogroup"/);
   assert.match(html, /qr-mode-spotlight[\s\S]*?id="qrModeUrl"/);
   assert.doesNotMatch(
     html,
@@ -608,11 +611,14 @@ function testOfflineModeNotice() {
 
   assert.match(css, /\.offline-notice\[hidden\]/);
   assert.match(css, /\.qr-mode-spotlight/);
+  assert.match(css, /\.qr-mode-switch/);
+  assert.match(css, /\.mode-toggle--featured button\.is-active/);
   assert.match(css, /\.offline-teaser/);
   assert.match(css, /\.offline-notice__points/);
   assert.match(qrView, /offlineNotice\.hidden = !isOfflineMode/);
   assert.match(qrView, /offlineTeaser\.hidden = isOfflineMode/);
   assert.match(main, /setQrMode\('vcard'\)/);
+  assert.match(main, /aria-checked/);
   assert.doesNotMatch(qrView, /urlDisplay\.textContent = [^;]*Mode vCard/);
 }
 
