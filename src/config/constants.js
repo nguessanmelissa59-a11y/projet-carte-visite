@@ -106,8 +106,9 @@ window.VCardApp.Config = {
       bannerColor: '#0a6b45',
       headerBg: 'bg-[#0a6b45]',
       btnBg: 'bg-[#0a6b45] hover:bg-[#085536] text-white',
-      badgeBg: 'bg-[#d8f5e7] text-[#0a6b45] border-[#a8e6c8] dark:bg-emerald-950/40 dark:text-emerald-100 dark:border-emerald-800',
-      iconColor: 'text-[#0a6b45] dark:text-emerald-200',
+      badgeBg:
+        'bg-[#d8f5e7] text-[#0a6b45] border-[#a8e6c8] dark:bg-[#0a6b45]/35 dark:text-[#c6eedc] dark:border-[#0e8556]',
+      iconColor: 'text-[#0a6b45] dark:text-[#7dcea8]',
       qrDark: '#085536'
     },
     cobalt: {

@@ -194,6 +194,24 @@ function testCssAtmosphere() {
   ]) {
     assert.ok(css.includes(token), `css missing ${token}`);
   }
+  assert.doesNotMatch(css, /html\.dark[^{]*\{[^}]*--accent:\s*#2ecf88/);
+  assert.doesNotMatch(css, /html\.dark\[data-card-theme='forest'\][^{]*\{[^}]*--accent:\s*#2ecf88/);
+  assert.match(css, /html\.dark\[data-card-theme='forest'\][^{]*\{[^}]*--accent:\s*#0a6b45/);
+}
+
+function testForestGreenTintUnified() {
+  const css = read('assets/css/styles.css');
+  const constants = read('src/config/constants.js');
+  const indexHtml = read('index.html');
+  const authHtml = read('auth.html');
+
+  assert.match(constants, /bannerColor: '#0a6b45'/);
+  assert.match(constants, /btnBg: 'bg-\[#0a6b45\]/);
+  assert.doesNotMatch(constants, /dark:text-emerald-/);
+  assert.doesNotMatch(constants, /dark:bg-emerald-/);
+  assert.doesNotMatch(indexHtml, /#2ecf88/);
+  assert.doesNotMatch(authHtml, /#2ecf88/);
+  assert.match(css, /html\.dark \{[\s\S]*?--accent: #0a6b45;/);
 }
 
 function testThemeBannerColors() {
@@ -633,6 +651,7 @@ const tests = [
   ['qr view guards missing library', testQrViewGuardsMissingLibrary],
   ['qr logo overlay', testQrLogoOverlay],
   ['css atmosphere', testCssAtmosphere],
+  ['forest green tint unified', testForestGreenTintUnified],
   ['theme banner colors', testThemeBannerColors],
   ['card templates catalog', testCardTemplatesCatalog],
   ['profile card markup', testProfileCardMarkup],
