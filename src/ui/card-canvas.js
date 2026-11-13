@@ -1407,34 +1407,50 @@ window.VCardApp.CardCanvasExporter = (function () {
     setTimeout(() => URL.revokeObjectURL(url), 3000);
   }
 
-  async function downloadCardImage(state, qrMode, onComplete) {
+  /**
+   * Genere et telecharge le PDF imprimable recto + verso.
+   * @param {object} state
+   * @param {string} qrMode
+   * @param {(ok: boolean, fileName: string|null) => void} [onComplete]
+   * @param {{layout?: string}} [options] layout : 'single' (defaut) ou 'sheet'
+   */
+  async function downloadCardImage(state, qrMode, onComplete, options) {
     try {
+      const layout = resolvePrintLayout(options && options.layout);
+      const cardCount = layout.cols * layout.rows;
+      const isSheet = cardCount > 1;
       const [rectoSource, versoSource] = await Promise.all([
         generateCardCanvas(state, qrMode),
         generateVersoCanvas(state, qrMode)
       ]);
       const rectoPrint = buildPrintCardCanvas(rectoSource);
       const versoPrint = buildPrintCardCanvas(versoSource);
-      const pdfBytes = buildPrintablePdfBytes([
-        {
-          jpegBytes: canvasToJpegBytes(rectoPrint, 0.95),
-          pixelW: rectoPrint.width,
-          pixelH: rectoPrint.height,
-          label:
-            'Recto 85 x 55 mm - Fond perdu 3 mm / marges 4 mm - Imprimer a 100%'
-        },
-        {
-          jpegBytes: canvasToJpegBytes(versoPrint, 0.95),
-          pixelW: versoPrint.width,
-          pixelH: versoPrint.height,
-          label:
-            'Verso 85 x 55 mm - Fond perdu 3 mm / marges 4 mm - Imprimer a 100%'
-        }
-      ]);
+      const pdfBytes = buildPrintablePdfBytes(
+        [
+          {
+            jpegBytes: canvasToJpegBytes(rectoPrint, 0.95),
+            pixelW: rectoPrint.width,
+            pixelH: rectoPrint.height,
+            label: isSheet
+              ? `Planche recto - ${cardCount} cartes 85 x 55 mm - Imprimer a 100%, recto verso bord long`
+              : 'Recto 85 x 55 mm - Fond perdu 3 mm / marges 4 mm - Imprimer a 100%'
+          },
+          {
+            jpegBytes: canvasToJpegBytes(versoPrint, 0.95),
+            pixelW: versoPrint.width,
+            pixelH: versoPrint.height,
+            label: isSheet
+              ? `Planche verso - ${cardCount} cartes 85 x 55 mm - Imprimer a 100%, recto verso bord long`
+              : 'Verso 85 x 55 mm - Fond perdu 3 mm / marges 4 mm - Imprimer a 100%'
+          }
+        ],
+        layout
+      );
       const safeFirst = (state.firstName || 'Carte').replace(/[^a-zA-Z0-9_-]/g, '_');
       const safeLast = (state.lastName || 'Visite').replace(/[^a-zA-Z0-9_-]/g, '_');
       const tpl = state.cardTemplate || 'editorial';
-      const fileName = `Carte_Visite_${safeFirst}_${safeLast}_${tpl}_recto-verso_85x55mm.pdf`;
+      const layoutTag = isSheet ? `_planche-${cardCount}` : '';
+      const fileName = `Carte_Visite_${safeFirst}_${safeLast}_${tpl}${layoutTag}_recto-verso_85x55mm.pdf`;
       const blob = new Blob([pdfBytes], { type: 'application/pdf' });
       triggerBlobDownload(blob, fileName);
       if (typeof onComplete === 'function') onComplete(true, fileName);
@@ -1456,7 +1472,9 @@ window.VCardApp.CardCanvasExporter = (function () {
       pageWidthMm: PRINT_PAGE_WIDTH_MM,
       pageHeightMm: PRINT_PAGE_HEIGHT_MM,
       cardWidthPx: PRINT_CARD_WIDTH_PX,
-      cardHeightPx: PRINT_CARD_HEIGHT_PX
+      cardHeightPx: PRINT_CARD_HEIGHT_PX,
+      sheetCols: PRINT_LAYOUTS.sheet.cols,
+      sheetRows: PRINT_LAYOUTS.sheet.rows
     };
   }
 
@@ -1466,6 +1484,8 @@ window.VCardApp.CardCanvasExporter = (function () {
     renderCardToCanvas,
     renderVersoToCanvas,
     downloadCardImage,
+    buildPrintablePdfBytes,
+    resolvePrintLayout,
     listTemplates,
     getPrintSpecs
   };
