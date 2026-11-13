@@ -3,6 +3,9 @@ Thumbs.db
 .vscode/
 .idea/
 *.log
+.env
+.env.*
+!.env.example
 node_modules/
 dist/
 admin/node_modules/
