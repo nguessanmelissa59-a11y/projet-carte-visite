@@ -325,6 +325,101 @@ function testPrintableCardExport() {
   assert.match(css, /\.print-preview-dialog/);
 }
 
+function loadCardCanvasExporter() {
+  const ctx = {
+    window: { VCardApp: { Config: { THEME_PALETTES: {}, CARD_TEMPLATES: {} } } },
+    TextEncoder
+  };
+  vm.createContext(ctx);
+  vm.runInContext(read('src/ui/card-canvas.js'), ctx);
+  return ctx.window.VCardApp.CardCanvasExporter;
+}
+
+function buildTestPdf(exporter, layout) {
+  const jpegBytes = Uint8Array.of(0xff, 0xd8, 0xff, 0xd9);
+  const pages = ['Recto', 'Verso'].map((label) => ({ jpegBytes, pixelW: 1004, pixelH: 650, label }));
+  return Buffer.from(exporter.buildPrintablePdfBytes(pages, layout)).toString('latin1');
+}
+
+function readCardPlacements(pdf) {
+  const placements = [];
+  const pattern = /^([\d.]+) 0 0 ([\d.]+) ([\d.]+) ([\d.]+) cm$/gm;
+  for (const m of pdf.matchAll(pattern)) {
+    placements.push({ w: Number(m[1]), h: Number(m[2]), x: Number(m[3]), y: Number(m[4]) });
+  }
+  return placements;
+}
+
+function assertPdfXrefValid(pdf) {
+  const startxref = Number(pdf.match(/startxref\n(\d+)\n%%EOF$/)[1]);
+  const table = pdf.slice(startxref).split('\n');
+  assert.equal(table[0], 'xref');
+  const count = Number(table[1].split(' ')[1]);
+  for (let id = 1; id < count; id += 1) {
+    const offset = Number(table[2 + id].slice(0, 10));
+    assert.ok(pdf.startsWith(`${id} 0 obj\n`, offset), `xref offset invalide pour l'objet ${id}`);
+  }
+}
+
+function testPrintSheetLayout() {
+  const html = read('index.html');
+  assert.match(html, /id="printLayoutPicker"/);
+  assert.match(html, /name="printLayout" value="single" checked/);
+  assert.match(html, /name="printLayout" value="sheet"/);
+  assert.match(html, /Planche de 10 cartes/);
+
+  const main = read('src/main.js');
+  assert.match(main, /function getSelectedPrintLayout/);
+  assert.match(main, /\{ layout \}/);
+
+  const css = read('assets/css/styles.css');
+  assert.match(css, /\.print-layout__options/);
+  assert.match(css, /\.print-layout__option:has\(input:checked\)/);
+
+  const exporter = loadCardCanvasExporter();
+  const pageW = (210 * 72) / 25.4;
+  const pageH = (297 * 72) / 25.4;
+
+  const sheet = exporter.resolvePrintLayout('sheet');
+  assert.equal(sheet.cols * sheet.rows, 10);
+  assert.equal(exporter.resolvePrintLayout('inconnu').id, 'single');
+  assert.equal(exporter.resolvePrintLayout('__proto__').id, 'single');
+  assert.equal(exporter.resolvePrintLayout(undefined).id, 'single');
+
+  const singlePdf = buildTestPdf(exporter);
+  assert.match(singlePdf, /\/Count 2 /);
+  assert.equal(singlePdf.match(/\/Im0 Do/g).length, 2);
+  assert.equal(singlePdf.match(/ l S$/gm).length, 16);
+  assertPdfXrefValid(singlePdf);
+
+  const sheetPdf = buildTestPdf(exporter, sheet);
+  assert.match(sheetPdf, /\/Count 2 /);
+  assert.equal(sheetPdf.match(/\/Im0 Do/g).length, 20);
+  assert.equal(sheetPdf.match(/ l S$/gm).length, 36);
+  assertPdfXrefValid(sheetPdf);
+
+  const placements = readCardPlacements(sheetPdf);
+  assert.equal(placements.length, 20);
+  const recto = placements.slice(0, 10);
+  const verso = placements.slice(10);
+  assert.deepEqual(recto, verso);
+  assert.equal(new Set(recto.map((p) => `${p.x}:${p.y}`)).size, 10);
+
+  const left = Math.min(...recto.map((p) => p.x));
+  const right = Math.max(...recto.map((p) => p.x + p.w));
+  const bottom = Math.min(...recto.map((p) => p.y));
+  const top = Math.max(...recto.map((p) => p.y + p.h));
+  assert.ok(left > 0 && bottom > 0 && right < pageW && top < pageH, 'planche hors de la page A4');
+  // Grille centree : le verso retombe derriere le recto en impression recto verso.
+  assert.ok(Math.abs(left - (pageW - right)) < 0.05, 'planche non centree horizontalement');
+  assert.ok(Math.abs(bottom - (pageH - top)) < 0.05, 'planche non centree verticalement');
+  // Cartes au format 85 x 55 mm, sans mise a l'echelle.
+  for (const p of recto) {
+    assert.ok(Math.abs(p.w - (85 * 72) / 25.4) < 0.01);
+    assert.ok(Math.abs(p.h - (55 * 72) / 25.4) < 0.01);
+  }
+}
+
 function testPrintPreviewRequiresVisualization() {
   const css = read('assets/css/styles.css');
   assert.match(css, /\.print-faces/);
@@ -536,6 +631,7 @@ const tests = [
   ['card templates catalog', testCardTemplatesCatalog],
   ['profile card markup', testProfileCardMarkup],
   ['printable card export', testPrintableCardExport],
+  ['print sheet layout', testPrintSheetLayout],
   ['print preview requires visualization', testPrintPreviewRequiresVisualization],
   ['toast centered', testToastCentered],
   ['share public button', testSharePublicButton]

@@ -193,6 +193,19 @@ Règles mot de passe :
 - 5 échecs par e-mail → connexion par mot de passe bloquée 15 min (`LOGIN_MAX_ATTEMPTS`, `LOGIN_LOCK_WINDOW_MS`) ; le code OTP reste utilisable.
 - Changer un mot de passe existant exige l’actuel et ferme les autres sessions.
 
+Envoi des codes par e-mail (`backend/services/mailer.js`, SMTP Gmail par défaut) :
+
+- Actif dès que `SMTP_USER` et `SMTP_PASS` sont définis ; le code n’est alors plus renvoyé dans la réponse ni écrit dans les journaux.
+- Connexion par code : réponse identique que le compte existe ou non.
+- Inscription : si l’envoi échoue, l’utilisateur est prévenu (502) sans détail technique.
+
+Connexion avec Google (bouton « Continuer avec Google », `/auth` et `/register`) :
+
+- Actif si `GOOGLE_CLIENT_ID` et `GOOGLE_CLIENT_SECRET` sont définis, et uniquement sur l’hôte de `GOOGLE_REDIRECT_URI`.
+- Flux côté serveur (code d’autorisation, `state`, `nonce`, PKCE) ; aucun script Google dans la page.
+- Adresses acceptées : e-mail vérifié géré par Google (Gmail ou domaine Google Workspace).
+- Le compte est créé à la première connexion, ou rattaché au compte existant de même e-mail ; pas de code ni de mot de passe à saisir.
+
 ### 4.4 Photo & QR density
 
 - Upload : redimensionnement canvas (miniature compressée) pour stockage / vCard.
@@ -253,7 +266,7 @@ id, `user_id`, `token_hash`, expires_at, created_at.
 Non couverts / non promis dans cette version :
 
 - Multi-tenant SaaS, facturation, rôles admin riches.
-- Envoi e-mail OTP production via provider dédié (aujourd’hui : flux local / console acceptable en dev).
+- Envoi e-mail OTP via un fournisseur transactionnel dédié (aujourd’hui : SMTP Gmail, limité à quelques centaines d’envois par jour).
 - App native iOS/Android.
 - Édition collaborative temps réel.
 - Réseaux sociaux au-delà de LinkedIn + site (GitHub / X / Instagram non dans le formulaire actuel).
