@@ -5,7 +5,8 @@
   // purpose reste vide tant qu'aucun code n'a été demandé : la page suit alors l'URL.
   let pending = {
     email: '',
-    purpose: ''
+    purpose: '',
+    method: 'email'
   };
   let authMode = 'login';
   let emailDelivery = false;
@@ -117,8 +118,8 @@
     if (lead) {
       lead.textContent =
         authMode === 'register'
-          ? 'Créez votre compte : un code de confirmation sera envoyé par e-mail.'
-          : 'Connectez-vous avec votre mot de passe ou avec un code reçu par e-mail.';
+          ? 'Créez votre compte, puis confirmez-le par e-mail ou en scannant un QR Code avec votre authenticator.'
+          : 'Connectez-vous avec votre mot de passe, un code e-mail ou votre application authenticator.';
     }
 
     document.title =

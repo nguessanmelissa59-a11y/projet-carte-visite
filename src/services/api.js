@@ -79,24 +79,28 @@ window.VCardApp.ApiService = (function () {
     }
   }
 
-  async function register({ email, firstName, lastName }) {
+  async function register({ email, firstName, lastName, method }) {
+    const payload = { email, firstName, lastName };
+    if (method) payload.method = method;
     const res = await fetch('/api/auth/register', {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, firstName, lastName })
+      body: JSON.stringify(payload)
     });
     const data = await parseJson(res);
     if (!res.ok) throw new Error(data.error || 'Inscription impossible');
     return data;
   }
 
-  async function login({ email }) {
+  async function login({ email, method }) {
+    const payload = { email };
+    if (method) payload.method = method;
     const res = await fetch('/api/auth/login', {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email })
+      body: JSON.stringify(payload)
     });
     const data = await parseJson(res);
     if (!res.ok) throw new Error(data.error || 'Connexion impossible');
@@ -142,9 +146,10 @@ window.VCardApp.ApiService = (function () {
     return data.user;
   }
 
-  async function verifyOtp({ email, code, purpose, password }) {
+  async function verifyOtp({ email, code, purpose, password, method }) {
     const payload = { email, code, purpose };
     if (password) payload.password = password;
+    if (method) payload.method = method;
     const res = await fetch('/api/auth/verify', {
       method: 'POST',
       credentials: 'include',
