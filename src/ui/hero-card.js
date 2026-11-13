@@ -91,7 +91,7 @@ window.VCardApp.HeroCard = (function () {
     els.card.classList.toggle('is-flipped', flipped);
     els.card.setAttribute(
       'aria-label',
-      flipped ? 'Votre carte de visite, verso avec QR Code' : 'Votre carte de visite, recto'
+      flipped ? 'Votre carte de visite, verso' : 'Votre carte de visite, recto'
     );
     if (els.flipButton) els.flipButton.setAttribute('aria-pressed', flipped ? 'true' : 'false');
     if (els.flipLabel) els.flipLabel.textContent = flipped ? 'Voir le recto' : 'Voir le verso';
