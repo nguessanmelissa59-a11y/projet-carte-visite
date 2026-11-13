@@ -231,6 +231,79 @@ async function handleVerifyOtp(req, res) {
   }
 }
 
+async function handlePasswordLogin(req, res) {
+  try {
+    const body = await readJsonBody(req, 64 * 1024);
+    const emailCheck = validateEmail(body.email);
+    if (!emailCheck.ok) return sendJson(res, 400, { error: emailCheck.error });
+
+    const password = normalizePassword(body.password);
+    if (!password) return sendJson(res, 401, { error: LOGIN_FAILED_MESSAGE });
+
+    if (isLocked(emailCheck.value)) {
+      return sendJson(res, 429, { error: LOGIN_LOCKED_MESSAGE });
+    }
+    registerAttempt(emailCheck.value);
+
+    // Compte inconnu, non verifie ou sans mot de passe : meme calcul, meme reponse.
+    const found = getUserByEmail(emailCheck.value);
+    const storedHash = found && found.emailVerified ? getPasswordHash(found.id) : '';
+    const valid = await verifyPassword(password, storedHash);
+    if (!valid) return sendJson(res, 401, { error: LOGIN_FAILED_MESSAGE });
+
+    clearAttempts(emailCheck.value);
+    const user = ensureAdminBootstrap(found);
+    const session = startSession(user.id);
+
+    return sendJson(
+      res,
+      200,
+      {
+        ok: true,
+        user: publicUser(user),
+        expiresAt: session.expiresAt
+      },
+      { 'Set-Cookie': buildSessionCookie(session.token, session.expiresAt) }
+    );
+  } catch {
+    return sendJson(res, 400, { error: 'Requête invalide' });
+  }
+}
+
+async function handleSetPassword(req, res) {
+  try {
+    if (!isSameOriginRequest(req)) {
+      return sendJson(res, 403, { error: 'Origine non autorisée' });
+    }
+    const session = resolveSessionFromRequest(req);
+    if (!session) return sendJson(res, 401, { error: 'Non authentifié' });
+
+    const body = await readJsonBody(req, 64 * 1024);
+    const passwordCheck = validatePassword(body.password);
+    if (!passwordCheck.ok) return sendJson(res, 400, { error: passwordCheck.error });
+
+    const currentHash = getPasswordHash(session.userId);
+    if (currentHash) {
+      const throttleKey = session.user.email;
+      if (isLocked(throttleKey)) {
+        return sendJson(res, 429, { error: LOGIN_LOCKED_MESSAGE });
+      }
+      registerAttempt(throttleKey);
+      const current = normalizePassword(body.currentPassword);
+      if (!current || !(await verifyPassword(current, currentHash))) {
+        return sendJson(res, 403, { error: 'Mot de passe actuel incorrect' });
+      }
+      clearAttempts(throttleKey);
+    }
+
+    setPasswordHash(session.userId, await hashPassword(passwordCheck.value));
+    deleteOtherSessionsForUser(session.userId, session.id);
+    return sendJson(res, 200, { ok: true, user: publicUser(getUserById(session.userId)) });
+  } catch {
+    return sendJson(res, 400, { error: 'Requête invalide' });
+  }
+}
+
 function handleMe(req, res) {
   const session = resolveSessionFromRequest(req);
   if (!session) {
@@ -277,7 +350,9 @@ function handleMyCards(req, res) {
 module.exports = {
   handleRegister,
   handleLogin,
+  handlePasswordLogin,
   handleVerifyOtp,
+  handleSetPassword,
   handleMe,
   handleLogout,
   handleUpdateProfile,
