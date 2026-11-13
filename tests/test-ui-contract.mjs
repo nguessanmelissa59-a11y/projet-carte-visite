@@ -377,6 +377,7 @@ const tests = [
   ['html contracts', testHtmlContracts],
   ['offline mode notice', testOfflineModeNotice],
   ['field validation client', testFieldValidationClient],
+  ['lookup combobox ui', testLookupComboboxUi],
   ['editor preview layout', testEditorPreviewLayout],
   ['vendored qrcode library', testVendoredQrcodeLibrary],
   ['qr view guards missing library', testQrViewGuardsMissingLibrary],
