@@ -317,7 +317,15 @@
                 <span class="idx">4</span>
                 <h2>Couleur de la carte</h2>
               </div>
-              <div id="themeColorPicker" class="flex items-center gap-1 flex-wrap">
+              <p class="text-sm text-[color:var(--ink-muted)] m-0 mb-2">
+                S’applique à la page profil et au modèle d’impression (recto / verso).
+              </p>
+              <div
+                id="themeColorPicker"
+                class="theme-color-picker flex items-center gap-1 flex-wrap"
+                role="group"
+                aria-label="Couleur de la carte"
+              >
                 <button type="button" data-theme="forest" class="theme-swatch" title="Forêt" aria-label="Thème forêt"><span class="theme-swatch__dot" style="background:#0a6b45"></span></button>
                 <button type="button" data-theme="navy" class="theme-swatch" title="Marine" aria-label="Thème marine"><span class="theme-swatch__dot" style="background:#1a4f96"></span></button>
                 <button type="button" data-theme="bronze" class="theme-swatch" title="Terracotta" aria-label="Thème terracotta"><span class="theme-swatch__dot" style="background:#c45c1f"></span></button>

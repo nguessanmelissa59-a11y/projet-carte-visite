@@ -485,10 +485,13 @@ function testPrintSheetLayout() {
   assert.match(source, /cote a cote/);
 
   const exporter = loadCardCanvasExporter();
+  const specs = exporter.getPrintSpecs();
   const pageW = (210 * 72) / 25.4;
   const pageH = (297 * 72) / 25.4;
   const cardW = (85 * 72) / 25.4;
   const cardH = (55 * 72) / 25.4;
+  const gutter = ((specs.pairGutterMm || 8) * 72) / 25.4;
+  const rowGap = ((specs.rowGapMm || 3) * 72) / 25.4;
 
   const sheet = exporter.resolvePrintLayout('sheet');
   assert.equal(sheet.cols, 2);
@@ -496,24 +499,31 @@ function testPrintSheetLayout() {
   assert.equal(exporter.resolvePrintLayout('inconnu').id, 'single');
   assert.equal(exporter.resolvePrintLayout('__proto__').id, 'single');
   assert.equal(exporter.resolvePrintLayout(undefined).id, 'single');
+  assert.equal(specs.pairGutterMm, 8);
+  assert.equal(specs.rowGapMm, 3);
 
   const singlePdf = buildTestPdf(exporter);
   assert.match(singlePdf, /\/Count 1 /);
   assert.equal(singlePdf.match(/\/Im0 Do/g).length, 1);
   assert.equal(singlePdf.match(/\/Im1 Do/g).length, 1);
-  assert.equal(singlePdf.match(/ l S$/gm).length, 10);
+  // 4 bords verticaux x 2 + 2 bords horizontaux x 2
+  assert.equal(singlePdf.match(/ l S$/gm).length, 12);
   assertPdfXrefValid(singlePdf);
 
   const singlePlacements = readCardPlacements(singlePdf);
   assert.equal(singlePlacements.length, 2);
-  assert.ok(Math.abs(singlePlacements[1].x - (singlePlacements[0].x + cardW)) < 0.01);
+  assert.ok(
+    Math.abs(singlePlacements[1].x - (singlePlacements[0].x + cardW + gutter)) < 0.01,
+    'verso colle au recto (gouttiere manquante)'
+  );
   assert.ok(Math.abs(singlePlacements[1].y - singlePlacements[0].y) < 0.01);
 
   const sheetPdf = buildTestPdf(exporter, sheet);
   assert.match(sheetPdf, /\/Count 1 /);
   assert.equal(sheetPdf.match(/\/Im0 Do/g).length, 5);
   assert.equal(sheetPdf.match(/\/Im1 Do/g).length, 5);
-  assert.equal(sheetPdf.match(/ l S$/gm).length, 18);
+  // 4 bords verticaux x 2 + 10 bords horizontaux uniques x 2
+  assert.equal(sheetPdf.match(/ l S$/gm).length, 28);
   assertPdfXrefValid(sheetPdf);
 
   const placements = readCardPlacements(sheetPdf);
@@ -529,8 +539,17 @@ function testPrintSheetLayout() {
   assert.equal(new Set(recto.map((p) => `${p.x}:${p.y}`)).size, 5);
 
   for (let i = 0; i < recto.length; i += 1) {
-    assert.ok(Math.abs(verso[i].x - (recto[i].x + cardW)) < 0.01, 'verso non a droite du recto');
+    assert.ok(
+      Math.abs(verso[i].x - (recto[i].x + cardW + gutter)) < 0.01,
+      'verso non separe du recto par la gouttiere'
+    );
     assert.ok(Math.abs(verso[i].y - recto[i].y) < 0.01, 'verso non aligne au recto');
+    if (i > 0) {
+      assert.ok(
+        Math.abs(recto[i].y - (recto[i - 1].y + cardH + rowGap)) < 0.01,
+        'espacement vertical planche incorrect'
+      );
+    }
   }
 
   const left = Math.min(...recto.map((p) => p.x));
