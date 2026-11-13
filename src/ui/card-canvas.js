@@ -16,6 +16,10 @@ window.VCardApp.CardCanvasExporter = (function () {
   const PRINT_CARD_HEIGHT_PX = Math.round((PRINT_CARD_HEIGHT_MM / 25.4) * PRINT_DPI);
   const PRINT_PAGE_WIDTH_MM = 210;
   const PRINT_PAGE_HEIGHT_MM = 297;
+  /** Espace entre recto et verso pour laisser de la place a la decoupe. */
+  const PRINT_PAIR_GUTTER_MM = 8;
+  /** Espace vertical entre deux paires sur la planche A4. */
+  const PRINT_ROW_GAP_MM = 3;
   const MM_TO_PT = 72 / 25.4;
 
   /**
@@ -578,13 +582,14 @@ window.VCardApp.CardCanvasExporter = (function () {
     });
   }
 
-  async function drawCreative(ctx, state, qrMode) {
+  async function drawCreative(ctx, state, qrMode, accentHex) {
+    const accent = accentHex || '#ff6b4a';
     ctx.fillStyle = '#fff8f1';
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
     const band = ctx.createLinearGradient(0, 0, WIDTH * 0.7, HEIGHT);
-    band.addColorStop(0, '#ff6b4a');
-    band.addColorStop(0.55, '#fb7185');
+    band.addColorStop(0, accent);
+    band.addColorStop(0.55, accent);
     band.addColorStop(1, '#f59e0b');
     ctx.fillStyle = band;
     ctx.beginPath();
@@ -1648,13 +1653,7 @@ window.VCardApp.CardCanvasExporter = (function () {
       state.cardTemplate && RENDERERS[state.cardTemplate] ? state.cardTemplate : 'editorial';
     const accentHex = getAccent(state);
     const renderer = RENDERERS[templateId];
-
-    if (templateId === 'editorial') {
-      await renderer(ctx, state, qrMode, accentHex);
-    } else {
-      await renderer(ctx, state, qrMode);
-    }
-
+    await renderer(ctx, state, qrMode, accentHex);
     return canvas;
   }
 
