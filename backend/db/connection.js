@@ -70,6 +70,25 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_otp_email ON otp_challenges(email, created_at);
   CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
   CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires_at);
+
+  CREATE TABLE IF NOT EXISTS job_titles (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    name_key TEXT NOT NULL UNIQUE,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS organizations (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    name_key TEXT NOT NULL UNIQUE,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_job_titles_name ON job_titles(name);
+  CREATE INDEX IF NOT EXISTS idx_organizations_name ON organizations(name);
 `);
 
 function ensureColumn(tableName, columnName, columnSql) {
@@ -82,11 +101,37 @@ function ensureColumn(tableName, columnName, columnSql) {
 
 ensureColumn('cards', 'user_id', 'user_id TEXT');
 ensureColumn('users', 'role', "role TEXT NOT NULL DEFAULT 'user'");
+ensureColumn('cards', 'job_title_id', 'job_title_id TEXT');
+ensureColumn('cards', 'organization_id', 'organization_id TEXT');
 
 db.exec(`
   CREATE INDEX IF NOT EXISTS idx_cards_user_id ON cards(user_id);
   CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
+  CREATE INDEX IF NOT EXISTS idx_cards_job_title_id ON cards(job_title_id);
+  CREATE INDEX IF NOT EXISTS idx_cards_organization_id ON cards(organization_id);
 `);
+
+function seedLookupFromCards(tableName, columnName) {
+  const rows = db.prepare(
+    `SELECT DISTINCT TRIM(${columnName}) AS name
+     FROM cards
+     WHERE TRIM(${columnName}) != ''`
+  ).all();
+  const now = new Date().toISOString();
+  const insert = db.prepare(
+    `INSERT OR IGNORE INTO ${tableName} (id, name, name_key, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?)`
+  );
+  for (const row of rows) {
+    const name = String(row.name || '').trim();
+    if (!name) continue;
+    const nameKey = name.toLowerCase();
+    insert.run(newId(tableName === 'job_titles' ? 'job' : 'org'), name, nameKey, now, now);
+  }
+}
+
+seedLookupFromCards('job_titles', 'job_title');
+seedLookupFromCards('organizations', 'organization');
 
 function newId(prefix) {
   return `${prefix}_${crypto.randomBytes(12).toString('hex')}`;
