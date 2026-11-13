@@ -56,7 +56,7 @@
     const messages = {
       idle: 'Session expirée après 30 minutes d’inactivité. Reconnectez-vous.',
       expired: 'Votre session n’est plus valide. Reconnectez-vous.',
-      required: 'Connectez-vous pour accéder à l’éditeur.',
+      required: 'Connectez-vous pour modifier cette carte.',
       logout: 'Vous êtes déconnecté.'
     };
     if (Object.prototype.hasOwnProperty.call(messages, reason)) {

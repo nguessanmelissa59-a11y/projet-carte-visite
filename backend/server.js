@@ -111,9 +111,8 @@ function serveStaticFile(req, res, pathname, parsedUrl) {
     return;
   }
 
-  // L'éditeur (/) reste accessible sans session (brouillon local).
-  // requireEditorSession sert aux vues protégées / redirections explicites.
-  void requireEditorSession;
+  // L'éditeur (/) est public : brouillon local sans compte.
+  // La sauvegarde serveur et ?edit= restent protégées côté API / front.
 
   fs.stat(fullPath, (err, stats) => {
     if (err || !stats.isFile()) {
