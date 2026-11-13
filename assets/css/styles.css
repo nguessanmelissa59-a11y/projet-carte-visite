@@ -644,22 +644,45 @@ html.dark[data-card-theme='obsidian'] .easy-steps li.is-active > span:first-chil
 }
 
 .preview-panel-toolbar {
-  padding: 0.75rem 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  padding: 0.85rem 1rem;
   border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 45%, var(--surface-elevated));
+}
+
+.preview-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.preview-live::before {
+  content: '';
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
 }
 
 .preview-panel .phone-shell {
-  margin: 0;
-  max-width: none;
+  margin: 0.85rem auto 1rem;
+  max-width: min(100%, 22rem);
   width: 100%;
-  border-radius: 0;
-  border: 0;
-  border-top: 0;
-  padding: 0.55rem 0.55rem 0.7rem;
+  animation: preview-lift 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .preview-panel .phone-screen {
-  border-radius: 0.85rem;
+  border-radius: 1.15rem;
 }
 
 .preview-card-body {
@@ -1800,85 +1823,84 @@ html.dark .qr-frame {
   align-items: center;
   gap: 0.35rem;
   min-height: 1.5rem;
-  padding: 0.15rem 0.45rem;
-  border-radius: var(--radius-control);
-  border: 2px solid var(--line-strong);
-  background: #fff;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 55%, var(--surface-elevated));
   font-family: var(--font-mono);
   font-size: 0.6875rem;
   color: var(--ink-muted);
-  box-shadow: 1px 1px 0 var(--line-strong);
 }
 
 .status-chip[data-state='online'] {
   color: var(--auth-banner);
-  border-color: var(--line-strong);
-  background: color-mix(in srgb, var(--auth-banner) 12%, #fff);
+  border-color: color-mix(in srgb, var(--auth-banner) 30%, transparent);
+  background: color-mix(in srgb, var(--auth-banner) 10%, var(--surface-elevated));
 }
 
 .status-chip[data-state='offline'] {
   color: #9a3412;
-  border-color: var(--line-strong);
+  border-color: rgba(154, 52, 18, 0.22);
   background: rgba(154, 52, 18, 0.08);
 }
 
 .mode-toggle {
   display: inline-flex;
   padding: 0.2rem;
-  border-radius: var(--radius-control);
-  border: 2px solid var(--line-strong);
-  background: #fff;
-  box-shadow: var(--shadow-control);
+  border-radius: 0.75rem;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 65%, var(--surface-elevated));
+  box-shadow: none;
 }
 
 .mode-toggle button {
   min-height: 2.75rem;
   padding: 0 0.85rem;
   border: 0;
-  border-radius: 0.1rem;
+  border-radius: 0.55rem;
   background: transparent;
   color: var(--ink-muted);
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .mode-toggle button.is-active {
-  background: var(--line-strong);
-  color: #fff;
-  box-shadow: none;
+  background: var(--surface-elevated);
+  color: var(--ink);
+  box-shadow: var(--shadow-control);
 }
 
 html.dark .mode-toggle {
-  background: var(--surface-elevated);
+  background: color-mix(in srgb, var(--surface) 70%, #000);
 }
 
 html.dark .mode-toggle button.is-active {
-  background: #fff;
-  color: #111;
+  background: var(--surface-elevated);
+  color: var(--ink);
 }
 
 .reveal {
-  animation: rise-in 0.35s ease-out both;
+  animation: rise-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .reveal-delay-1 {
-  animation-delay: 0.04s;
+  animation-delay: 0.06s;
 }
 
 .reveal-delay-2 {
-  animation-delay: 0.08s;
+  animation-delay: 0.12s;
 }
 
 .reveal-delay-3 {
-  animation-delay: 0.12s;
+  animation-delay: 0.18s;
 }
 
 @keyframes rise-in {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -1886,11 +1908,35 @@ html.dark .mode-toggle button.is-active {
   }
 }
 
+@keyframes qr-settle {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes preview-lift {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .reveal,
   .reveal-delay-1,
   .reveal-delay-2,
-  .reveal-delay-3 {
+  .reveal-delay-3,
+  .qr-frame,
+  .preview-panel .phone-shell {
     animation: none;
   }
 

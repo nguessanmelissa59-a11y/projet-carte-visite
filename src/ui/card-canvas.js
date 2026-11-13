@@ -1341,7 +1341,7 @@ window.VCardApp.CardCanvasExporter = (function () {
       state.cardTemplate && RENDERERS[state.cardTemplate] ? state.cardTemplate : 'editorial';
     const tpl = (CARD_TEMPLATES && CARD_TEMPLATES[templateId]) || {};
     const swatch = tpl.swatch || ['#ffffff', '#18181b', '#e4e4e7'];
-    const darkFaces = new Set(['corporate', 'nocturne', 'prestige', 'metro']);
+    const darkFaces = new Set(['nocturne', 'prestige', 'metro', 'sunset']);
     return {
       id: templateId,
       bg: swatch[0],

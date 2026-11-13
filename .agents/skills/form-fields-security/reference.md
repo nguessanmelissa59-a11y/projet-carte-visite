@@ -202,7 +202,7 @@ Deja partiellement couvert par `backend/services/auth-validation.js`.
 | firstName / lastName | `NAME_RE` Unicode lettres, max 80 | Reutiliser au rendu profil |
 | OTP `code` | exactement 6 chiffres | Rate-limit : `OTP_MAX_ATTEMPTS`, `OTP_MAX_PER_WINDOW` ; TOTP fenetre ±1 periode |
 | `method` | enum `email` \| `authenticator` | Defaut `email` ; rejeter toute autre valeur |
-| `password` | chaine, 8 a 128 caracteres, NFKC | Hash scrypt (`password-service.js`) ; jamais renvoye ni logge ; plafond `LOGIN_MAX_ATTEMPTS` par e-mail ; defini seulement avec un OTP valide ou une session |
+| `password` | chaine, 8 a 128 caracteres, NFKC | Hash scrypt (`password-service.js`) ; jamais renvoye ni logge ; **obligatoire si `purpose=register`** ; facultatif si `purpose=login` (definir / remplacer) ; plafond `LOGIN_MAX_ATTEMPTS` par e-mail ; defini seulement avec un OTP valide ou une session |
 | secret TOTP | base32, chiffrement AES-GCM au repos | Jamais logge ; `totp_secret` DB chiffre (`TOTP_ENC_KEY`) ; URI otpauth uniquement pendant l'enrolement |
 | Google `code` / `state` (retour OAuth) | `state` compare au cookie `vcard_oauth` (HttpOnly, 10 min), `nonce` et PKCE verifies | `google-oauth.js` ; e-mail accepte seulement si verifie et gere par Google ; `next` limite a un chemin local |
 | `?error=` (page auth) | cle d'une liste fixe de messages | Jamais affiche tel quel (`auth-page.js`) |

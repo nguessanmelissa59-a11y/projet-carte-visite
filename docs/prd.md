@@ -180,7 +180,7 @@ Modules **séparés** : `/auth` (connexion) et `/register` (inscription), avec l
 1. Inscription seule (`/register` : prénom, nom, e-mail) : choix de confirmation **e-mail** ou **authenticator** (QR Code `otpauth://` à scanner).
 2. Connexion seule (`/auth` : mot de passe, code e-mail ou code authenticator) ; lien « Créer un compte » si besoin.
 3. Réception OTP e-mail : si `SMTP_USER` / `SMTP_PASS` sont renseignés ; sinon mode local (console serveur / `devOtp`). Authenticator : aucun e-mail, code généré par l’app (Google Authenticator, Authy, etc.).
-4. Vérification → cookie de session. Un mot de passe peut être défini à cette étape. L’enrôlement authenticator persiste un secret chiffré (`totp_secret`).
+4. Vérification → cookie de session. **À l’inscription, le mot de passe est obligatoire** avec le code OTP / TOTP. L’enrôlement authenticator persiste un secret chiffré (`totp_secret`).
 5. Connexions suivantes : mot de passe (sans code), code e-mail ou code authenticator, au choix.
 6. Mot de passe oublié : connexion par code, en saisissant un nouveau mot de passe à l’étape du code.
 7. Accès profil compte, mot de passe et liste des cartes (`/api/me/cards`).

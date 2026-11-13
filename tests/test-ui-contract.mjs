@@ -694,6 +694,10 @@ function testAuthPasswordOrCode() {
   assert.match(html, /id="loginPassword"[^>]*type="password"[^>]*autocomplete="current-password"/);
   assert.match(html, /id="newPassword"[^>]*type="password"[^>]*minlength="8"[^>]*autocomplete="new-password"/);
   assert.match(html, /id="otpPassword"[\s\S]{0,160}?type="password"[\s\S]{0,160}?autocomplete="new-password"/);
+  assert.match(html, /id="otpPasswordLabel"/);
+  assert.match(page, /registerNeedsPassword/);
+  assert.match(page, /passwordInput\.required = registerNeedsPassword/);
+  assert.match(page, /pending\.purpose === 'register'/);
   assert.doesNotMatch(html, /id="(loginPassword|otpPassword|currentPassword|newPassword)"[^>]*type="text"/);
 
   assert.match(api, /\/api\/auth\/login\/password/);
