@@ -130,17 +130,48 @@
     }, 60 * 1000);
   }
 
+  function markCardSaved(saved) {
+    if (!saved) return;
+    cardOnServer = true;
+    saveState = 'saved';
+    savedAt = Date.now();
+  }
+
+  function markCardDirty() {
+    if (cardOnServer && saveState !== 'saving') saveState = 'dirty';
+    else if (!cardOnServer && ApiService.isAvailable()) saveState = 'unsaved';
+  }
+
+  function updateFlowProgress() {
+    if (!FlowProgress || typeof FlowProgress.render !== 'function' || isPublicScanView) return;
+    FlowProgress.render(state, {
+      saveState,
+      cardOnServer,
+      shared: sharedOnce,
+      backendAvailable: ApiService.isAvailable(),
+      qrMode,
+      savedAt
+    });
+  }
+
   async function initBackendConnection(cardIdParam, isScanEvent, editSlugParam) {
     const backendStatus = await ApiService.checkBackend();
     updateBackendStatusUI(backendStatus);
     updateAuthChrome();
 
-    if (!backendStatus.available) return;
+    if (!backendStatus.available) {
+      saveState = 'local';
+      updateFlowProgress();
+      return;
+    }
+
+    if (!cardOnServer) saveState = 'unsaved';
 
     if (cardIdParam) {
       const serverCard = await ApiService.fetchCardBySlug(cardIdParam, isScanEvent);
       if (serverCard) {
         state = { ...DEMO_DATA, ...serverCard };
+        markCardSaved(serverCard);
         populateForm();
         renderAll(true);
         triggerAutoDownloadIfEnabled();
@@ -164,6 +195,7 @@
           ProfileCardUI.showToast('Cette carte appartient à un autre compte');
         } else {
           state = { ...DEMO_DATA, ...serverCard };
+          markCardSaved(serverCard);
           populateForm();
         }
       }
@@ -178,6 +210,7 @@
       const serverCard = await ApiService.fetchCardBySlug(preferred.slug, false);
       if (serverCard) {
         state = { ...DEMO_DATA, ...serverCard };
+        markCardSaved(serverCard);
         populateForm();
       }
     }
