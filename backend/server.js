@@ -260,5 +260,6 @@ server.listen(PORT, HOST, () => {
   console.log(`- Local (PC)      : http://localhost:${PORT}`);
   console.log(`- Reseau (Mobile) : http://${lanIp}:${PORT}`);
   console.log(`- Auth OTP        : http://localhost:${PORT}/auth`);
+  console.log(`- Inscription     : http://localhost:${PORT}/register`);
   console.log(`- Admin           : http://localhost:${PORT}/admin`);
 });
