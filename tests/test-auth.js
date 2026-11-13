@@ -300,3 +300,251 @@ test('logout invalide la session', async () => {
   handleMe(createMockReq('GET', null, cookie), meRes);
   assert.equal(meRes.statusCode, 401);
 });
+
+async function registerWithCode(email, verifyExtra = {}) {
+  const regRes = createMockRes();
+  await handleRegister(
+    createMockReq('POST', { email, firstName: 'Test', lastName: 'Compte' }),
+    regRes
+  );
+  assert.equal(regRes.statusCode, 200);
+  const verifyRes = createMockRes();
+  await handleVerifyOtp(
+    createMockReq('POST', {
+      email,
+      code: regRes.json().devOtp,
+      purpose: 'register',
+      ...verifyExtra
+    }),
+    verifyRes
+  );
+  return verifyRes;
+}
+
+async function passwordLogin(email, password) {
+  const res = createMockRes();
+  await handlePasswordLogin(createMockReq('POST', { email, password }), res);
+  return res;
+}
+
+async function setPassword(body, cookie) {
+  const res = createMockRes();
+  await handleSetPassword(createMockReq('POST', body, cookie), res);
+  return res;
+}
+
+function isSessionAlive(cookie) {
+  const res = createMockRes();
+  handleMe(createMockReq('GET', null, cookie), res);
+  return res.statusCode === 200;
+}
+
+test('hash de mot de passe : format scrypt, vérification stricte', async () => {
+  const stored = await hashPassword('une phrase secrete');
+  assert.match(stored, /^scrypt\$32768\$8\$1\$[A-Za-z0-9+/=]+\$[A-Za-z0-9+/=]+$/);
+  assert.notEqual(stored, await hashPassword('une phrase secrete'));
+  assert.equal(await verifyPassword('une phrase secrete', stored), true);
+  assert.equal(await verifyPassword('une phrase secrete ', stored), false);
+  assert.equal(await verifyPassword('une phrase secrete', ''), false);
+  assert.equal(await verifyPassword('une phrase secrete', 'scrypt$1$1$1$AA==$AA=='), false);
+});
+
+test('inscription avec mot de passe puis connexion sans OTP', async () => {
+  const verifyRes = await registerWithCode('pwd@example.com', {
+    password: 'phrase de passe 42'
+  });
+  assert.equal(verifyRes.statusCode, 200);
+  assert.equal(verifyRes.json().user.hasPassword, true);
+  assert.doesNotMatch(verifyRes.body, /scrypt|passwordHash|password_hash/);
+
+  const loginRes = await passwordLogin('PWD@example.com', 'phrase de passe 42');
+  assert.equal(loginRes.statusCode, 200);
+  assert.equal(loginRes.json().user.email, 'pwd@example.com');
+  assert.doesNotMatch(loginRes.body, /scrypt|passwordHash|password_hash/);
+
+  const cookie = cookieFrom(loginRes);
+  assert.ok(cookie.includes(SESSION_COOKIE_NAME));
+  assert.match(String(loginRes.headers['Set-Cookie']), /HttpOnly/);
+  assert.match(String(loginRes.headers['Set-Cookie']), /SameSite=Lax/);
+
+  const meRes = createMockRes();
+  handleMe(createMockReq('GET', null, cookie), meRes);
+  assert.equal(meRes.statusCode, 200);
+  assert.equal(meRes.json().user.hasPassword, true);
+  assert.doesNotMatch(meRes.body, /scrypt|passwordHash|password_hash/);
+});
+
+test('connexion par mot de passe refusée avec une réponse uniforme', async () => {
+  await registerWithCode('uniforme@example.com', { password: 'phrase de passe 42' });
+  const noPassword = await registerWithCode('sans-mdp@example.com');
+  assert.equal(noPassword.json().user.hasPassword, false);
+
+  const wrong = await passwordLogin('uniforme@example.com', 'mauvaise phrase 42');
+  const unknown = await passwordLogin('inconnu@example.com', 'phrase de passe 42');
+  const without = await passwordLogin('sans-mdp@example.com', 'phrase de passe 42');
+  const empty = await passwordLogin('uniforme@example.com', '');
+  const notString = await passwordLogin('uniforme@example.com', { $ne: '' });
+
+  for (const res of [wrong, unknown, without, empty, notString]) {
+    assert.equal(res.statusCode, 401);
+    assert.equal(res.json().error, wrong.json().error);
+    assert.equal(cookieFrom(res), '');
+  }
+
+  const badEmail = await passwordLogin('pas-une-adresse', 'phrase de passe 42');
+  assert.equal(badEmail.statusCode, 400);
+});
+
+test('compte non vérifié : pas de connexion par mot de passe', async () => {
+  const regRes = createMockRes();
+  await handleRegister(
+    createMockReq('POST', {
+      email: 'non-verifie@example.com',
+      firstName: 'Non',
+      lastName: 'Verifie',
+      password: 'phrase de passe 42'
+    }),
+    regRes
+  );
+  assert.equal(regRes.statusCode, 200);
+
+  const loginRes = await passwordLogin('non-verifie@example.com', 'phrase de passe 42');
+  assert.equal(loginRes.statusCode, 401);
+});
+
+test('mot de passe invalide à la vérification : refus sans consommer le code', async () => {
+  const email = 'court@example.com';
+  const regRes = createMockRes();
+  await handleRegister(
+    createMockReq('POST', { email, firstName: 'Mot', lastName: 'Court' }),
+    regRes
+  );
+  const code = regRes.json().devOtp;
+
+  for (const password of ['court', 'x'.repeat(129), 12345678]) {
+    const res = createMockRes();
+    await handleVerifyOtp(
+      createMockReq('POST', { email, code, purpose: 'register', password }),
+      res
+    );
+    assert.equal(res.statusCode, 400);
+    assert.equal(cookieFrom(res), '');
+  }
+
+  const okRes = createMockRes();
+  await handleVerifyOtp(
+    createMockReq('POST', { email, code, purpose: 'register', password: 'phrase de passe 42' }),
+    okRes
+  );
+  assert.equal(okRes.statusCode, 200);
+  assert.equal(okRes.json().user.hasPassword, true);
+});
+
+test('blocage après trop d’échecs, la connexion par code reste possible', async () => {
+  const email = 'blocage@example.com';
+  await registerWithCode(email, { password: 'phrase de passe 42' });
+
+  for (let i = 0; i < 5; i += 1) {
+    const res = await passwordLogin(email, `mauvaise phrase ${i}`);
+    assert.equal(res.statusCode, 401);
+  }
+
+  const locked = await passwordLogin(email, 'phrase de passe 42');
+  assert.equal(locked.statusCode, 429);
+  assert.equal(cookieFrom(locked), '');
+
+  const loginRes = createMockRes();
+  await handleLogin(createMockReq('POST', { email }), loginRes);
+  const verifyRes = createMockRes();
+  await handleVerifyOtp(
+    createMockReq('POST', { email, code: loginRes.json().devOtp, purpose: 'login' }),
+    verifyRes
+  );
+  assert.equal(verifyRes.statusCode, 200);
+  assert.ok(cookieFrom(verifyRes));
+});
+
+test('définir puis changer son mot de passe en session', async () => {
+  const email = 'changement@example.com';
+  const verifyRes = await registerWithCode(email);
+  const cookie = cookieFrom(verifyRes);
+
+  const anonymous = await setPassword({ password: 'premiere phrase 1' }, '');
+  assert.equal(anonymous.statusCode, 401);
+
+  const tooShort = await setPassword({ password: 'court' }, cookie);
+  assert.equal(tooShort.statusCode, 400);
+
+  const first = await setPassword({ password: 'premiere phrase 1' }, cookie);
+  assert.equal(first.statusCode, 200);
+  assert.equal(first.json().user.hasPassword, true);
+  assert.doesNotMatch(first.body, /scrypt|passwordHash|password_hash/);
+
+  const otherLogin = await passwordLogin(email, 'premiere phrase 1');
+  assert.equal(otherLogin.statusCode, 200);
+  const otherCookie = cookieFrom(otherLogin);
+
+  const missingCurrent = await setPassword({ password: 'seconde phrase 2' }, cookie);
+  assert.equal(missingCurrent.statusCode, 403);
+  const wrongCurrent = await setPassword(
+    { password: 'seconde phrase 2', currentPassword: 'pas la bonne 9' },
+    cookie
+  );
+  assert.equal(wrongCurrent.statusCode, 403);
+
+  const changed = await setPassword(
+    { password: 'seconde phrase 2', currentPassword: 'premiere phrase 1' },
+    cookie
+  );
+  assert.equal(changed.statusCode, 200);
+
+  assert.equal(isSessionAlive(cookie), true);
+  assert.equal(isSessionAlive(otherCookie), false);
+  assert.equal((await passwordLogin(email, 'premiere phrase 1')).statusCode, 401);
+  assert.equal((await passwordLogin(email, 'seconde phrase 2')).statusCode, 200);
+});
+
+test('changement de mot de passe refusé depuis une autre origine', async () => {
+  const verifyRes = await registerWithCode('origine@example.com');
+  const cookie = cookieFrom(verifyRes);
+
+  const req = createMockReq('POST', { password: 'phrase de passe 42' }, cookie);
+  req.headers.host = 'localhost:3000';
+  req.headers.origin = 'http://localhost:5173';
+  const crossOrigin = createMockRes();
+  await handleSetPassword(req, crossOrigin);
+  assert.equal(crossOrigin.statusCode, 403);
+
+  const sameReq = createMockReq('POST', { password: 'phrase de passe 42' }, cookie);
+  sameReq.headers.host = 'localhost:3000';
+  sameReq.headers.origin = 'http://localhost:3000';
+  const sameOrigin = createMockRes();
+  await handleSetPassword(sameReq, sameOrigin);
+  assert.equal(sameOrigin.statusCode, 200);
+});
+
+test('réinitialisation par code : nouveau mot de passe, anciennes sessions fermées', async () => {
+  const email = 'reinit@example.com';
+  const verifyRes = await registerWithCode(email, { password: 'ancienne phrase 1' });
+  const oldCookie = cookieFrom(verifyRes);
+  assert.equal(isSessionAlive(oldCookie), true);
+
+  const loginRes = createMockRes();
+  await handleLogin(createMockReq('POST', { email }), loginRes);
+  const resetRes = createMockRes();
+  await handleVerifyOtp(
+    createMockReq('POST', {
+      email,
+      code: loginRes.json().devOtp,
+      purpose: 'login',
+      password: 'nouvelle phrase 2'
+    }),
+    resetRes
+  );
+  assert.equal(resetRes.statusCode, 200);
+
+  assert.equal(isSessionAlive(oldCookie), false);
+  assert.equal(isSessionAlive(cookieFrom(resetRes)), true);
+  assert.equal((await passwordLogin(email, 'ancienne phrase 1')).statusCode, 401);
+  assert.equal((await passwordLogin(email, 'nouvelle phrase 2')).statusCode, 200);
+});
