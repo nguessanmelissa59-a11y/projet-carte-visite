@@ -1398,7 +1398,7 @@ html.dark .form-input {
   min-width: 2.75rem;
   padding: 0.55rem 1.1rem;
   border-radius: var(--radius-control);
-  border: 1px solid transparent;
+  border: 2px solid transparent;
   text-align: center;
   white-space: normal;
   line-height: 1.25;
@@ -1407,47 +1407,56 @@ html.dark .form-input {
   font-weight: 600;
   line-height: 1;
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .btn:active {
-  transform: translateY(1px);
+  transform: translate(1px, 1px);
+  box-shadow: none;
 }
 
 .btn-primary {
-  background: var(--accent);
+  background: var(--brand);
   color: #fff;
-  border-color: color-mix(in srgb, var(--accent) 80%, #000);
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-control);
 }
 
 html.dark[data-card-theme='obsidian'] .btn-primary {
-  color: #0c0b0a;
+  color: #fff;
 }
 
 .btn-primary:hover {
-  background: color-mix(in srgb, var(--accent) 88%, #000);
+  background: var(--brand-mid);
   filter: none;
 }
 
 .btn-ink {
-  background: #171717;
+  background: var(--brand);
   color: #fff;
-  border-color: #171717;
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-control);
 }
 
 .btn-ink:hover {
-  background: #2a2a2a;
-  border-color: #2a2a2a;
+  background: var(--brand-mid);
+  border-color: var(--line-strong);
 }
 
 .btn-secondary {
-  background: color-mix(in srgb, var(--surface-elevated) 92%, transparent);
+  background: #fff;
   color: var(--ink);
-  border-color: var(--line);
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-control);
+}
+
+html.dark .btn-secondary {
+  background: var(--surface-elevated);
 }
 
 .btn-secondary:hover {
-  background: color-mix(in srgb, var(--accent) 8%, var(--surface-elevated));
+  background: color-mix(in srgb, var(--brand) 10%, #fff);
 }
 
 .btn-ghost {
@@ -1456,11 +1465,50 @@ html.dark[data-card-theme='obsidian'] .btn-primary {
   border-color: transparent;
   min-height: 2.25rem;
   padding-inline: 0.5rem;
+  box-shadow: none;
 }
 
 .btn-ghost:hover {
   color: var(--ink);
-  background: color-mix(in srgb, var(--accent) 6%, transparent);
+  background: color-mix(in srgb, var(--brand) 8%, transparent);
+}
+
+.theme-mode {
+  display: inline-flex;
+  align-items: stretch;
+  padding: 0.15rem;
+  border: 2px solid var(--line-strong);
+  border-radius: var(--radius-control);
+  background: #fff;
+  box-shadow: var(--shadow-control);
+}
+
+html.dark .theme-mode {
+  background: var(--surface-elevated);
+}
+
+.theme-mode__btn {
+  min-height: 2.35rem;
+  min-width: 2.75rem;
+  padding: 0.35rem 0.7rem;
+  border: 0;
+  border-radius: 0.1rem;
+  background: transparent;
+  color: var(--ink-muted);
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.theme-mode__btn.is-active {
+  background: var(--line-strong);
+  color: #fff;
+}
+
+html.dark .theme-mode__btn.is-active {
+  background: #fff;
+  color: #111;
 }
 
 .theme-swatches {
