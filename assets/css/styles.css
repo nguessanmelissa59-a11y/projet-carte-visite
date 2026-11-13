@@ -1,37 +1,52 @@
 :root {
-  --surface: #f6f0e2;
-  --surface-elevated: #fffdf7;
-  --ink: #0a1714;
-  --ink-muted: #4f5a55;
-  --line: rgba(10, 23, 20, 0.14);
+  /* Chrome produit (fixe) : orange néo-brutal. Les pastilles carte gardent --accent. */
+  --brand: #ff6b21;
+  --brand-mid: #ff823f;
+  --brand-ink: #111111;
+  --brand-soft: rgba(255, 107, 33, 0.16);
+  --auth-banner: #0b5c3c;
+  --surface: #f4f1ea;
+  --surface-elevated: #fffcf7;
+  --ink: #111111;
+  --ink-muted: #5a5a55;
+  --line: rgba(17, 17, 17, 0.16);
+  --line-strong: #111111;
   --accent: #0a6b45;
   --accent-soft: rgba(10, 107, 69, 0.16);
   --accent-mid: #0e8556;
   --info-warm: #ffd7c2;
-  --ambient-a: rgba(10, 107, 69, 0.1);
-  --ambient-b: rgba(255, 215, 194, 0.55);
-  --radius-panel: 1rem;
-  --radius-control: 0.5rem;
-  --shadow-panel: 0 1px 2px rgba(10, 23, 20, 0.05), 0 12px 28px -20px rgba(10, 23, 20, 0.28);
+  --ambient-a: rgba(255, 107, 33, 0.1);
+  --ambient-b: rgba(255, 215, 194, 0.45);
+  --radius-panel: 0.35rem;
+  --radius-control: 0.2rem;
+  --shadow-panel: 3px 3px 0 var(--line-strong);
+  --shadow-control: 2px 2px 0 var(--line-strong);
   --font-display: 'Fraunces', Georgia, serif;
   --font-body: 'Figtree', system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 }
 
 html.dark {
-  --surface: #0c1210;
-  --surface-elevated: #141b18;
-  --ink: #eef6f1;
-  --ink-muted: #9db0a6;
-  --line: rgba(238, 246, 241, 0.14);
-  /* Même teinte forêt que la carte (#0a6b45), pas de menthe séparée. */
+  --brand: #ff6b21;
+  --brand-mid: #ff823f;
+  --brand-ink: #111111;
+  --brand-soft: rgba(255, 107, 33, 0.28);
+  --auth-banner: #0b5c3c;
+  --surface: #12110f;
+  --surface-elevated: #1a1916;
+  --ink: #f5f2ea;
+  --ink-muted: #a8a49a;
+  --line: rgba(245, 242, 234, 0.16);
+  --line-strong: #f5f2ea;
+  /* Pastille forêt : même teinte carte (#0a6b45), pas de menthe séparée. */
   --accent: #0a6b45;
   --accent-soft: rgba(10, 107, 69, 0.28);
   --accent-mid: #0e8556;
   --info-warm: rgba(255, 215, 194, 0.2);
-  --ambient-a: rgba(10, 107, 69, 0.18);
-  --ambient-b: rgba(14, 133, 86, 0.12);
-  --shadow-panel: 0 12px 40px rgba(0, 0, 0, 0.4);
+  --ambient-a: rgba(255, 107, 33, 0.14);
+  --ambient-b: rgba(11, 92, 60, 0.12);
+  --shadow-panel: 3px 3px 0 rgba(0, 0, 0, 0.85);
+  --shadow-control: 2px 2px 0 rgba(0, 0, 0, 0.85);
 }
 
 html[data-card-theme='obsidian'] {
