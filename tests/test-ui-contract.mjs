@@ -178,7 +178,7 @@ function testCssAtmosphere() {
   for (const token of [
     '--accent',
     '--brand: #ff6b21',
-    '--surface: #f4f1ea',
+    '--surface: #f7f7f5',
     '--accent: #0a6b45',
     '--info-warm',
     '.beta-chip',

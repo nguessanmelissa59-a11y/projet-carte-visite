@@ -54,6 +54,7 @@
     renderCardTemplatePicker();
     setViewMode(isPublicScanView);
     bindEvents();
+    if (FlowProgress && typeof FlowProgress.bind === 'function') FlowProgress.bind();
     renderAll(true);
     if (window.lucide) window.lucide.createIcons();
 
