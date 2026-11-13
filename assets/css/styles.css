@@ -1001,6 +1001,12 @@ html.dark .offline-notice {
   border-top: 1px solid var(--line);
 }
 
+.auth-provider {
+  margin: 0 0 1.25rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--line);
+}
+
 .auth-switch {
   margin: 1.25rem 0 0;
   padding-top: 1rem;
