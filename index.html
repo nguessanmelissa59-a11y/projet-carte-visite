@@ -128,11 +128,33 @@
                 </div>
                 <div>
                   <label for="jobTitle" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">Poste</label>
-                  <input id="jobTitle" name="jobTitle" type="text" maxlength="120" autocomplete="organization-title" placeholder="Directeur Technique" class="form-input" />
+                  <input
+                    id="jobTitle"
+                    name="jobTitle"
+                    type="text"
+                    maxlength="120"
+                    autocomplete="off"
+                    spellcheck="false"
+                    placeholder="Rechercher ou créer un poste"
+                    class="form-input"
+                    aria-describedby="jobTitleHint"
+                  />
+                  <p id="jobTitleHint" class="field-hint">Liste partagée : cherchez, sinon créez.</p>
                 </div>
                 <div>
                   <label for="organization" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">Entreprise</label>
-                  <input id="organization" name="organization" type="text" maxlength="120" autocomplete="organization" placeholder="NovaTech Africa" class="form-input" />
+                  <input
+                    id="organization"
+                    name="organization"
+                    type="text"
+                    maxlength="120"
+                    autocomplete="off"
+                    spellcheck="false"
+                    placeholder="Rechercher ou créer une entreprise"
+                    class="form-input"
+                    aria-describedby="organizationHint"
+                  />
+                  <p id="organizationHint" class="field-hint">Liste partagée : cherchez, sinon créez.</p>
                 </div>
               </div>
             </div>
@@ -547,6 +569,7 @@
   <script src="src/ui/qr-view.js"></script>
   <script src="src/ui/card-canvas.js"></script>
   <script src="src/ui/profile-card.js"></script>
+  <script src="src/ui/lookup-combobox.js"></script>
   <script src="src/main.js"></script>
 </body>
 </html>
