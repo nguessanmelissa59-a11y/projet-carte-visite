@@ -23,8 +23,10 @@ const {
   handleMyCards
 } = require('../backend/controllers/auth.controller');
 const { hashPassword, verifyPassword } = require('../backend/services/password-service');
-const { handleSaveCard, handleGetCard } = require('../backend/controllers/card.controller');
-const { SESSION_COOKIE_NAME } = require('../backend/config/env');
+const { handleSaveCard, handleGetCard, handleGetServerInfo } = require('../backend/controllers/card.controller');
+const { SESSION_COOKIE_NAME, SESSION_IDLE_MS } = require('../backend/config/env');
+const { db } = require('../backend/db/connection');
+const { hashValue } = require('../backend/db/auth-repository');
 
 let server;
 let baseUrl = '';
@@ -393,16 +395,13 @@ test('inscription avec mot de passe puis connexion sans OTP', async () => {
 
 test('connexion par mot de passe refusée avec une réponse uniforme', async () => {
   await registerWithCode('uniforme@example.com', { password: 'phrase de passe 42' });
-  const noPassword = await registerWithCode('sans-mdp@example.com');
-  assert.equal(noPassword.json().user.hasPassword, false);
 
   const wrong = await passwordLogin('uniforme@example.com', 'mauvaise phrase 42');
   const unknown = await passwordLogin('inconnu@example.com', 'phrase de passe 42');
-  const without = await passwordLogin('sans-mdp@example.com', 'phrase de passe 42');
   const empty = await passwordLogin('uniforme@example.com', '');
   const notString = await passwordLogin('uniforme@example.com', { $ne: '' });
 
-  for (const res of [wrong, unknown, without, empty, notString]) {
+  for (const res of [wrong, unknown, empty, notString]) {
     assert.equal(res.statusCode, 401);
     assert.equal(res.json().error, wrong.json().error);
     assert.equal(cookieFrom(res), '');
@@ -410,6 +409,42 @@ test('connexion par mot de passe refusée avec une réponse uniforme', async () 
 
   const badEmail = await passwordLogin('pas-une-adresse', 'phrase de passe 42');
   assert.equal(badEmail.statusCode, 400);
+});
+
+test('inscription refusee sans mot de passe avec OTP', async () => {
+  const email = 'sans-mdp@example.com';
+  const regRes = createMockRes();
+  await handleRegister(
+    createMockReq('POST', { email, firstName: 'Sans', lastName: 'Mdp' }),
+    regRes
+  );
+  assert.equal(regRes.statusCode, 200);
+
+  const missing = createMockRes();
+  await handleVerifyOtp(
+    createMockReq('POST', {
+      email,
+      code: regRes.json().devOtp,
+      purpose: 'register'
+    }),
+    missing
+  );
+  assert.equal(missing.statusCode, 400);
+  assert.match(String(missing.json().error || ''), /mot de passe/i);
+
+  // Le code n'a pas ete consomme : une 2e tentative avec mot de passe doit passer.
+  const ok = createMockRes();
+  await handleVerifyOtp(
+    createMockReq('POST', {
+      email,
+      code: regRes.json().devOtp,
+      purpose: 'register',
+      password: 'phrase de passe 42'
+    }),
+    ok
+  );
+  assert.equal(ok.statusCode, 200);
+  assert.equal(ok.json().user.hasPassword, true);
 });
 
 test('compte non vérifié : pas de connexion par mot de passe', async () => {
@@ -599,7 +634,7 @@ test('inscription authenticator : QR otpauth puis session', async () => {
   assert.equal(badCode.statusCode, 400);
 
   const code = totpAt(regBody.totpSecret);
-  const verifyRes = createMockRes();
+  const withoutPassword = createMockRes();
   await handleVerifyOtp(
     createMockReq('POST', {
       email: 'totp-user@example.com',
@@ -607,10 +642,24 @@ test('inscription authenticator : QR otpauth puis session', async () => {
       purpose: 'register',
       method: 'authenticator'
     }),
+    withoutPassword
+  );
+  assert.equal(withoutPassword.statusCode, 400);
+
+  const verifyRes = createMockRes();
+  await handleVerifyOtp(
+    createMockReq('POST', {
+      email: 'totp-user@example.com',
+      code,
+      purpose: 'register',
+      method: 'authenticator',
+      password: 'phrase de passe 42'
+    }),
     verifyRes
   );
   assert.equal(verifyRes.statusCode, 200);
   assert.equal(verifyRes.json().user.hasTotp, true);
+  assert.equal(verifyRes.json().user.hasPassword, true);
   const cookie = cookieFrom(verifyRes);
   assert.ok(cookie.includes(SESSION_COOKIE_NAME));
 
@@ -642,7 +691,8 @@ test('connexion authenticator apres enrolement', async () => {
       email,
       code: totpAt(secret),
       purpose: 'register',
-      method: 'authenticator'
+      method: 'authenticator',
+      password: 'phrase de passe 42'
     }),
     enroll
   );

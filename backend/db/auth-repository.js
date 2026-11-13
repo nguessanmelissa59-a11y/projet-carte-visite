@@ -260,7 +260,10 @@ function getSessionByToken(rawToken) {
     return null;
   }
   const lastActiveMs = Date.parse(row.last_active_at || row.created_at);
-  const idleMs = Number.isFinite(SESSION_IDLE_MS) ? SESSION_IDLE_MS : 30 * 60 * 1000;
+  const idleMs =
+    Number.isFinite(SESSION_IDLE_MS) && SESSION_IDLE_MS > 0
+      ? SESSION_IDLE_MS
+      : 30 * 60 * 1000;
   if (!Number.isFinite(lastActiveMs) || lastActiveMs + idleMs < Date.now()) {
     stmtDeleteSession.run(row.id);
     return null;
