@@ -1412,7 +1412,7 @@ window.VCardApp.CardCanvasExporter = (function () {
   async function downloadCardImage(state, qrMode, onComplete, options) {
     try {
       const layout = resolvePrintLayout(options && options.layout);
-      const cardCount = layout.cols * layout.rows;
+      const cardCount = layout.rows;
       const isSheet = cardCount > 1;
       const [rectoSource, versoSource] = await Promise.all([
         generateCardCanvas(state, qrMode),
@@ -1427,16 +1427,13 @@ window.VCardApp.CardCanvasExporter = (function () {
             pixelW: rectoPrint.width,
             pixelH: rectoPrint.height,
             label: isSheet
-              ? `Planche recto - ${cardCount} cartes 85 x 55 mm - Imprimer a 100%, recto verso bord long`
-              : 'Recto 85 x 55 mm - Fond perdu 3 mm / marges 4 mm - Imprimer a 100%'
+              ? `Planche ${cardCount} cartes - recto | verso cote a cote - 85 x 55 mm - Imprimer a 100%`
+              : 'Recto | verso cote a cote - 85 x 55 mm - Fond perdu 3 mm / marges 4 mm - Imprimer a 100%'
           },
           {
             jpegBytes: canvasToJpegBytes(versoPrint, 0.95),
             pixelW: versoPrint.width,
-            pixelH: versoPrint.height,
-            label: isSheet
-              ? `Planche verso - ${cardCount} cartes 85 x 55 mm - Imprimer a 100%, recto verso bord long`
-              : 'Verso 85 x 55 mm - Fond perdu 3 mm / marges 4 mm - Imprimer a 100%'
+            pixelH: versoPrint.height
           }
         ],
         layout

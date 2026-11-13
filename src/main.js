@@ -227,8 +227,8 @@
     const layout = getSelectedPrintLayout();
     ProfileCardUI.showToast(
       layout === 'sheet'
-        ? 'Préparation de la planche de 10 cartes (recto + verso)...'
-        : 'Préparation du PDF recto + verso (85×55 mm)...'
+        ? 'Préparation de la planche (recto | verso côte à côte)...'
+        : 'Préparation du PDF recto | verso côte à côte (85×55 mm)...'
     );
     exporter.downloadCardImage(
       state,
