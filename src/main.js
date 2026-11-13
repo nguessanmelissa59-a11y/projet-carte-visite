@@ -404,6 +404,7 @@
   }
 
   function populateForm() {
+    if (FieldValidation) FieldValidation.sanitizePhoneFields(state);
     FORM_FIELDS.forEach((field) => {
       const el = document.getElementById(field);
       if (el) el.value = state[field] || '';

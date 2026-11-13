@@ -99,6 +99,21 @@ function testFieldValidationClient() {
   const fv = sandbox.window.VCardApp.FieldValidation;
 
   assert.equal(fv.sanitizePhoneInput('12ab34'), '1234');
+
+  const loaded = fv.sanitizePhoneFields({
+    phone: 'appel +225 07 08',
+    whatsapp: 'texte libre',
+    email: 'a@b.com'
+  });
+  assert.equal(loaded.phone, '+225 07 08');
+  assert.equal(loaded.whatsapp, '');
+  assert.equal(loaded.email, 'a@b.com');
+  assert.equal(fv.sanitizePhoneFields({}).phone, '');
+  assert.match(
+    read('src/main.js'),
+    /function populateForm\(\) \{\s*if \(FieldValidation\) FieldValidation\.sanitizePhoneFields\(state\);/
+  );
+
   assert.equal(fv.isPhoneValid('+225 07 08 09'), true);
   assert.equal(fv.isPhoneValid('hello'), false);
   assert.equal(fv.isEmailValid('a@b.com'), true);
