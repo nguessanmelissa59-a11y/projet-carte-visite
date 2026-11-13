@@ -48,9 +48,9 @@
 
   <main class="auth-main max-w-lg mx-auto px-4 sm:px-6 py-4 sm:py-6">
     <div class="panel-intro reveal">
-      <p class="eyebrow">Compte</p>
+      <p class="eyebrow" id="authEyebrow">Compte</p>
       <h1 class="hero-brand">EVC Melissa</h1>
-      <p class="hero-lead">
+      <p class="hero-lead" id="authLead">
         Connectez-vous avec votre mot de passe ou avec un code reçu par e-mail.
       </p>
     </div>
@@ -65,55 +65,65 @@
 
     <section id="authGuestPanel" class="panel panel-pad p-5 sm:p-6 reveal reveal-delay-1">
       <div id="authStepIdentity">
-        <div class="section-label">
-          <span class="idx">1</span>
-          <h2>Créer un compte</h2>
-        </div>
-        <form id="registerForm" class="space-y-3" autocomplete="on">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div id="authLoginPanel">
+          <div class="section-label">
+            <span class="idx">1</span>
+            <h2>Se connecter</h2>
+          </div>
+          <form id="loginForm" class="space-y-3" autocomplete="on">
             <div>
-              <label for="regFirstName" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">Prénom</label>
-              <input id="regFirstName" name="firstName" type="text" required maxlength="80" class="form-input" placeholder="Votre prénom" />
+              <label for="loginEmail" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">E-mail</label>
+              <input id="loginEmail" name="email" type="email" required maxlength="254" class="form-input" placeholder="Votre e-mail" autocomplete="username" />
             </div>
             <div>
-              <label for="regLastName" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">Nom</label>
-              <input id="regLastName" name="lastName" type="text" required maxlength="80" class="form-input" placeholder="Votre nom" />
+              <label for="loginPassword" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">Mot de passe</label>
+              <input id="loginPassword" name="password" type="password" maxlength="128" class="form-input" autocomplete="current-password" />
+              <p class="text-sm text-[color:var(--ink-muted)] mt-2 m-0">
+                Pas de mot de passe, ou oublié ? Recevez un code par e-mail.
+              </p>
             </div>
-          </div>
-          <div>
-            <label for="regEmail" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">E-mail</label>
-            <input id="regEmail" name="email" type="email" required maxlength="254" class="form-input" placeholder="vous@email.com" autocomplete="email" />
-          </div>
-          <button type="submit" class="btn btn-primary h-11 min-h-11 w-full px-5">
-            <span>Créer mon compte</span>
-          </button>
-        </form>
-
-        <div class="auth-divider" aria-hidden="true"></div>
-
-        <div class="section-label">
-          <span class="idx">2</span>
-          <h2>Déjà inscrit</h2>
+            <button type="submit" class="btn btn-primary h-11 min-h-11 w-full px-5">
+              <span>Se connecter</span>
+            </button>
+            <button type="button" id="btnLoginOtp" class="btn btn-secondary h-11 min-h-11 w-full px-5">
+              <span>Recevoir un code par e-mail</span>
+            </button>
+          </form>
+          <p class="auth-switch">
+            Pas encore de compte ?
+            <a id="linkToRegister" class="auth-switch__link" href="/register">Créer un compte</a>
+          </p>
         </div>
-        <form id="loginForm" class="space-y-3" autocomplete="on">
-          <div>
-            <label for="loginEmail" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">E-mail</label>
-            <input id="loginEmail" name="email" type="email" required maxlength="254" class="form-input" placeholder="Votre e-mail" autocomplete="username" />
+
+        <div id="authRegisterPanel" class="hidden">
+          <div class="section-label">
+            <span class="idx">1</span>
+            <h2>Créer un compte</h2>
           </div>
-          <div>
-            <label for="loginPassword" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">Mot de passe</label>
-            <input id="loginPassword" name="password" type="password" maxlength="128" class="form-input" autocomplete="current-password" />
-            <p class="text-sm text-[color:var(--ink-muted)] mt-2 m-0">
-              Pas de mot de passe, ou oublié ? Recevez un code par e-mail.
-            </p>
-          </div>
-          <button type="submit" class="btn btn-secondary h-11 min-h-11 w-full px-5">
-            <span>Se connecter</span>
-          </button>
-          <button type="button" id="btnLoginOtp" class="btn btn-secondary h-11 min-h-11 w-full px-5">
-            <span>Recevoir un code par e-mail</span>
-          </button>
-        </form>
+          <form id="registerForm" class="space-y-3" autocomplete="on">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label for="regFirstName" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">Prénom</label>
+                <input id="regFirstName" name="firstName" type="text" required maxlength="80" class="form-input" placeholder="Votre prénom" />
+              </div>
+              <div>
+                <label for="regLastName" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">Nom</label>
+                <input id="regLastName" name="lastName" type="text" required maxlength="80" class="form-input" placeholder="Votre nom" />
+              </div>
+            </div>
+            <div>
+              <label for="regEmail" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">E-mail</label>
+              <input id="regEmail" name="email" type="email" required maxlength="254" class="form-input" placeholder="vous@email.com" autocomplete="email" />
+            </div>
+            <button type="submit" class="btn btn-primary h-11 min-h-11 w-full px-5">
+              <span>Créer mon compte</span>
+            </button>
+          </form>
+          <p class="auth-switch">
+            Déjà inscrit ?
+            <a id="linkToLogin" class="auth-switch__link" href="/auth">Se connecter</a>
+          </p>
+        </div>
       </div>
 
       <form id="otpForm" class="space-y-3 hidden">
