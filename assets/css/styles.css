@@ -11,7 +11,8 @@
   --ambient-a: rgba(10, 107, 69, 0.1);
   --ambient-b: rgba(255, 215, 194, 0.55);
   --radius-panel: 1rem;
-  --shadow-panel: 0 12px 40px rgba(10, 23, 20, 0.1);
+  --radius-control: 0.5rem;
+  --shadow-panel: 0 1px 2px rgba(10, 23, 20, 0.05), 0 12px 28px -20px rgba(10, 23, 20, 0.28);
   --font-display: 'Fraunces', Georgia, serif;
   --font-body: 'Figtree', system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
@@ -838,7 +839,7 @@ body.print-preview-open {
   background: color-mix(in srgb, var(--accent) 12%, transparent);
   color: var(--accent);
   font-family: var(--font-mono);
-  font-size: 0.625rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -1051,7 +1052,7 @@ html.dark .offline-notice {
 .form-input {
   width: 100%;
   min-height: 2.75rem;
-  border-radius: 0.625rem;
+  border-radius: var(--radius-control);
   border: 1px solid color-mix(in srgb, var(--ink) 16%, transparent);
   background-color: #fff;
   padding: 0.65rem 0.85rem;
@@ -1178,7 +1179,7 @@ html.dark .form-input {
   min-height: 2.75rem;
   border: 1px solid color-mix(in srgb, var(--ink) 16%, transparent);
   border-right: 0;
-  border-radius: 0.625rem 0 0 0.625rem;
+  border-radius: var(--radius-control) 0 0 var(--radius-control);
   background: color-mix(in srgb, var(--surface) 80%, var(--surface-elevated));
   color: var(--ink-muted);
   font-family: var(--font-mono);
@@ -1191,8 +1192,9 @@ html.dark .form-input {
   justify-content: center;
   gap: 0.45rem;
   min-height: 2.75rem;
+  min-width: 2.75rem;
   padding: 0.55rem 1.1rem;
-  border-radius: 999px;
+  border-radius: var(--radius-control);
   border: 1px solid transparent;
   text-align: center;
   white-space: normal;
@@ -1258,26 +1260,42 @@ html.dark[data-card-theme='obsidian'] .btn-primary {
   background: color-mix(in srgb, var(--accent) 6%, transparent);
 }
 
+.theme-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.125rem;
+  margin-inline: -0.5rem;
+}
+
+/* Zone tactile de 44 px ; la pastille visible reste plus petite. */
 .theme-swatch {
-  position: relative;
-  width: 2.15rem;
-  height: 2.15rem;
-  min-width: 2.15rem;
-  min-height: 2.15rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: transparent;
+  cursor: pointer;
+}
+
+.theme-swatch__dot {
+  width: 1.75rem;
+  height: 1.75rem;
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
-  box-shadow: none;
-  cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.theme-swatch:hover {
-  transform: translateY(-1px);
+.theme-swatch:hover .theme-swatch__dot {
+  transform: scale(1.1);
 }
 
-.theme-swatch.is-active {
+.theme-swatch.is-active .theme-swatch__dot {
   box-shadow:
-    0 0 0 2px var(--surface),
+    0 0 0 2px var(--surface-elevated),
     0 0 0 3.5px var(--accent);
 }
 
@@ -1492,13 +1510,13 @@ html.dark .qr-frame {
 }
 
 .mode-toggle button {
-  min-height: 2rem;
-  padding: 0 0.7rem;
+  min-height: 2.75rem;
+  padding: 0 0.85rem;
   border: 0;
   border-radius: 0.5rem;
   background: transparent;
   color: var(--ink-muted);
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   font-weight: 550;
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease;
@@ -1630,7 +1648,7 @@ html.dark .qr-frame {
   min-height: 2.85rem;
   margin-top: 1.25rem;
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--radius-control);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1652,10 +1670,10 @@ html.dark .qr-frame {
 
 .profile-card__cta-secondary {
   width: 100%;
-  min-height: 2.6rem;
+  min-height: 2.75rem;
   margin-top: 0.5rem;
   border: 1px solid var(--line);
-  border-radius: 0.75rem;
+  border-radius: var(--radius-control);
   display: inline-flex;
   align-items: center;
   justify-content: center;
