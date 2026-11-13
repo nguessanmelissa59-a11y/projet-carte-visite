@@ -485,6 +485,7 @@ function testToastCentered() {
   const indexHtml = read('index.html');
   const authHtml = read('auth.html');
   const profileCard = read('src/ui/profile-card.js');
+  const css = read('assets/css/styles.css');
 
   for (const html of [indexHtml, authHtml]) {
     assert.match(html, /id="toastContainer"/);
@@ -492,6 +493,11 @@ function testToastCentered() {
     assert.match(html, /items-center justify-center/);
     assert.doesNotMatch(html, /toastContainer"[^>]*bottom-5/);
   }
+
+  // body.app-shell > * { position: relative } ne doit pas écraser le toast
+  assert.match(css, /:not\(#toastContainer\):not\(\.print-preview-dialog\)/);
+  assert.match(css, /#toastContainer\s*\{[^}]*position:\s*fixed/s);
+  assert.match(css, /#toastContainer\s*\{[^}]*justify-content:\s*center/s);
 
   assert.match(profileCard, /function showToast/);
   assert.match(profileCard, /max-w-\[min\(22rem,100%\)\]/);
