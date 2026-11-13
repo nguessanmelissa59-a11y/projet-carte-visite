@@ -485,9 +485,44 @@ function testAuthPasswordOrCode() {
   assert.doesNotMatch(page, /localStorage|sessionStorage/);
 }
 
+function testAuthGoogleButton() {
+  const html = read('auth.html');
+  const page = read('src/ui/auth-page.js');
+  const api = read('src/services/api.js');
+
+  // Masque par defaut : affiche seulement si le serveur annonce Google disponible.
+  assert.match(html, /id="googleAuthBlock" class="hidden"/);
+  assert.match(
+    html,
+    /<a id="btnGoogleAuth" class="[^"]*\bmin-h-11\b[^"]*\bw-full\b[^"]*" href="\/api\/auth\/google\/start">/
+  );
+  assert.match(html, /Continuer avec Google/);
+  assert.ok(
+    html.indexOf('id="googleAuthBlock"') < html.indexOf('id="authLoginPanel"'),
+    'le bloc Google doit servir a la connexion et a l inscription'
+  );
+  // Flux gere par le serveur : aucun script Google charge dans la page.
+  assert.doesNotMatch(html, /accounts\.google\.com|gsi\/client|apis\.google\.com/);
+
+  assert.match(api, /async function fetchAuthProviders/);
+  assert.match(api, /\/api\/auth\/providers/);
+  assert.match(page, /ApiService\.fetchAuthProviders\(\)/);
+  assert.match(page, /block\.classList\.toggle\('hidden', !providers\.google\)/);
+  assert.match(page, /\/api\/auth\/google\/start\?next=\$\{encodeURIComponent\(next\)\}/);
+
+  // Le parametre ?error= sert de cle dans une liste fixe, jamais de texte affiche.
+  assert.match(page, /Object\.hasOwn\(GOOGLE_ERROR_MESSAGES, key\)/);
+  assert.match(page, /setAuthMessage\(GOOGLE_ERROR_MESSAGES\[key\]\)/);
+  for (const key of ['google_unavailable', 'google_cancelled', 'google_email', 'google_failed']) {
+    assert.match(page, new RegExp(`${key}:`), `message manquant pour ${key}`);
+  }
+  assert.doesNotMatch(page, /setAuthMessage\(params\.get/);
+}
+
 const tests = [
   ['auth modules separated', testAuthModulesSeparated],
   ['auth password or code', testAuthPasswordOrCode],
+  ['auth google button', testAuthGoogleButton],
   ['html contracts', testHtmlContracts],
   ['offline mode notice', testOfflineModeNotice],
   ['field validation client', testFieldValidationClient],

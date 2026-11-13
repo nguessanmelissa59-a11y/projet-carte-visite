@@ -166,7 +166,10 @@
 
     const hint = document.getElementById('otpHint');
     const devHint = document.getElementById('devOtpHint');
-    hint.textContent = `Un code a été préparé pour ${data.email || pending.email}.`;
+    const recipient = data.email || pending.email;
+    hint.textContent = emailDelivery
+      ? `Un code a été envoyé à ${recipient}. Pensez à regarder aussi les courriers indésirables.`
+      : `Un code a été préparé pour ${recipient}.`;
     if (data.devOtp) {
       devHint.classList.remove('hidden');
       devHint.textContent = `Code local de test : ${data.devOtp}`;
@@ -187,10 +190,7 @@
   function finishLogin() {
     setStep(3);
     setAuthMessage('Connexion réussie.');
-    const next = new URLSearchParams(window.location.search).get('next');
-    // Chemin local uniquement : "//hote" et "/\hote" sortent du site.
-    const safeNext = next && /^\/(?![/\\])/.test(next) ? next : '/';
-    window.location.href = safeNext;
+    window.location.href = safeNextParam() || '/';
   }
 
   async function requestLoginCode() {

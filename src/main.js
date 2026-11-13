@@ -224,15 +224,31 @@
       ProfileCardUI.showToast('Vérifiez d’abord le recto et le verso');
       return;
     }
-    ProfileCardUI.showToast('Préparation du PDF recto + verso (85×55 mm)...');
-    exporter.downloadCardImage(state, qrMode, (ok, fileName) => {
-      if (ok) {
-        ProfileCardUI.showToast(`PDF recto + verso prêt (${fileName})`);
-        closePrintPreview();
-      } else {
-        ProfileCardUI.showToast('Erreur lors de la génération du PDF imprimable');
-      }
-    });
+    const layout = getSelectedPrintLayout();
+    ProfileCardUI.showToast(
+      layout === 'sheet'
+        ? 'Préparation de la planche de 10 cartes (recto + verso)...'
+        : 'Préparation du PDF recto + verso (85×55 mm)...'
+    );
+    exporter.downloadCardImage(
+      state,
+      qrMode,
+      (ok, fileName) => {
+        if (ok) {
+          ProfileCardUI.showToast(`PDF recto + verso prêt (${fileName})`);
+          closePrintPreview();
+        } else {
+          ProfileCardUI.showToast('Erreur lors de la génération du PDF imprimable');
+        }
+      },
+      { layout }
+    );
+  }
+
+  /** Format choisi dans l’aperçu : 'single' (1 carte par feuille) ou 'sheet' (planche). */
+  function getSelectedPrintLayout() {
+    const checked = document.querySelector('input[name="printLayout"]:checked');
+    return checked && checked.value === 'sheet' ? 'sheet' : 'single';
   }
 
   function updateVirtualCardPreview() {
