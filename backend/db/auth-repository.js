@@ -66,8 +66,8 @@ const stmtRecentOtpCount = db.prepare(`
 `);
 
 const stmtInsertSession = db.prepare(`
-  INSERT INTO sessions (id, user_id, token_hash, expires_at, created_at)
-  VALUES (?, ?, ?, ?, ?)
+  INSERT INTO sessions (id, user_id, token_hash, expires_at, created_at, last_active_at)
+  VALUES (?, ?, ?, ?, ?, ?)
 `);
 const stmtGetSessionByTokenHash = db.prepare(`
   SELECT s.*, u.email, u.first_name, u.last_name, u.email_verified, u.role,
@@ -76,6 +76,9 @@ const stmtGetSessionByTokenHash = db.prepare(`
   FROM sessions s
   JOIN users u ON u.id = s.user_id
   WHERE s.token_hash = ?
+`);
+const stmtTouchSession = db.prepare(`
+  UPDATE sessions SET last_active_at = ? WHERE id = ?
 `);
 const stmtDeleteSession = db.prepare('DELETE FROM sessions WHERE id = ?');
 const stmtDeleteExpiredSessions = db.prepare('DELETE FROM sessions WHERE expires_at < ?');
@@ -234,29 +237,41 @@ function createSession(userId, ttlMs) {
   const rawToken = crypto.randomBytes(32).toString('hex');
   const id = newId('ses');
   const now = Date.now();
+  const nowIso = new Date(now).toISOString();
   stmtInsertSession.run(
     id,
     userId,
     hashValue(rawToken),
     new Date(now + ttlMs).toISOString(),
-    new Date(now).toISOString()
+    nowIso,
+    nowIso
   );
   return { id, token: rawToken, expiresAt: new Date(now + ttlMs).toISOString() };
 }
 
 function getSessionByToken(rawToken) {
   if (!rawToken) return null;
-  stmtDeleteExpiredSessions.run(new Date().toISOString());
+  const nowIso = new Date().toISOString();
+  stmtDeleteExpiredSessions.run(nowIso);
   const row = stmtGetSessionByTokenHash.get(hashValue(rawToken));
   if (!row) return null;
-  if (row.expires_at < new Date().toISOString()) {
+  if (row.expires_at < nowIso) {
     stmtDeleteSession.run(row.id);
     return null;
   }
+  const lastActiveMs = Date.parse(row.last_active_at || row.created_at);
+  const idleMs = Number.isFinite(SESSION_IDLE_MS) ? SESSION_IDLE_MS : 30 * 60 * 1000;
+  if (!Number.isFinite(lastActiveMs) || lastActiveMs + idleMs < Date.now()) {
+    stmtDeleteSession.run(row.id);
+    return null;
+  }
+  stmtTouchSession.run(nowIso, row.id);
   return {
     id: row.id,
     userId: row.user_id,
     expiresAt: row.expires_at,
+    lastActiveAt: nowIso,
+    idleTimeoutMs: idleMs,
     user: {
       id: row.user_id,
       email: row.email,

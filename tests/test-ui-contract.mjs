@@ -723,6 +723,7 @@ const tests = [
   ['qr view guards missing library', testQrViewGuardsMissingLibrary],
   ['qr logo overlay', testQrLogoOverlay],
   ['css atmosphere', testCssAtmosphere],
+  ['brand charter and hero', testBrandCharterAndHero],
   ['forest green tint unified', testForestGreenTintUnified],
   ['theme banner colors', testThemeBannerColors],
   ['card templates catalog', testCardTemplatesCatalog],
