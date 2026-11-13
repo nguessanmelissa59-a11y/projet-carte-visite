@@ -21,6 +21,12 @@ const {
   handleMyCards
 } = require('./controllers/auth.controller');
 const {
+  handleAuthProviders,
+  handleGoogleStart,
+  handleGoogleCallback
+} = require('./controllers/google-auth.controller');
+const { isPublicStaticPath } = require('./http/static-policy');
+const {
   handleAdminStats,
   handleAdminListCards,
   handleAdminDeleteCard,
@@ -68,6 +74,12 @@ function serveStaticFile(req, res, pathname) {
   if (!fullPath.startsWith(PUBLIC_ROOT)) {
     res.writeHead(403);
     res.end('Forbidden');
+    return;
+  }
+
+  if (!isPublicStaticPath(safePath)) {
+    res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+    res.end('Fichier introuvable');
     return;
   }
 
@@ -147,6 +159,15 @@ const server = http.createServer((req, res) => {
   }
   if (req.method === 'POST' && pathname === '/api/auth/logout') {
     return handleLogout(req, res);
+  }
+  if (req.method === 'GET' && pathname === '/api/auth/providers') {
+    return handleAuthProviders(req, res);
+  }
+  if (req.method === 'GET' && pathname === '/api/auth/google/start') {
+    return handleGoogleStart(req, res);
+  }
+  if (req.method === 'GET' && pathname === '/api/auth/google/callback') {
+    return handleGoogleCallback(req, res);
   }
   if (req.method === 'POST' && pathname === '/api/auth/login/password') {
     return handlePasswordLogin(req, res);
