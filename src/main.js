@@ -1040,6 +1040,8 @@
         previewTab = 'mobile';
         tabPreviewMobile.classList.add('is-active');
         tabPreviewCard.classList.remove('is-active');
+        tabPreviewMobile.setAttribute('aria-checked', 'true');
+        tabPreviewCard.setAttribute('aria-checked', 'false');
         if (previewMobileContainer) previewMobileContainer.classList.remove('hidden');
         if (previewCardContainer) previewCardContainer.classList.add('hidden');
       });
@@ -1048,7 +1050,9 @@
         previewTab = 'card';
         tabPreviewCard.classList.add('is-active');
         tabPreviewMobile.classList.remove('is-active');
-        if (previewMobileContainer) previewMobileContainer.classList.remove('hidden');
+        tabPreviewCard.setAttribute('aria-checked', 'true');
+        tabPreviewMobile.setAttribute('aria-checked', 'false');
+        if (previewMobileContainer) previewMobileContainer.classList.add('hidden');
         if (previewCardContainer) previewCardContainer.classList.remove('hidden');
         updateVirtualCardPreview();
       });

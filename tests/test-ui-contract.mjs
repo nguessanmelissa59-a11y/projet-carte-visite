@@ -614,10 +614,11 @@ function testOfflineModeNotice() {
   assert.match(css, /\.qr-mode-switch/);
   assert.match(
     css,
-    /\.mode-toggle\.mode-toggle--featured button\.is-active\s*\{[^}]*background:\s*var\(--accent\)/s,
-    'option selectionnee doit etre marquee en accent'
+    /\.mode-toggle button\.is-active\s*\{[^}]*background:\s*var\(--accent\)/s,
+    'option selectionnee (tous mode-toggle) doit etre marquee en accent'
   );
-  assert.match(css, /\.mode-toggle:not\(\.mode-toggle--featured\) button\.is-active/);
+  assert.match(html, /id="tabPreviewMobile"[^>]*aria-checked="true"/);
+  assert.match(html, /id="tabPreviewCard"[^>]*aria-checked="false"/);
   assert.match(css, /\.offline-teaser/);
   assert.match(css, /\.offline-notice__points/);
   assert.match(qrView, /offlineNotice\.hidden = !isOfflineMode/);
