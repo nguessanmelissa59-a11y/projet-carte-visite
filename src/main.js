@@ -245,8 +245,8 @@
     let value = target.type === 'checkbox' ? target.checked : target.value;
     if (FieldValidation) {
       if (target.name === 'phone' || target.name === 'whatsapp') {
-        value = FieldValidation.sanitizePhoneInput(value);
-        if (target.value !== value) target.value = value;
+        FieldValidation.applyPhoneMask(target);
+        value = target.value;
       }
       if (target.name === 'email' && typeof value === 'string' && value) {
         value = FieldValidation.normalizeEmail(value);

@@ -23,10 +23,83 @@ window.VCardApp.FieldValidation = (function () {
     slug: 48
   };
 
+  /**
+   * Formate un numéro pour l'affichage (espaces auto).
+   * Priorité Côte d'Ivoire : +225 XX XX XX XX XX
+   */
+  function formatPhoneDisplay(value) {
+    const cleaned = String(value || '').replace(PHONE_ALLOWED_RE, '');
+    if (!cleaned.trim()) return '';
+
+    const wantsPlus = /^\s*\+/.test(cleaned);
+    let digits = cleaned.replace(/\D/g, '');
+    if (!digits) return wantsPlus ? '+' : '';
+
+    if (digits.startsWith('00')) {
+      digits = digits.slice(2);
+    }
+
+    function groupPairs(chunk) {
+      const parts = String(chunk || '').match(/.{1,2}/g);
+      return parts ? parts.join(' ') : '';
+    }
+
+    // Indicatif CI + jusqu'à 10 chiffres nationaux
+    if (digits.startsWith('225')) {
+      const national = digits.slice(3, 13);
+      const grouped = groupPairs(national);
+      return grouped ? `+225 ${grouped}` : '+225';
+    }
+
+    // Saisie locale type 07… → 07 08 09 10 11
+    if (digits.startsWith('0')) {
+      return groupPairs(digits.slice(0, 10));
+    }
+
+    // Autre international : + puis paires
+    if (wantsPlus) {
+      return `+${groupPairs(digits.slice(0, 15))}`;
+    }
+
+    return groupPairs(digits.slice(0, 15));
+  }
+
   function sanitizePhoneInput(value) {
-    return String(value || '')
-      .replace(PHONE_ALLOWED_RE, '')
-      .slice(0, LIMITS.phone);
+    return formatPhoneDisplay(value).slice(0, LIMITS.phone);
+  }
+
+  /**
+   * Applique le masque tout en gardant le curseur sur le même chiffre.
+   */
+  function applyPhoneMask(input) {
+    if (!input) return;
+    const oldValue = String(input.value || '');
+    const caret = typeof input.selectionStart === 'number' ? input.selectionStart : oldValue.length;
+    const digitsBeforeCaret = oldValue.slice(0, caret).replace(/\D/g, '').length;
+    const onlyPlusBefore =
+      digitsBeforeCaret === 0 && /^\s*\+/.test(oldValue.slice(0, caret));
+
+    const next = sanitizePhoneInput(oldValue);
+    if (next === oldValue) return;
+
+    input.value = next;
+
+    let pos = 0;
+    let seen = 0;
+    if (onlyPlusBefore && next.startsWith('+')) {
+      pos = 1;
+    } else {
+      while (pos < next.length && seen < digitsBeforeCaret) {
+        if (/\d/.test(next.charAt(pos))) seen += 1;
+        pos += 1;
+      }
+    }
+
+    try {
+      input.setSelectionRange(pos, pos);
+    } catch {
+      // ignore (champ non focusable)
+    }
   }
 
   // Valeurs chargees (brouillon local, lien partage, serveur) : meme filtre que la saisie.
@@ -177,7 +250,9 @@ window.VCardApp.FieldValidation = (function () {
 
   return {
     LIMITS,
+    formatPhoneDisplay,
     sanitizePhoneInput,
+    applyPhoneMask,
     sanitizePhoneFields,
     normalizeEmail,
     isPhoneValid,
