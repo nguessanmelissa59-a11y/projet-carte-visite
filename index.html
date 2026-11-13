@@ -685,6 +685,9 @@
             <canvas id="printPreviewVersoCanvas" class="w-full h-auto block max-w-full"></canvas>
           </div>
         </figure>
+        <p class="print-faces__cut-hint">
+          Sur le PDF : 8&nbsp;mm d’espace entre recto et verso + traits de coupe pour découper facilement.
+        </p>
       </div>
 
       <fieldset id="printLayoutPicker" class="print-layout">
@@ -694,7 +697,7 @@
             <input type="radio" name="printLayout" value="single" checked />
             <span class="print-layout__text">
               <strong>1 carte par feuille</strong>
-              <span>Recto et verso côte à côte, centrés sur l’A4.</span>
+              <span>Recto et verso côte à côte, 8&nbsp;mm pour découper.</span>
             </span>
           </label>
           <label class="print-layout__option">
@@ -717,8 +720,8 @@
         </button>
       </div>
       <p class="text-xs text-[color:var(--ink-muted)] m-0">
-        1 page A4 : chaque recto à côté de son verso, traits de coupe,
-        fond perdu 3&nbsp;mm / marges 4&nbsp;mm. Imprimer à 100&nbsp;%.
+        1 page A4 : recto | verso avec gouttière de coupe 8&nbsp;mm, traits de coupe,
+        fond perdu 3&nbsp;mm. Imprimer à 100&nbsp;%.
       </p>
     </div>
   </div>
