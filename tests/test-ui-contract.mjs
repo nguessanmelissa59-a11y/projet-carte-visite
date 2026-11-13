@@ -222,6 +222,30 @@ function testBrandCharterAndHero() {
   assert.match(storage, /bindThemeModeControls/);
 }
 
+function testEditorialFlowProgress() {
+  const html = read('index.html');
+  const css = read('assets/css/styles.css');
+  const main = read('src/main.js');
+  const flow = read('src/ui/flow-progress.js');
+
+  assert.match(html, /id="flowSteps"/);
+  assert.match(html, /id="flowHint"/);
+  assert.match(html, /id="shareLockNotice"/);
+  assert.match(html, /preview-live/);
+  assert.match(html, /src\/ui\/flow-progress\.js/);
+  assert.match(html, /data-step="infos"/);
+  assert.match(html, /data-step="save"/);
+  assert.match(html, /data-step="share"/);
+  assert.match(css, /\.easy-steps__copy/);
+  assert.match(css, /\.preview-live/);
+  assert.match(css, /position:\s*sticky/);
+  assert.match(flow, /FlowProgress/);
+  assert.match(flow, /function render/);
+  assert.match(main, /FlowProgress\.bind/);
+  assert.match(main, /updateFlowProgress/);
+  assert.match(main, /markCardSaved/);
+}
+
 function testForestGreenTintUnified() {
   const css = read('assets/css/styles.css');
   const constants = read('src/config/constants.js');
@@ -775,6 +799,7 @@ const tests = [
   ['qr logo overlay', testQrLogoOverlay],
   ['css atmosphere', testCssAtmosphere],
   ['brand charter and hero', testBrandCharterAndHero],
+  ['editorial flow progress', testEditorialFlowProgress],
   ['forest green tint unified', testForestGreenTintUnified],
   ['theme banner colors', testThemeBannerColors],
   ['card templates catalog', testCardTemplatesCatalog],
