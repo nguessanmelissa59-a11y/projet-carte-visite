@@ -209,10 +209,11 @@ Deja partiellement couvert par `backend/services/auth-validation.js`.
 
 Regles auth :
 
-1. Ne jamais renvoyer le code OTP en production (`AUTH_EXPOSE_OTP` false si `NODE_ENV=production`).
-2. Reponses d'erreur generiques sur verify (eviter "email inconnu" vs "code faux" si enumeration sensible).
+1. Ne jamais renvoyer le code OTP e-mail en production (`AUTH_EXPOSE_OTP` false si `NODE_ENV=production`).
+2. Reponses d'erreur generiques sur verify (eviter "email inconnu" vs "code faux" si enumeration sensible) — y compris pour login TOTP.
 3. Invalider / rotation session au logout ; cookie clear avec memes flags.
-4. Ne pas logger email + OTP ensemble.
+4. Ne pas logger email + OTP / secret TOTP ensemble.
+5. Secret TOTP : chiffrement au repos ; ne jamais exposer `totp_secret` DB via `/api/auth/me`.
 
 ---
 

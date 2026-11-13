@@ -600,6 +600,10 @@ function testAuthPasswordOrCode() {
   for (const id of [
     'loginPassword',
     'btnLoginOtp',
+    'btnLoginTotp',
+    'totpEnrollBlock',
+    'totpQrCanvas',
+    'totpManualSecret',
     'otpPassword',
     'otpPasswordHint',
     'passwordForm',
@@ -612,6 +616,14 @@ function testAuthPasswordOrCode() {
     assert.match(html, new RegExp(`id="${id}"`), `missing id ${id}`);
   }
 
+  assert.match(html, /name="regOtpMethod"/);
+  assert.match(html, /value="authenticator"/);
+  assert.match(html, /assets\/vendor\/qrcode\.min\.js/);
+  assert.match(page, /selectedRegisterMethod/);
+  assert.match(page, /renderTotpQr/);
+  assert.match(page, /requestLoginCode\('authenticator'\)/);
+  assert.match(api, /if \(method\) payload\.method = method/);
+
   assert.match(html, /id="loginPassword"[^>]*type="password"[^>]*autocomplete="current-password"/);
   assert.match(html, /id="newPassword"[^>]*type="password"[^>]*minlength="8"[^>]*autocomplete="new-password"/);
   assert.match(html, /id="otpPassword"[\s\S]{0,160}?type="password"[\s\S]{0,160}?autocomplete="new-password"/);
@@ -622,7 +634,10 @@ function testAuthPasswordOrCode() {
   assert.match(api, /async function setPassword/);
 
   assert.match(page, /ApiService\.loginWithPassword/);
-  assert.match(page, /getElementById\('btnLoginOtp'\)\.addEventListener\('click', requestLoginCode\)/);
+  assert.match(
+    page,
+    /getElementById\('btnLoginOtp'\)\.addEventListener\('click', \(\) => requestLoginCode\('email'\)\)/
+  );
   // Redirection apres connexion : chemin local uniquement.
   assert.match(page, /\/\^\\\/\(\?!\[\/\\\\\]\)\/\.test\(next\)/);
   assert.doesNotMatch(page, /localStorage|sessionStorage/);
