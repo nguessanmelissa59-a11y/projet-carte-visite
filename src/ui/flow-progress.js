@@ -146,7 +146,7 @@ window.VCardApp.FlowProgress = (function () {
     if (!trigger) return;
     const target = document.getElementById(trigger.getAttribute('data-step-target'));
     if (!target) return;
-    target.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    target.scrollIntoView({ block: 'start', behavior: 'auto' });
 
     const focusIds = (trigger.getAttribute('data-step-focus') || '').split(',').filter(Boolean);
     const focusEl = focusIds.map((id) => document.getElementById(id)).find(isVisible);

@@ -728,7 +728,7 @@ html.dark[data-card-theme='obsidian'] .easy-steps li.is-active > span:first-chil
   border-radius: 0.85rem;
   background:
     linear-gradient(180deg, color-mix(in srgb, var(--surface) 88%, #fff), var(--surface));
-  box-shadow: var(--shadow-panel);
+  box-shadow: var(--shadow-control);
 }
 
 .print-card-preview canvas {
@@ -920,15 +920,14 @@ body.print-preview-open {
 
 .qr-mode-spotlight {
   margin-bottom: 1.1rem;
-  padding: 1rem;
-  border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--line));
+  padding: 1rem 1.05rem;
+  border: 1px solid var(--line);
   border-radius: 0.9rem;
   background:
     linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--accent) 10%, transparent) 0%,
-      color-mix(in srgb, var(--surface-elevated, var(--surface)) 92%, transparent) 48%,
-      var(--surface) 100%
+      160deg,
+      color-mix(in srgb, var(--accent) 8%, var(--surface-elevated)) 0%,
+      var(--surface-elevated) 55%
     );
 }
 

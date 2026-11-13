@@ -421,7 +421,7 @@ test('hash de mot de passe : format scrypt, vérification stricte', async () => 
   assert.equal(await verifyPassword('une phrase secrete', 'scrypt$1$1$1$AA==$AA=='), false);
 });
 
-test('inscription avec mot de passe puis connexion sans OTP', async () => {
+test('inscription puis connexion mot de passe + OTP', async () => {
   const verifyRes = await registerWithCode('pwd@example.com', {
     password: 'phrase de passe 42'
   });
@@ -429,7 +429,15 @@ test('inscription avec mot de passe puis connexion sans OTP', async () => {
   assert.equal(verifyRes.json().user.hasPassword, true);
   assert.doesNotMatch(verifyRes.body, /scrypt|passwordHash|password_hash/);
 
-  const loginRes = await passwordLogin('PWD@example.com', 'phrase de passe 42');
+  const step = await passwordLogin('PWD@example.com', 'phrase de passe 42');
+  assert.equal(step.statusCode, 200);
+  assert.equal(step.json().otpIssued, true);
+  assert.equal(step.json().method, 'email');
+  assert.ok(step.json().devOtp);
+  assert.equal(cookieFrom(step), '');
+  assert.equal(step.json().user, undefined);
+
+  const loginRes = await passwordLoginWithOtp('PWD@example.com', 'phrase de passe 42');
   assert.equal(loginRes.statusCode, 200);
   assert.equal(loginRes.json().user.email, 'pwd@example.com');
   assert.doesNotMatch(loginRes.body, /scrypt|passwordHash|password_hash/);
@@ -600,7 +608,7 @@ test('définir puis changer son mot de passe en session', async () => {
   assert.equal(first.json().user.hasPassword, true);
   assert.doesNotMatch(first.body, /scrypt|passwordHash|password_hash/);
 
-  const otherLogin = await passwordLogin(email, 'premiere phrase 1');
+  const otherLogin = await passwordLoginWithOtp(email, 'premiere phrase 1');
   assert.equal(otherLogin.statusCode, 200);
   const otherCookie = cookieFrom(otherLogin);
 
@@ -613,7 +621,7 @@ test('définir puis changer son mot de passe en session', async () => {
   assert.equal(isSessionAlive(cookie), true);
   assert.equal(isSessionAlive(otherCookie), false);
   assert.equal((await passwordLogin(email, 'premiere phrase 1')).statusCode, 401);
-  assert.equal((await passwordLogin(email, 'seconde phrase 2')).statusCode, 200);
+  assert.equal((await passwordLoginWithOtp(email, 'seconde phrase 2')).statusCode, 200);
 });
 
 test('changement de mot de passe refusé depuis une autre origine', async () => {
@@ -666,7 +674,7 @@ test('réinitialisation par code : nouveau mot de passe, anciennes sessions ferm
   assert.equal(isSessionAlive(oldCookie), false);
   assert.equal(isSessionAlive(cookieFrom(resetRes)), true);
   assert.equal((await passwordLogin(email, 'ancienne phrase 1')).statusCode, 401);
-  assert.equal((await passwordLogin(email, 'nouvelle phrase 2')).statusCode, 200);
+  assert.equal((await passwordLoginWithOtp(email, 'nouvelle phrase 2')).statusCode, 200);
 });
 
 test('inscription authenticator : QR otpauth puis session', async () => {
