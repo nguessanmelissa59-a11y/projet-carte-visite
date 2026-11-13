@@ -4,6 +4,7 @@ window.VCardApp.ApiService = (function () {
   let backendAvailable = false;
   let serverOrigin = window.location.origin;
   let currentUser = null;
+  let idleTimeoutMs = 30 * 60 * 1000;
 
   function slugify(text) {
     return (
@@ -40,6 +41,9 @@ window.VCardApp.ApiService = (function () {
       if (!res.ok) throw new Error('Not available');
       const data = await res.json();
       backendAvailable = true;
+      if (data.auth && Number(data.auth.idleTimeoutMs) > 0) {
+        idleTimeoutMs = Number(data.auth.idleTimeoutMs);
+      }
 
       const isLocalhost =
         window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
