@@ -405,7 +405,44 @@ function testOfflineModeNotice() {
   assert.doesNotMatch(qrView, /urlDisplay\.textContent = [^;]*Mode vCard/);
 }
 
+function testAuthPasswordOrCode() {
+  const html = read('auth.html');
+  const page = read('src/ui/auth-page.js');
+  const api = read('src/services/api.js');
+
+  for (const id of [
+    'loginPassword',
+    'btnLoginOtp',
+    'otpPassword',
+    'otpPasswordHint',
+    'passwordForm',
+    'currentPasswordField',
+    'currentPassword',
+    'newPassword',
+    'passwordStatus',
+    'passwordMessage'
+  ]) {
+    assert.match(html, new RegExp(`id="${id}"`), `missing id ${id}`);
+  }
+
+  assert.match(html, /id="loginPassword"[^>]*type="password"[^>]*autocomplete="current-password"/);
+  assert.match(html, /id="newPassword"[^>]*type="password"[^>]*minlength="8"[^>]*autocomplete="new-password"/);
+  assert.match(html, /id="otpPassword"[\s\S]{0,160}?type="password"[\s\S]{0,160}?autocomplete="new-password"/);
+  assert.doesNotMatch(html, /id="(loginPassword|otpPassword|currentPassword|newPassword)"[^>]*type="text"/);
+
+  assert.match(api, /\/api\/auth\/login\/password/);
+  assert.match(api, /async function loginWithPassword/);
+  assert.match(api, /async function setPassword/);
+
+  assert.match(page, /ApiService\.loginWithPassword/);
+  assert.match(page, /getElementById\('btnLoginOtp'\)\.addEventListener\('click', requestLoginCode\)/);
+  // Redirection apres connexion : chemin local uniquement.
+  assert.match(page, /\/\^\\\/\(\?!\[\/\\\\\]\)\/\.test\(next\)/);
+  assert.doesNotMatch(page, /localStorage|sessionStorage/);
+}
+
 const tests = [
+  ['auth password or code', testAuthPasswordOrCode],
   ['html contracts', testHtmlContracts],
   ['offline mode notice', testOfflineModeNotice],
   ['field validation client', testFieldValidationClient],
