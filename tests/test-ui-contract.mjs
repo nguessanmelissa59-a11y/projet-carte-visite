@@ -59,6 +59,37 @@ function testHtmlContracts() {
   assert.match(html, /inputmode="tel"/);
   assert.match(html, /inputmode="email"/);
   assert.ok(html.includes('pattern="^\\+?[0-9\\s().\\-]{6,}$"'));
+  assert.match(html, /id="jobTitle"/);
+  assert.match(html, /id="organization"/);
+  assert.match(html, /Rechercher ou créer un poste/);
+  assert.match(html, /Rechercher ou créer une entreprise/);
+  assert.match(html, /src\/ui\/lookup-combobox\.js/);
+}
+
+function testLookupComboboxUi() {
+  const html = read('index.html');
+  const css = read('assets/css/styles.css');
+  const combo = read('src/ui/lookup-combobox.js');
+  const main = read('src/main.js');
+  const api = read('src/services/api.js');
+
+  assert.match(combo, /LookupCombobox/);
+  assert.match(combo, /labelCreate/);
+  assert.match(combo, /Créer/);
+  assert.match(combo, /aria-autocomplete/);
+  assert.match(main, /LookupCombobox\.mount/);
+  assert.match(main, /kind: 'job-titles'/);
+  assert.match(main, /kind: 'organizations'/);
+  assert.match(api, /searchLookup/);
+  assert.match(api, /createLookup/);
+  assert.match(api, /\/api\/lookups\/job-titles/);
+  assert.match(api, /\/api\/lookups\/organizations/);
+  assert.match(css, /\.lookup-combo/);
+  assert.match(css, /\.lookup-combo__list/);
+  assert.match(css, /\.lookup-combo__create/);
+  assert.match(css, /\.field-hint/);
+  assert.match(html, /jobTitleHint/);
+  assert.match(html, /organizationHint/);
 }
 
 function testFieldValidationClient() {
