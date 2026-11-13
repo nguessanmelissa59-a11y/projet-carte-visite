@@ -6,6 +6,7 @@
     email: '',
     purpose: 'register'
   };
+  let authMode = 'login';
 
   document.addEventListener('DOMContentLoaded', async () => {
     if (!ApiService || !StorageService) {
@@ -18,6 +19,8 @@
     }
 
     StorageService.initTheme();
+    authMode = resolveAuthMode();
+    applyAuthMode(authMode);
     bindThemeToggle();
     bindForms();
     if (window.lucide) window.lucide.createIcons();
@@ -29,6 +32,57 @@
     }
     await renderSessionState();
   });
+
+  function resolveAuthMode() {
+    const params = new URLSearchParams(window.location.search);
+    const mode = String(params.get('mode') || '').toLowerCase();
+    const path = String(window.location.pathname || '').toLowerCase();
+    if (mode === 'register' || path === '/register' || path === '/register/') {
+      return 'register';
+    }
+    return 'login';
+  }
+
+  function buildAuthHref(mode) {
+    const params = new URLSearchParams(window.location.search);
+    const next = params.get('next');
+    const target = new URLSearchParams();
+    if (mode === 'register') target.set('mode', 'register');
+    if (next && /^\/(?![/\\])/.test(next)) target.set('next', next);
+    const query = target.toString();
+    return query ? `/auth.html?${query}` : '/auth.html';
+  }
+
+  function applyAuthMode(mode) {
+    authMode = mode === 'register' ? 'register' : 'login';
+    const loginPanel = document.getElementById('authLoginPanel');
+    const registerPanel = document.getElementById('authRegisterPanel');
+    const eyebrow = document.getElementById('authEyebrow');
+    const lead = document.getElementById('authLead');
+    const linkToRegister = document.getElementById('linkToRegister');
+    const linkToLogin = document.getElementById('linkToLogin');
+
+    if (loginPanel) loginPanel.classList.toggle('hidden', authMode !== 'login');
+    if (registerPanel) registerPanel.classList.toggle('hidden', authMode !== 'register');
+
+    if (eyebrow) {
+      eyebrow.textContent = authMode === 'register' ? 'Inscription' : 'Connexion';
+    }
+    if (lead) {
+      lead.textContent =
+        authMode === 'register'
+          ? 'Créez votre compte : un code de confirmation sera envoyé par e-mail.'
+          : 'Connectez-vous avec votre mot de passe ou avec un code reçu par e-mail.';
+    }
+
+    document.title =
+      authMode === 'register'
+        ? 'Créer un compte — EVC Melissa'
+        : 'Se connecter — EVC Melissa';
+
+    if (linkToRegister) linkToRegister.href = buildAuthHref('register');
+    if (linkToLogin) linkToLogin.href = buildAuthHref('login');
+  }
 
   function bindThemeToggle() {
     const btn = document.getElementById('btnThemeToggle');
@@ -51,6 +105,7 @@
   function showIdentityStep() {
     document.getElementById('authStepIdentity').classList.remove('hidden');
     document.getElementById('otpForm').classList.add('hidden');
+    applyAuthMode(pending.purpose === 'register' ? 'register' : authMode || 'login');
     setStep(1);
   }
 

@@ -226,12 +226,22 @@ const server = http.createServer((req, res) => {
     return handleDownloadVcf(req, res, shortVcfMatch[1], true);
   }
 
-  if (req.method === 'GET' && (pathname === '/auth' || pathname === '/auth/')) {
+  if (
+    req.method === 'GET' &&
+    (pathname === '/auth' ||
+      pathname === '/auth/' ||
+      pathname === '/register' ||
+      pathname === '/register/')
+  ) {
     const next = parsedUrl.searchParams.get('next');
-    const location =
-      next && next.startsWith('/') && !next.startsWith('//')
-        ? `/auth.html?next=${encodeURIComponent(next)}`
-        : '/auth.html';
+    const isRegister = pathname === '/register' || pathname === '/register/';
+    const params = new URLSearchParams();
+    if (isRegister) params.set('mode', 'register');
+    if (next && next.startsWith('/') && !next.startsWith('//')) {
+      params.set('next', next);
+    }
+    const query = params.toString();
+    const location = query ? `/auth.html?${query}` : '/auth.html';
     res.writeHead(302, { Location: location });
     res.end();
     return;

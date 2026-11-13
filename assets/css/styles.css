@@ -918,6 +918,38 @@ html.dark .offline-notice {
   border-top: 1px solid var(--line);
 }
 
+.auth-switch {
+  margin: 1.25rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+  font-size: 1rem;
+  line-height: 1.45;
+  color: var(--ink-muted);
+  text-align: center;
+}
+
+.auth-switch__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  margin-left: 0.25rem;
+  padding: 0.25rem 0.15rem;
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.auth-switch__link:hover {
+  color: var(--ink);
+}
+
+@media (min-width: 768px) {
+  .auth-switch {
+    text-align: left;
+  }
+}
+
 .inset-block {
   padding: 1rem 0 0;
   border-radius: 0;
