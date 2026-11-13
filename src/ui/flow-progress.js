@@ -142,20 +142,30 @@ window.VCardApp.FlowProgress = (function () {
     setTimeout(() => el.classList.remove('is-pointed'), 1400);
   }
 
+  function activateStep(trigger) {
+    if (!trigger) return;
+    const target = document.getElementById(trigger.getAttribute('data-step-target'));
+    if (!target) return;
+    target.scrollIntoView({ block: 'start', behavior: 'smooth' });
+
+    const focusIds = (trigger.getAttribute('data-step-focus') || '').split(',').filter(Boolean);
+    const focusEl = focusIds.map((id) => document.getElementById(id)).find(isVisible);
+    pointAt(focusEl);
+  }
+
   /** Les etapes servent de sommaire : un clic amene a la zone concernee. */
   function bind() {
     const list = document.getElementById('flowSteps');
     if (!list) return;
     list.addEventListener('click', (event) => {
+      activateStep(event.target.closest('[data-step-target]'));
+    });
+    list.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
       const trigger = event.target.closest('[data-step-target]');
       if (!trigger) return;
-      const target = document.getElementById(trigger.getAttribute('data-step-target'));
-      if (!target) return;
-      target.scrollIntoView({ block: 'start', behavior: 'auto' });
-
-      const focusIds = (trigger.getAttribute('data-step-focus') || '').split(',').filter(Boolean);
-      const focusEl = focusIds.map((id) => document.getElementById(id)).find(isVisible);
-      pointAt(focusEl);
+      event.preventDefault();
+      activateStep(trigger);
     });
   }
 
