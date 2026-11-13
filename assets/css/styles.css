@@ -1380,13 +1380,14 @@ html.dark .form-input {
   align-items: center;
   padding: 0 0.75rem;
   min-height: 2.75rem;
-  border: 1px solid color-mix(in srgb, var(--ink) 16%, transparent);
+  border: 2px solid var(--line-strong);
   border-right: 0;
   border-radius: var(--radius-control) 0 0 var(--radius-control);
   background: color-mix(in srgb, var(--surface) 80%, var(--surface-elevated));
   color: var(--ink-muted);
   font-family: var(--font-mono);
   font-size: 0.75rem;
+  box-shadow: var(--shadow-control);
 }
 
 .btn {
@@ -1732,32 +1733,34 @@ html.dark .qr-frame {
   gap: 0.35rem;
   min-height: 1.5rem;
   padding: 0.15rem 0.45rem;
-  border-radius: 0.25rem;
-  border: 1px solid var(--line);
-  background: transparent;
+  border-radius: var(--radius-control);
+  border: 2px solid var(--line-strong);
+  background: #fff;
   font-family: var(--font-mono);
   font-size: 0.6875rem;
   color: var(--ink-muted);
+  box-shadow: 1px 1px 0 var(--line-strong);
 }
 
 .status-chip[data-state='online'] {
-  color: var(--accent-mid, var(--accent));
-  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
-  background: var(--accent-soft);
+  color: var(--auth-banner);
+  border-color: var(--line-strong);
+  background: color-mix(in srgb, var(--auth-banner) 12%, #fff);
 }
 
 .status-chip[data-state='offline'] {
   color: #9a3412;
-  border-color: rgba(154, 52, 18, 0.25);
+  border-color: var(--line-strong);
   background: rgba(154, 52, 18, 0.08);
 }
 
 .mode-toggle {
   display: inline-flex;
   padding: 0.2rem;
-  border-radius: 0.65rem;
-  border: 1px solid var(--line);
-  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  border-radius: var(--radius-control);
+  border: 2px solid var(--line-strong);
+  background: #fff;
+  box-shadow: var(--shadow-control);
 }
 
 .mode-toggle button {
