@@ -103,12 +103,40 @@ window.VCardApp.ApiService = (function () {
     return data;
   }
 
-  async function verifyOtp({ email, code, purpose }) {
+  async function loginWithPassword({ email, password }) {
+    const res = await fetch('/api/auth/login/password', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await parseJson(res);
+    if (!res.ok) throw new Error(data.error || 'Connexion impossible');
+    currentUser = data.user || null;
+    return data;
+  }
+
+  async function setPassword({ currentPassword, password }) {
+    const res = await fetch('/api/auth/password', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ currentPassword, password })
+    });
+    const data = await parseJson(res);
+    if (!res.ok) throw new Error(data.error || 'Mot de passe non enregistré');
+    currentUser = data.user || null;
+    return data.user;
+  }
+
+  async function verifyOtp({ email, code, purpose, password }) {
+    const payload = { email, code, purpose };
+    if (password) payload.password = password;
     const res = await fetch('/api/auth/verify', {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, code, purpose })
+      body: JSON.stringify(payload)
     });
     const data = await parseJson(res);
     if (!res.ok) throw new Error(data.error || 'Vérification OTP échouée');
@@ -225,6 +253,8 @@ window.VCardApp.ApiService = (function () {
     refreshSession,
     register,
     login,
+    loginWithPassword,
+    setPassword,
     verifyOtp,
     logout,
     updateProfile,
