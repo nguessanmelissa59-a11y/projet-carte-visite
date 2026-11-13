@@ -612,7 +612,12 @@ function testOfflineModeNotice() {
   assert.match(css, /\.offline-notice\[hidden\]/);
   assert.match(css, /\.qr-mode-spotlight/);
   assert.match(css, /\.qr-mode-switch/);
-  assert.match(css, /\.mode-toggle--featured button\.is-active/);
+  assert.match(
+    css,
+    /\.mode-toggle\.mode-toggle--featured button\.is-active\s*\{[^}]*background:\s*var\(--accent\)/s,
+    'option selectionnee doit etre marquee en accent'
+  );
+  assert.match(css, /\.mode-toggle:not\(\.mode-toggle--featured\) button\.is-active/);
   assert.match(css, /\.offline-teaser/);
   assert.match(css, /\.offline-notice__points/);
   assert.match(qrView, /offlineNotice\.hidden = !isOfflineMode/);

@@ -1968,7 +1968,7 @@ html.dark .qr-frame {
   transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.mode-toggle button.is-active {
+.mode-toggle:not(.mode-toggle--featured) button.is-active {
   background: var(--surface-elevated);
   color: var(--ink);
   box-shadow: var(--shadow-control);
@@ -1978,7 +1978,7 @@ html.dark .mode-toggle {
   background: color-mix(in srgb, var(--surface) 70%, #000);
 }
 
-html.dark .mode-toggle button.is-active {
+html.dark .mode-toggle:not(.mode-toggle--featured) button.is-active {
   background: var(--surface-elevated);
   color: var(--ink);
 }
