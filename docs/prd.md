@@ -169,13 +169,22 @@ Déclenchée par `?id=:slug`, `/?id=:slug&scan=1`, ou fallback `?data=` / `#data
 
 ### 4.3 Compte & auth (`auth.html`)
 
-Auth **sans mot de passe** : e-mail + code OTP.
+Connexion **avec ou sans OTP** : code reçu par e-mail, ou mot de passe (facultatif).
 
-1. Inscription (prénom, nom, e-mail) ou connexion (e-mail).
+1. Inscription (prénom, nom, e-mail), toujours confirmée par un code OTP.
 2. Réception OTP (e-mail ; en local, code aussi en console serveur / `devOtp`).
-3. Vérification → cookie de session.
-4. Accès profil compte + liste des cartes (`/api/me/cards`).
-5. Dans l’éditeur : hint « connectez-vous pour garder et modifier », lien compte dans le header.
+3. Vérification → cookie de session. Un mot de passe peut être défini à cette étape.
+4. Connexions suivantes : mot de passe (sans code) ou code OTP, au choix.
+5. Mot de passe oublié : connexion par code, en saisissant un nouveau mot de passe à l’étape du code.
+6. Accès profil compte, mot de passe et liste des cartes (`/api/me/cards`).
+7. Dans l’éditeur : hint « connectez-vous pour garder et modifier », lien compte dans le header.
+
+Règles mot de passe :
+
+- 8 à 128 caractères, stocké haché (scrypt), jamais renvoyé par l’API.
+- Défini uniquement par le détenteur d’un code OTP valide ou d’une session ouverte.
+- 5 échecs par e-mail → connexion par mot de passe bloquée 15 min (`LOGIN_MAX_ATTEMPTS`, `LOGIN_LOCK_WINDOW_MS`) ; le code OTP reste utilisable.
+- Changer un mot de passe existant exige l’actuel et ferme les autres sessions.
 
 ### 4.4 Photo & QR density
 
@@ -209,7 +218,7 @@ slug (PK), identité, coordonnées, liens, bio, `photo_url`, `photo_base64`, `th
 
 ### `users`
 
-id, email (unique, NOCASE), prénom, nom, `email_verified`, timestamps.
+id, email (unique, NOCASE), prénom, nom, `email_verified`, `role`, `password_hash` (vide si aucun mot de passe), timestamps.
 
 ### `otp_challenges`
 

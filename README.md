@@ -77,7 +77,7 @@ npm run admin:install
 npm run admin:build
 ```
 
-3. Ouvrir `http://localhost:3000/admin` apres connexion OTP avec un e-mail listé dans `ADMIN_EMAILS`.
+3. Ouvrir `http://localhost:3000/admin` apres connexion (code OTP ou mot de passe) avec un e-mail listé dans `ADMIN_EMAILS`.
 
 Dev hot-reload admin (proxy API vers le port 3000) :
 
