@@ -1,5 +1,5 @@
 const { sendJson, readJsonBody } = require('../http/json');
-const { OTP_MAX_ATTEMPTS, OTP_TTL_MS } = require('../config/env');
+const { OTP_MAX_ATTEMPTS, OTP_TTL_MS, MAIL_CONFIGURED } = require('../config/env');
 const {
   validateEmail,
   validateName,
@@ -36,6 +36,9 @@ const {
 } = require('../db/auth-repository');
 const { listCardsByUserId } = require('../db/repository');
 
+const OTP_CONSOLE_MESSAGE =
+  'Code OTP envoyé. Vérifiez votre e-mail (ou la console serveur en local).';
+const OTP_SENT_BY_EMAIL_MESSAGE = 'Code envoyé. Vérifiez votre boîte e-mail.';
 const LOGIN_FAILED_MESSAGE = 'E-mail ou mot de passe incorrect';
 const LOGIN_LOCKED_MESSAGE =
   'Trop de tentatives. Réessayez plus tard ou connectez-vous avec un code.';
@@ -127,6 +130,28 @@ async function handleLogin(req, res) {
     if (!emailCheck.ok) return sendJson(res, 400, { error: emailCheck.error });
 
     const user = getUserByEmail(emailCheck.value);
+
+    if (MAIL_CONFIGURED) {
+      // Envoi reel : meme reponse et meme delai que le compte existe ou non.
+      // L'envoi part en arriere-plan, un plafond atteint n'est pas signale.
+      if (user) {
+        await issueOtp({
+          email: emailCheck.value,
+          purpose: 'login',
+          meta: {},
+          awaitDelivery: false
+        });
+      }
+      return sendJson(res, 200, {
+        ok: true,
+        otpIssued: true,
+        message: 'Si un compte existe pour cet e-mail, un code vient d’être envoyé.',
+        email: emailCheck.value,
+        purpose: 'login',
+        expiresInSec: Math.round(OTP_TTL_MS / 1000)
+      });
+    }
+
     if (!user) {
       // Même forme de réponse pour limiter l'énumération de comptes.
       return sendJson(res, 200, {
@@ -139,17 +164,17 @@ async function handleLogin(req, res) {
       });
     }
 
-    const otp = issueOtp({
+    const otp = await issueOtp({
       email: emailCheck.value,
       purpose: 'login',
       meta: {}
     });
-    if (!otp.ok) return sendJson(res, 429, { error: otp.error });
+    if (!otp.ok) return sendJson(res, otp.status || 429, { error: otp.error });
 
     return sendJson(res, 200, {
       ok: true,
       otpIssued: true,
-      message: 'Code OTP envoyé. Vérifiez votre e-mail (ou la console serveur en local).',
+      message: OTP_CONSOLE_MESSAGE,
       email: otp.email,
       purpose: 'login',
       expiresInSec: otp.expiresInSec,
