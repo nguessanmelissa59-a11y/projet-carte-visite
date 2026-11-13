@@ -197,32 +197,6 @@ window.VCardApp.ApiService = (function () {
     return data.item || null;
   }
 
-  async function searchLookup(kind, query) {
-    if (!backendAvailable) return [];
-    const path =
-      kind === 'organizations' ? '/api/lookups/organizations' : '/api/lookups/job-titles';
-    const url = `${path}?q=${encodeURIComponent(String(query || ''))}&limit=20`;
-    const res = await fetch(url, { method: 'GET', credentials: 'include' });
-    if (!res.ok) return [];
-    const data = await parseJson(res);
-    return Array.isArray(data.items) ? data.items : [];
-  }
-
-  async function createLookup(kind, name) {
-    if (!backendAvailable) return null;
-    const path =
-      kind === 'organizations' ? '/api/lookups/organizations' : '/api/lookups/job-titles';
-    const res = await fetch(path, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name })
-    });
-    const data = await parseJson(res);
-    if (!res.ok) throw new Error(data.error || 'Création impossible');
-    return data.item || null;
-  }
-
   function isAvailable() {
     return backendAvailable;
   }
