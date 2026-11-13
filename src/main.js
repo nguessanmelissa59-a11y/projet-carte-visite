@@ -502,6 +502,80 @@
     }
   }
 
+  async function copyTextToClipboard(text) {
+    const value = String(text || '');
+    if (!value) return false;
+
+    if (
+      window.isSecureContext &&
+      navigator.clipboard &&
+      typeof navigator.clipboard.writeText === 'function'
+    ) {
+      await navigator.clipboard.writeText(value);
+      return true;
+    }
+
+    const ta = document.createElement('textarea');
+    ta.value = value;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.top = '0';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    let ok = false;
+    try {
+      ok = document.execCommand('copy');
+    } catch {
+      ok = false;
+    }
+    ta.remove();
+    return ok;
+  }
+
+  async function sharePublicProfile() {
+    const shareUrl = QrView.resolvePayload(state, 'url');
+    if (!shareUrl) {
+      ProfileCardUI.showToast('Lien de partage indisponible');
+      return;
+    }
+
+    const fullName = `${state.firstName || ''} ${state.lastName || ''}`.trim() || 'Contact';
+    const shareData = {
+      title: `Carte de visite — ${fullName}`,
+      text: `Coordonnées de ${fullName}`,
+      url: shareUrl
+    };
+
+    if (typeof navigator.share === 'function') {
+      try {
+        const canShare =
+          typeof navigator.canShare !== 'function' || navigator.canShare(shareData);
+        if (canShare) {
+          await navigator.share(shareData);
+          ProfileCardUI.showToast('Fiche partagée');
+          return;
+        }
+      } catch (err) {
+        if (err && err.name === 'AbortError') return;
+      }
+    }
+
+    try {
+      const copied = await copyTextToClipboard(shareUrl);
+      if (copied) {
+        ProfileCardUI.showToast('Lien copié');
+        return;
+      }
+    } catch {
+      // prompt fallback below
+    }
+
+    window.prompt('Copiez ce lien :', shareUrl);
+    ProfileCardUI.showToast('Lien prêt à copier');
+  }
+
   function bindEvents() {
     const form = document.getElementById('vcardForm');
     if (form) {
@@ -722,7 +796,8 @@
       btnCopyLink.addEventListener('click', async () => {
         const url = QrView.resolvePayload(state, 'url');
         try {
-          await navigator.clipboard.writeText(url);
+          const copied = await copyTextToClipboard(url);
+          if (!copied) throw new Error('copy-failed');
           const label = document.getElementById('copyLinkText');
           if (label) {
             const prev = label.textContent;
@@ -731,7 +806,7 @@
           }
           ProfileCardUI.showToast('Lien copié dans le presse-papiers');
         } catch {
-          prompt('Copiez ce lien :', url);
+          window.prompt('Copiez ce lien :', url);
         }
       });
     }
@@ -844,23 +919,10 @@
 
     const btnSharePublic = document.getElementById('btnSharePublic');
     if (btnSharePublic) {
-      btnSharePublic.addEventListener('click', async () => {
-        const shareUrl = QrView.resolvePayload(state, 'url');
-        const fullName = `${state.firstName || ''} ${state.lastName || ''}`.trim();
-        if (navigator.share) {
-          try {
-            await navigator.share({
-              title: `Carte de visite — ${fullName}`,
-              text: `Coordonnées de ${fullName}`,
-              url: shareUrl
-            });
-            return;
-          } catch {
-            // Fallback
-          }
-        }
-        await navigator.clipboard.writeText(shareUrl);
-        ProfileCardUI.showToast('Lien copié');
+      btnSharePublic.addEventListener('click', () => {
+        sharePublicProfile().catch(() => {
+          ProfileCardUI.showToast('Partage impossible');
+        });
       });
     }
 

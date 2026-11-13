@@ -18,7 +18,7 @@ EVC Melissa permet de :
 4. **Afficher** une page publique élégante au scan (`/?id=:slug&scan=1`).
 5. **Enregistrer le contact** en 1 clic (fichier `.vcf` vCard 3.0, iOS Safari et Android).
 6. **Imprimer** une planche PDF format carte de visite réelle **85 × 55 mm**.
-7. **Gérer son compte** (auth e-mail + OTP) pour retrouver et modifier ses cartes.
+7. **Gérer son compte** (e-mail + code OTP, mot de passe facultatif) pour retrouver et modifier ses cartes.
 
 ### Critère de réussite
 
@@ -85,7 +85,9 @@ Le mode `lz-string` reste un **repli** pour ouverture statique sans Node.
 | `GET` | `/v/:slug` | `.vcf` court (ouverture Contacts) |
 | `POST` | `/api/auth/register` | Inscription + émission OTP |
 | `POST` | `/api/auth/login` | Connexion + émission OTP |
-| `POST` | `/api/auth/verify` | Vérification OTP → session cookie |
+| `POST` | `/api/auth/login/password` | Connexion par mot de passe (sans OTP) → session cookie |
+| `POST` | `/api/auth/verify` | Vérification OTP → session cookie (mot de passe facultatif à définir) |
+| `POST` | `/api/auth/password` | Définir / changer le mot de passe (session requise) |
 | `GET` | `/api/auth/me` | Utilisateur courant |
 | `POST` | `/api/auth/logout` | Fin de session |
 | `PATCH` | `/api/auth/profile` | Mise à jour profil compte |
