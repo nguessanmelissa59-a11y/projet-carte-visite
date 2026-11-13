@@ -548,3 +548,120 @@ test('réinitialisation par code : nouveau mot de passe, anciennes sessions ferm
   assert.equal((await passwordLogin(email, 'ancienne phrase 1')).statusCode, 401);
   assert.equal((await passwordLogin(email, 'nouvelle phrase 2')).statusCode, 200);
 });
+
+test('inscription authenticator : QR otpauth puis session', async () => {
+  const { totpAt } = require('../backend/services/totp-service');
+
+  const regRes = createMockRes();
+  await handleRegister(
+    createMockReq('POST', {
+      email: 'totp-user@example.com',
+      firstName: 'Totp',
+      lastName: 'User',
+      method: 'authenticator'
+    }),
+    regRes
+  );
+  assert.equal(regRes.statusCode, 200);
+  const regBody = regRes.json();
+  assert.equal(regBody.method, 'authenticator');
+  assert.ok(String(regBody.otpauthUrl || '').startsWith('otpauth://totp/'));
+  assert.ok(regBody.totpSecret);
+  assert.equal(regBody.devOtp, undefined);
+
+  const badCode = createMockRes();
+  await handleVerifyOtp(
+    createMockReq('POST', {
+      email: 'totp-user@example.com',
+      code: '000000',
+      purpose: 'register',
+      method: 'authenticator'
+    }),
+    badCode
+  );
+  assert.equal(badCode.statusCode, 400);
+
+  const code = totpAt(regBody.totpSecret);
+  const verifyRes = createMockRes();
+  await handleVerifyOtp(
+    createMockReq('POST', {
+      email: 'totp-user@example.com',
+      code,
+      purpose: 'register',
+      method: 'authenticator'
+    }),
+    verifyRes
+  );
+  assert.equal(verifyRes.statusCode, 200);
+  assert.equal(verifyRes.json().user.hasTotp, true);
+  const cookie = cookieFrom(verifyRes);
+  assert.ok(cookie.includes(SESSION_COOKIE_NAME));
+
+  const meRes = createMockRes();
+  handleMe(createMockReq('GET', null, cookie), meRes);
+  assert.equal(meRes.statusCode, 200);
+  assert.equal(meRes.json().user.hasTotp, true);
+  assert.equal(meRes.json().user.totpSecret, undefined);
+});
+
+test('connexion authenticator apres enrolement', async () => {
+  const { totpAt } = require('../backend/services/totp-service');
+  const email = 'totp-login@example.com';
+
+  const regRes = createMockRes();
+  await handleRegister(
+    createMockReq('POST', {
+      email,
+      firstName: 'Login',
+      lastName: 'Totp',
+      method: 'authenticator'
+    }),
+    regRes
+  );
+  const secret = regRes.json().totpSecret;
+  const enroll = createMockRes();
+  await handleVerifyOtp(
+    createMockReq('POST', {
+      email,
+      code: totpAt(secret),
+      purpose: 'register',
+      method: 'authenticator'
+    }),
+    enroll
+  );
+  assert.equal(enroll.statusCode, 200);
+
+  await handleLogout(createMockReq('POST', null, cookieFrom(enroll)), createMockRes());
+
+  const loginRes = createMockRes();
+  await handleLogin(createMockReq('POST', { email, method: 'authenticator' }), loginRes);
+  assert.equal(loginRes.statusCode, 200);
+  assert.equal(loginRes.json().method, 'authenticator');
+
+  const verifyRes = createMockRes();
+  await handleVerifyOtp(
+    createMockReq('POST', {
+      email,
+      code: totpAt(secret),
+      purpose: 'login',
+      method: 'authenticator'
+    }),
+    verifyRes
+  );
+  assert.equal(verifyRes.statusCode, 200);
+  assert.ok(cookieFrom(verifyRes).includes(SESSION_COOKIE_NAME));
+});
+
+test('methode OTP invalide rejetee', async () => {
+  const regRes = createMockRes();
+  await handleRegister(
+    createMockReq('POST', {
+      email: 'bad-method@example.com',
+      firstName: 'Bad',
+      lastName: 'Method',
+      method: 'sms'
+    }),
+    regRes
+  );
+  assert.equal(regRes.statusCode, 400);
+});
