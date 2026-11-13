@@ -154,6 +154,22 @@ test('lookup repository enforces unique name_key and findOrCreate', () => {
   assert.equal(orgA.id, orgB.id);
 });
 
+test('seed poste et entreprise de test sont charges', () => {
+  const jobs = jobTitles.search('', 50);
+  const orgs = organizations.search('', 50);
+  const jobNames = jobs.map((it) => it.name);
+  const orgNames = orgs.map((it) => it.name);
+
+  assert.ok(jobNames.includes('Directeur Technique'));
+  assert.ok(jobNames.includes('Product Owner'));
+  assert.ok(jobNames.includes('Chef de Projet'));
+  assert.ok(orgNames.includes('NovaTech Africa'));
+  assert.ok(orgNames.includes('EVC Melissa'));
+  assert.ok(orgNames.includes('SoftLab Abidjan'));
+  assert.ok(jobs.length >= 10);
+  assert.ok(orgs.length >= 8);
+});
+
 test('search job titles and organizations without auth', async () => {
   jobTitles.findOrCreate('Product Owner');
   organizations.findOrCreate('Acme CI');
