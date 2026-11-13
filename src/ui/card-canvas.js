@@ -1218,50 +1218,82 @@ window.VCardApp.CardCanvasExporter = (function () {
     return out;
   }
 
-  function buildCropMarksContent(cardX, cardY, cardW, cardH, label) {
+  /**
+   * Contenu d'une page : grille de cartes centree sur la feuille, traits de coupe
+   * dans les marges au droit de chaque ligne de decoupe, puis libelle.
+   * La grille etant centree, recto et verso se superposent en impression recto verso.
+   */
+  function buildPageContent(layout, pageW, pageH, cardW, cardH, label) {
     const mark = 8;
     const gap = 2;
+    const gridW = cardW * layout.cols;
+    const gridH = cardH * layout.rows;
+    const originX = (pageW - gridW) / 2;
+    const originY = (pageH - gridH) / 2;
+    const right = originX + gridW;
+    const top = originY + gridH;
     const safeLabel = String(label || '')
       .replace(/[()\\]/g, ' ')
       .slice(0, 90);
-    return [
-      'q',
-      `${cardW.toFixed(2)} 0 0 ${cardH.toFixed(2)} ${cardX.toFixed(2)} ${cardY.toFixed(2)} cm`,
-      '/Im0 Do',
-      'Q',
-      '0.4 w',
-      '0 0 0 RG',
-      `${(cardX - mark).toFixed(2)} ${cardY.toFixed(2)} m ${(cardX - gap).toFixed(2)} ${cardY.toFixed(2)} l S`,
-      `${cardX.toFixed(2)} ${(cardY - mark).toFixed(2)} m ${cardX.toFixed(2)} ${(cardY - gap).toFixed(2)} l S`,
-      `${(cardX + cardW + gap).toFixed(2)} ${cardY.toFixed(2)} m ${(cardX + cardW + mark).toFixed(2)} ${cardY.toFixed(2)} l S`,
-      `${(cardX + cardW).toFixed(2)} ${(cardY - mark).toFixed(2)} m ${(cardX + cardW).toFixed(2)} ${(cardY - gap).toFixed(2)} l S`,
-      `${(cardX - mark).toFixed(2)} ${(cardY + cardH).toFixed(2)} m ${(cardX - gap).toFixed(2)} ${(cardY + cardH).toFixed(2)} l S`,
-      `${cardX.toFixed(2)} ${(cardY + cardH + gap).toFixed(2)} m ${cardX.toFixed(2)} ${(cardY + cardH + mark).toFixed(2)} l S`,
-      `${(cardX + cardW + gap).toFixed(2)} ${(cardY + cardH).toFixed(2)} m ${(cardX + cardW + mark).toFixed(2)} ${(cardY + cardH).toFixed(2)} l S`,
-      `${(cardX + cardW).toFixed(2)} ${(cardY + cardH + gap).toFixed(2)} m ${(cardX + cardW).toFixed(2)} ${(cardY + cardH + mark).toFixed(2)} l S`,
+    const ops = [];
+
+    for (let row = 0; row < layout.rows; row += 1) {
+      for (let col = 0; col < layout.cols; col += 1) {
+        const x = originX + col * cardW;
+        const y = originY + row * cardH;
+        ops.push(
+          'q',
+          `${cardW.toFixed(2)} 0 0 ${cardH.toFixed(2)} ${x.toFixed(2)} ${y.toFixed(2)} cm`,
+          '/Im0 Do',
+          'Q'
+        );
+      }
+    }
+
+    ops.push('0.4 w', '0 0 0 RG');
+    for (let col = 0; col <= layout.cols; col += 1) {
+      const x = (originX + col * cardW).toFixed(2);
+      ops.push(
+        `${x} ${(originY - mark).toFixed(2)} m ${x} ${(originY - gap).toFixed(2)} l S`,
+        `${x} ${(top + gap).toFixed(2)} m ${x} ${(top + mark).toFixed(2)} l S`
+      );
+    }
+    for (let row = 0; row <= layout.rows; row += 1) {
+      const y = (originY + row * cardH).toFixed(2);
+      ops.push(
+        `${(originX - mark).toFixed(2)} ${y} m ${(originX - gap).toFixed(2)} ${y} l S`,
+        `${(right + gap).toFixed(2)} ${y} m ${(right + mark).toFixed(2)} ${y} l S`
+      );
+    }
+
+    // Le libelle reste sous les traits de coupe, sans sortir de la zone imprimable.
+    const labelY = Math.max(originY - 28, 12);
+    ops.push(
       'BT /F1 9 Tf 0.35 0.35 0.35 rg',
-      `50 ${(cardY - 28).toFixed(2)} Td`,
+      `50 ${labelY.toFixed(2)} Td`,
       `(${safeLabel}) Tj`,
       'ET'
-    ].join('\n');
+    );
+    return ops.join('\n');
   }
 
   /**
-   * Construit un PDF A4 multi-pages (une carte 85x55 centree par page).
+   * Construit un PDF A4 multi-pages. Chaque page repete son image selon l'imposition :
+   * une carte 85x55 centree (defaut) ou une planche de cartes identiques.
    * @param {Array<{jpegBytes: Uint8Array, pixelW: number, pixelH: number, label: string}>} pages
+   * @param {{cols: number, rows: number}} [layout]
    */
-  function buildPrintablePdfBytes(pages) {
+  function buildPrintablePdfBytes(pages, layout) {
     const pageList = Array.isArray(pages) ? pages : [];
     if (!pageList.length) {
       throw new Error('PDF imprimable: aucune page');
     }
 
+    const pageLayout = layout && layout.cols > 0 && layout.rows > 0 ? layout : PRINT_LAYOUTS.single;
     const pageW = PRINT_PAGE_WIDTH_MM * MM_TO_PT;
     const pageH = PRINT_PAGE_HEIGHT_MM * MM_TO_PT;
     const cardW = PRINT_CARD_WIDTH_MM * MM_TO_PT;
     const cardH = PRINT_CARD_HEIGHT_MM * MM_TO_PT;
-    const cardX = (pageW - cardW) / 2;
-    const cardY = (pageH - cardH) / 2;
     const encoder = new TextEncoder();
     const chunks = [];
     const offsets = [0];
@@ -1333,7 +1365,7 @@ window.VCardApp.CardCanvasExporter = (function () {
       write(page.jpegBytes);
       write('endstream\nendobj\n');
 
-      const content = buildCropMarksContent(cardX, cardY, cardW, cardH, page.label);
+      const content = buildPageContent(pageLayout, pageW, pageH, cardW, cardH, page.label);
       const contentBytes = encoder.encode(content);
       startObj();
       write(`${page.contentObjId} 0 obj\n<< /Length ${contentBytes.length} >>\nstream\n`);
