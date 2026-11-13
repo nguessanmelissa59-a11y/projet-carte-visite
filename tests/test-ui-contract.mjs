@@ -377,14 +377,30 @@ function testOfflineModeNotice() {
   const html = read('index.html');
   const css = read('assets/css/styles.css');
   const qrView = read('src/ui/qr-view.js');
+  const main = read('src/main.js');
 
   const notice = html.match(/<div id="offlineModeNotice"[^>]*>/);
   assert.ok(notice, 'encart mode hors-ligne introuvable');
   assert.match(notice[0], /\shidden/, 'encart masque par defaut');
   assert.match(html, /offline-notice__title">Mode vCard 3\.0 Direct \(Hors-ligne\)</);
+  assert.match(html, /id="offlineModeTeaser"/);
+  assert.match(html, /id="btnSwitchToVcard"/);
+  assert.match(html, /qr-mode-spotlight/);
+  assert.match(html, /mode-toggle--featured/);
+  assert.match(html, /Hors-ligne/);
+  assert.doesNotMatch(
+    html,
+    /easy-advanced-body[\s\S]*id="qrModeUrl"/,
+    'le choix de mode ne doit plus être enterré dans Personnaliser'
+  );
 
   assert.match(css, /\.offline-notice\[hidden\]/);
+  assert.match(css, /\.qr-mode-spotlight/);
+  assert.match(css, /\.offline-teaser/);
+  assert.match(css, /\.offline-notice__points/);
   assert.match(qrView, /offlineNotice\.hidden = !isOfflineMode/);
+  assert.match(qrView, /offlineTeaser\.hidden = isOfflineMode/);
+  assert.match(main, /setQrMode\('vcard'\)/);
   assert.doesNotMatch(qrView, /urlDisplay\.textContent = [^;]*Mode vCard/);
 }
 

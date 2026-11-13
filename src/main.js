@@ -674,19 +674,24 @@
 
     const qrModeUrlBtn = document.getElementById('qrModeUrl');
     const qrModeVcardBtn = document.getElementById('qrModeVcard');
+    const btnSwitchToVcard = document.getElementById('btnSwitchToVcard');
+
+    function setQrMode(nextMode) {
+      qrMode = nextMode === 'vcard' ? 'vcard' : 'url';
+      if (qrModeUrlBtn && qrModeVcardBtn) {
+        qrModeUrlBtn.classList.toggle('is-active', qrMode === 'url');
+        qrModeVcardBtn.classList.toggle('is-active', qrMode === 'vcard');
+      }
+      QrView.renderCanvas(state, qrMode, true);
+      if (window.lucide) window.lucide.createIcons();
+    }
+
     if (qrModeUrlBtn && qrModeVcardBtn) {
-      qrModeUrlBtn.addEventListener('click', () => {
-        qrMode = 'url';
-        qrModeUrlBtn.classList.add('is-active');
-        qrModeVcardBtn.classList.remove('is-active');
-        QrView.renderCanvas(state, qrMode, true);
-      });
-      qrModeVcardBtn.addEventListener('click', () => {
-        qrMode = 'vcard';
-        qrModeVcardBtn.classList.add('is-active');
-        qrModeUrlBtn.classList.remove('is-active');
-        QrView.renderCanvas(state, qrMode, true);
-      });
+      qrModeUrlBtn.addEventListener('click', () => setQrMode('url'));
+      qrModeVcardBtn.addEventListener('click', () => setQrMode('vcard'));
+    }
+    if (btnSwitchToVcard) {
+      btnSwitchToVcard.addEventListener('click', () => setQrMode('vcard'));
     }
 
     const btnDownloadCardPng = document.getElementById('btnDownloadCardPng');
