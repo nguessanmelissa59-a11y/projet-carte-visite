@@ -9,8 +9,10 @@ const {
   OTP_TTL_MS,
   OTP_RESEND_WINDOW_MS,
   OTP_MAX_PER_WINDOW,
-  AUTH_EXPOSE_OTP
+  AUTH_EXPOSE_OTP,
+  MAIL_CONFIGURED
 } = require('../config/env');
+const { sendOtpEmail } = require('./mailer');
 
 function generateOtpCode() {
   return String(crypto.randomInt(0, 1_000_000)).padStart(6, '0');
@@ -20,12 +22,39 @@ function canRequestOtp(email) {
   const since = new Date(Date.now() - OTP_RESEND_WINDOW_MS).toISOString();
   const count = countRecentOtps(email, since);
   if (count >= OTP_MAX_PER_WINDOW) {
-    return { ok: false, error: 'Trop de demandes. Réessayez dans une minute.' };
+    return { ok: false, status: 429, error: 'Trop de demandes. Réessayez dans une minute.' };
   }
   return { ok: true };
 }
 
-function issueOtp({ email, purpose, meta }) {
+// Le journal ne contient ni le code ni le destinataire.
+function deliverByEmail(email, code) {
+  return sendOtpEmail({
+    to: email,
+    code,
+    ttlMinutes: Math.round(OTP_TTL_MS / 60000)
+  }).then(
+    () => true,
+    (err) => {
+      const reason = (err && (err.code || err.name)) || 'erreur';
+      console.error(`[otp] envoi e-mail impossible (${reason})`);
+      return false;
+    }
+  );
+}
+
+/**
+ * Cree un code et le transmet : par e-mail si SMTP est configure, sinon dans
+ * la console du serveur (developpement local).
+ *
+ * @param {object} params
+ * @param {string} params.email
+ * @param {string} params.purpose 'register' ou 'login'.
+ * @param {object} [params.meta]
+ * @param {boolean} [params.awaitDelivery] false : l'envoi part en arriere-plan,
+ *   pour que le temps de reponse ne depende pas de l'existence du compte.
+ */
+async function issueOtp({ email, purpose, meta, awaitDelivery = true }) {
   const cleanEmail = normalizeEmail(email);
   const gate = canRequestOtp(cleanEmail);
   if (!gate.ok) return gate;
@@ -39,13 +68,25 @@ function issueOtp({ email, purpose, meta }) {
     meta
   });
 
-  // Pas de fournisseur SMS/SMTP branché : journal serveur + option de debug local.
-  console.log(`[otp] ${purpose} ${cleanEmail} code=${code} ttl=${Math.round(OTP_TTL_MS / 1000)}s`);
+  if (MAIL_CONFIGURED) {
+    const delivery = deliverByEmail(cleanEmail, code);
+    if (awaitDelivery && !(await delivery)) {
+      return {
+        ok: false,
+        status: 502,
+        error: 'Envoi du code impossible pour le moment. Réessayez dans un instant.'
+      };
+    }
+  } else {
+    // Aucun envoi d'e-mail configure : repli console pour le developpement local.
+    console.log(`[otp] ${purpose} ${cleanEmail} code=${code} ttl=${Math.round(OTP_TTL_MS / 1000)}s`);
+  }
 
   const payload = {
     ok: true,
     email: cleanEmail,
     purpose,
+    delivery: MAIL_CONFIGURED ? 'email' : 'console',
     expiresInSec: Math.round(OTP_TTL_MS / 1000)
   };
   if (AUTH_EXPOSE_OTP) {
