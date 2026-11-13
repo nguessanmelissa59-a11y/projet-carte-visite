@@ -390,7 +390,8 @@ function testPrintSheetLayout() {
   assert.match(html, /id="printLayoutPicker"/);
   assert.match(html, /name="printLayout" value="single" checked/);
   assert.match(html, /name="printLayout" value="sheet"/);
-  assert.match(html, /Planche de 10 cartes/);
+  assert.match(html, /Planche de 5 cartes/);
+  assert.match(html, /recto et verso côte à côte|recto \| verso/);
 
   const main = read('src/main.js');
   assert.match(main, /function getSelectedPrintLayout/);
@@ -400,47 +401,70 @@ function testPrintSheetLayout() {
   assert.match(css, /\.print-layout__options/);
   assert.match(css, /\.print-layout__option:has\(input:checked\)/);
 
+  const source = read('src/ui/card-canvas.js');
+  assert.match(source, /\/Im0 Do/);
+  assert.match(source, /\/Im1 Do/);
+  assert.match(source, /cote a cote/);
+
   const exporter = loadCardCanvasExporter();
   const pageW = (210 * 72) / 25.4;
   const pageH = (297 * 72) / 25.4;
+  const cardW = (85 * 72) / 25.4;
+  const cardH = (55 * 72) / 25.4;
 
   const sheet = exporter.resolvePrintLayout('sheet');
-  assert.equal(sheet.cols * sheet.rows, 10);
+  assert.equal(sheet.cols, 2);
+  assert.equal(sheet.rows, 5);
   assert.equal(exporter.resolvePrintLayout('inconnu').id, 'single');
   assert.equal(exporter.resolvePrintLayout('__proto__').id, 'single');
   assert.equal(exporter.resolvePrintLayout(undefined).id, 'single');
 
   const singlePdf = buildTestPdf(exporter);
-  assert.match(singlePdf, /\/Count 2 /);
-  assert.equal(singlePdf.match(/\/Im0 Do/g).length, 2);
-  assert.equal(singlePdf.match(/ l S$/gm).length, 16);
+  assert.match(singlePdf, /\/Count 1 /);
+  assert.equal(singlePdf.match(/\/Im0 Do/g).length, 1);
+  assert.equal(singlePdf.match(/\/Im1 Do/g).length, 1);
+  assert.equal(singlePdf.match(/ l S$/gm).length, 10);
   assertPdfXrefValid(singlePdf);
 
+  const singlePlacements = readCardPlacements(singlePdf);
+  assert.equal(singlePlacements.length, 2);
+  assert.ok(Math.abs(singlePlacements[1].x - (singlePlacements[0].x + cardW)) < 0.01);
+  assert.ok(Math.abs(singlePlacements[1].y - singlePlacements[0].y) < 0.01);
+
   const sheetPdf = buildTestPdf(exporter, sheet);
-  assert.match(sheetPdf, /\/Count 2 /);
-  assert.equal(sheetPdf.match(/\/Im0 Do/g).length, 20);
-  assert.equal(sheetPdf.match(/ l S$/gm).length, 36);
+  assert.match(sheetPdf, /\/Count 1 /);
+  assert.equal(sheetPdf.match(/\/Im0 Do/g).length, 5);
+  assert.equal(sheetPdf.match(/\/Im1 Do/g).length, 5);
+  assert.equal(sheetPdf.match(/ l S$/gm).length, 18);
   assertPdfXrefValid(sheetPdf);
 
   const placements = readCardPlacements(sheetPdf);
-  assert.equal(placements.length, 20);
-  const recto = placements.slice(0, 10);
-  const verso = placements.slice(10);
-  assert.deepEqual(recto, verso);
-  assert.equal(new Set(recto.map((p) => `${p.x}:${p.y}`)).size, 10);
+  assert.equal(placements.length, 10);
+  const recto = [];
+  const verso = [];
+  for (let i = 0; i < placements.length; i += 2) {
+    recto.push(placements[i]);
+    verso.push(placements[i + 1]);
+  }
+  assert.equal(recto.length, 5);
+  assert.equal(verso.length, 5);
+  assert.equal(new Set(recto.map((p) => `${p.x}:${p.y}`)).size, 5);
+
+  for (let i = 0; i < recto.length; i += 1) {
+    assert.ok(Math.abs(verso[i].x - (recto[i].x + cardW)) < 0.01, 'verso non a droite du recto');
+    assert.ok(Math.abs(verso[i].y - recto[i].y) < 0.01, 'verso non aligne au recto');
+  }
 
   const left = Math.min(...recto.map((p) => p.x));
-  const right = Math.max(...recto.map((p) => p.x + p.w));
+  const right = Math.max(...verso.map((p) => p.x + p.w));
   const bottom = Math.min(...recto.map((p) => p.y));
   const top = Math.max(...recto.map((p) => p.y + p.h));
   assert.ok(left > 0 && bottom > 0 && right < pageW && top < pageH, 'planche hors de la page A4');
-  // Grille centree : le verso retombe derriere le recto en impression recto verso.
   assert.ok(Math.abs(left - (pageW - right)) < 0.05, 'planche non centree horizontalement');
   assert.ok(Math.abs(bottom - (pageH - top)) < 0.05, 'planche non centree verticalement');
-  // Cartes au format 85 x 55 mm, sans mise a l'echelle.
-  for (const p of recto) {
-    assert.ok(Math.abs(p.w - (85 * 72) / 25.4) < 0.01);
-    assert.ok(Math.abs(p.h - (55 * 72) / 25.4) < 0.01);
+  for (const p of [...recto, ...verso]) {
+    assert.ok(Math.abs(p.w - cardW) < 0.01);
+    assert.ok(Math.abs(p.h - cardH) < 0.01);
   }
 }
 
