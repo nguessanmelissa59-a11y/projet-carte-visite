@@ -9,6 +9,7 @@
   const ProfileCardUI = window.VCardApp.ProfileCardUI;
   const CardCanvasExporter = window.VCardApp.CardCanvasExporter;
   const LookupCombobox = window.VCardApp.LookupCombobox;
+  const FlowProgress = window.VCardApp.FlowProgress;
 
   let state = { ...DEMO_DATA };
   let qrMode = 'url';
@@ -19,6 +20,10 @@
   let rafPending = false;
   let jobTitleCombo = null;
   let organizationCombo = null;
+  let cardOnServer = false;
+  let saveState = 'local';
+  let sharedOnce = false;
+  let savedAt = null;
   let lastUserActivityAt = Date.now();
   let idleWatchdogTimer = null;
   let sessionGuardRunning = false;

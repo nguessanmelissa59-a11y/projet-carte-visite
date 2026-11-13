@@ -301,6 +301,18 @@ function testCardTemplatesCatalog() {
   for (const id of required) {
     assert.match(canvasSource, new RegExp(`${id}:\\s*draw`), `renderer missing for ${id}`);
   }
+
+  // Compositions distinctes (pas seulement des swaps de couleur)
+  for (const helper of [
+    'drawCornerMarks',
+    'drawIdentityBlock',
+    'drawContactColumns',
+    'drawHairline',
+    'drawMicroLabel'
+  ]) {
+    assert.match(canvasSource, new RegExp(`function ${helper}\\(`));
+  }
+  assert.match(canvasSource, /Hanko|hanko|sceau|TIMBRE QR|STATION QR|Constellation|blueprint/i);
 }
 
 function testProfileCardMarkup() {
