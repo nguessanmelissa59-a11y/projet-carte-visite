@@ -428,6 +428,29 @@
               <p class="text-sm font-medium text-[color:var(--ink-muted)] m-0 mb-2">Choisir un modèle</p>
               <div id="cardTemplatePicker" class="card-template-picker" role="listbox" aria-label="Modèles de carte"></div>
             </div>
+            <div class="card-print-colors">
+              <p class="text-sm font-medium text-[color:var(--ink)] m-0">Couleurs du modèle</p>
+              <p class="text-xs text-[color:var(--ink-muted)] m-0 mt-0.5 mb-2">
+                Optionnel : changez l’accent sans changer de modèle.
+              </p>
+              <div
+                id="cardThemeColorPicker"
+                class="theme-color-picker flex items-center gap-1 flex-wrap"
+                role="group"
+                aria-label="Couleurs du modèle d’impression"
+              >
+                <button type="button" data-theme="forest" class="theme-swatch" title="Forêt" aria-label="Thème forêt"><span class="theme-swatch__dot" style="background:#0a6b45"></span></button>
+                <button type="button" data-theme="navy" class="theme-swatch" title="Marine" aria-label="Thème marine"><span class="theme-swatch__dot" style="background:#1a4f96"></span></button>
+                <button type="button" data-theme="bronze" class="theme-swatch" title="Terracotta" aria-label="Thème terracotta"><span class="theme-swatch__dot" style="background:#c45c1f"></span></button>
+                <button type="button" data-theme="bordeaux" class="theme-swatch" title="Bordeaux" aria-label="Thème bordeaux"><span class="theme-swatch__dot" style="background:#a11f35"></span></button>
+                <button type="button" data-theme="obsidian" class="theme-swatch" title="Encre" aria-label="Thème encre"><span class="theme-swatch__dot" style="background:#22262e"></span></button>
+                <button type="button" data-theme="cobalt" class="theme-swatch" title="Cobalt" aria-label="Thème cobalt"><span class="theme-swatch__dot" style="background:#1f6fbf"></span></button>
+                <button type="button" data-theme="teal" class="theme-swatch" title="Sarcelle" aria-label="Thème sarcelle"><span class="theme-swatch__dot" style="background:#0e8f78"></span></button>
+                <button type="button" data-theme="gold" class="theme-swatch" title="Or" aria-label="Thème or"><span class="theme-swatch__dot" style="background:#c2912a"></span></button>
+                <button type="button" data-theme="plum" class="theme-swatch" title="Prune" aria-label="Thème prune"><span class="theme-swatch__dot" style="background:#9a2f5c"></span></button>
+                <button type="button" data-theme="indigo" class="theme-swatch" title="Indigo" aria-label="Thème indigo"><span class="theme-swatch__dot" style="background:#4a4fb0"></span></button>
+              </div>
+            </div>
             <div class="print-faces" aria-label="Aperçu recto et verso">
               <figure class="print-face">
                 <figcaption>Recto · 85×55 mm</figcaption>

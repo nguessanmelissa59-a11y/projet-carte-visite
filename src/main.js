@@ -614,7 +614,7 @@
       }
     }
 
-    document.querySelectorAll('#themeColorPicker .theme-swatch').forEach((btn) => {
+    document.querySelectorAll('.theme-color-picker .theme-swatch').forEach((btn) => {
       const t = btn.getAttribute('data-theme');
       btn.classList.toggle('is-active', t === themeKey);
     });
@@ -808,10 +808,11 @@
       });
     }
 
-    document.querySelectorAll('#themeColorPicker .theme-swatch').forEach((btn) => {
+    document.querySelectorAll('.theme-color-picker .theme-swatch').forEach((btn) => {
       btn.addEventListener('click', () => {
         state.theme = btn.getAttribute('data-theme') || 'forest';
         renderAll(true);
+        updateVirtualCardPreview();
         schedulePersistence();
       });
     });

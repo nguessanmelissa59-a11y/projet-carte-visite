@@ -1761,6 +1761,13 @@ html.dark .theme-mode__btn.is-active {
   border-radius: 999px;
 }
 
+.card-print-colors {
+  padding: 0.85rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--surface) 55%, var(--surface-elevated));
+}
+
 .card-template-picker {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
