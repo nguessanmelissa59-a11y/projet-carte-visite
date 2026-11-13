@@ -14,6 +14,8 @@
   --accent: #0a6b45;
   --accent-soft: rgba(10, 107, 69, 0.12);
   --accent-mid: #0e8556;
+  /* Texte / icônes posés sur un fond --accent (boutons actifs, pastilles). */
+  --on-accent: #ffffff;
   --info-warm: #fff1e8;
   --ambient-a: rgba(255, 107, 33, 0.08);
   --ambient-b: rgba(10, 107, 69, 0.06);
