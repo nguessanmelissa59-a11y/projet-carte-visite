@@ -111,6 +111,10 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_cards_organization_id ON cards(organization_id);
 `);
 
+function newId(prefix) {
+  return `${prefix}_${crypto.randomBytes(12).toString('hex')}`;
+}
+
 function seedLookupFromCards(tableName, columnName) {
   const rows = db.prepare(
     `SELECT DISTINCT TRIM(${columnName}) AS name
@@ -132,10 +136,6 @@ function seedLookupFromCards(tableName, columnName) {
 
 seedLookupFromCards('job_titles', 'job_title');
 seedLookupFromCards('organizations', 'organization');
-
-function newId(prefix) {
-  return `${prefix}_${crypto.randomBytes(12).toString('hex')}`;
-}
 
 module.exports = {
   db,
