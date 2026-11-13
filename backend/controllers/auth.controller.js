@@ -241,21 +241,99 @@ async function handleLogin(req, res) {
   }
 }
 
+async function completeAuthAfterOtp({
+  email,
+  purpose,
+  challengeMeta,
+  enrollTotpSecret,
+  passwordCheck
+}) {
+  let user = getUserByEmail(email);
+  if (!user && purpose === 'register') {
+    user = createUser({
+      email,
+      firstName: (challengeMeta && challengeMeta.firstName) || '',
+      lastName: (challengeMeta && challengeMeta.lastName) || ''
+    });
+  }
+  if (!user) {
+    return { ok: false, status: 404, error: 'Compte introuvable' };
+  }
+
+  user = markUserVerified(user.id);
+
+  if (enrollTotpSecret) {
+    setTotpSecretEncrypted(user.id, encryptSecret(enrollTotpSecret));
+    user = getUserById(user.id);
+  }
+
+  if (passwordCheck) {
+    // Seul le detenteur du code choisit le mot de passe ; les sessions anterieures tombent.
+    setPasswordHash(user.id, await hashPassword(passwordCheck.value));
+    deleteSessionsForUser(user.id);
+    clearAttempts(user.email);
+    user = getUserById(user.id);
+  }
+
+  user = ensureAdminBootstrap(user);
+  const session = startSession(user.id);
+  return { ok: true, user, session };
+}
+
 async function handleVerifyOtp(req, res) {
   try {
     const body = await readJsonBody(req, 64 * 1024);
     const emailCheck = validateEmail(body.email);
     const codeCheck = validateOtpCode(body.code);
     const purpose = body.purpose === 'register' ? 'register' : 'login';
+    const methodCheck = validateOtpMethod(body.method || 'email');
 
     if (!emailCheck.ok) return sendJson(res, 400, { error: emailCheck.error });
     if (!codeCheck.ok) return sendJson(res, 400, { error: codeCheck.error });
+    if (!methodCheck.ok) return sendJson(res, 400, { error: methodCheck.error });
 
     // Mot de passe facultatif, valide avant de toucher au code pour ne pas le consommer.
     let passwordCheck = null;
     if (body.password !== undefined && body.password !== null && body.password !== '') {
       passwordCheck = validatePassword(body.password);
       if (!passwordCheck.ok) return sendJson(res, 400, { error: passwordCheck.error });
+    }
+
+    // Connexion TOTP deja enrole : pas de challenge e-mail, throttle par e-mail.
+    if (methodCheck.value === 'authenticator' && purpose === 'login') {
+      if (isLocked(emailCheck.value)) {
+        return sendJson(res, 429, { error: LOGIN_LOCKED_MESSAGE });
+      }
+      registerAttempt(emailCheck.value);
+
+      const found = getUserByEmail(emailCheck.value);
+      const encrypted = found && found.emailVerified ? getTotpSecretEncrypted(found.id) : '';
+      const secret = encrypted ? decryptSecret(encrypted) : '';
+      const valid = Boolean(secret) && verifyTotp(secret, codeCheck.value);
+      if (!valid) {
+        return sendJson(res, 400, { error: 'Code OTP incorrect' });
+      }
+
+      clearAttempts(emailCheck.value);
+      const done = await completeAuthAfterOtp({
+        email: emailCheck.value,
+        purpose,
+        challengeMeta: {},
+        enrollTotpSecret: null,
+        passwordCheck
+      });
+      if (!done.ok) return sendJson(res, done.status, { error: done.error });
+
+      return sendJson(
+        res,
+        200,
+        {
+          ok: true,
+          user: publicUser(done.user),
+          expiresAt: done.session.expiresAt
+        },
+        { 'Set-Cookie': buildSessionCookie(done.session.token, done.session.expiresAt) }
+      );
     }
 
     const challenge = getActiveOtp(emailCheck.value, purpose);
@@ -266,46 +344,51 @@ async function handleVerifyOtp(req, res) {
       return sendJson(res, 429, { error: 'Trop de tentatives. Demandez un nouveau OTP.' });
     }
 
-    if (!verifyOtpCode(challenge, codeCheck.value)) {
+    const meta = parseOtpMeta(challenge);
+    const challengeMethod = meta.method === 'authenticator' ? 'authenticator' : 'email';
+    if (challengeMethod !== methodCheck.value) {
+      return sendJson(res, 400, {
+        error: 'Méthode de vérification incorrecte. Reprenez depuis le début.'
+      });
+    }
+
+    let codeOk = false;
+    let enrollTotpSecret = null;
+    if (challengeMethod === 'authenticator') {
+      const secret = String(meta.totpSecret || '');
+      codeOk = Boolean(secret) && verifyTotp(secret, codeCheck.value);
+      if (codeOk && purpose === 'register') {
+        enrollTotpSecret = secret;
+      }
+    } else {
+      codeOk = verifyOtpCode(challenge, codeCheck.value);
+    }
+
+    if (!codeOk) {
       incrementOtpAttempts(challenge.id);
       return sendJson(res, 400, { error: 'Code OTP incorrect' });
     }
 
     consumeOtp(challenge.id);
 
-    let user = getUserByEmail(emailCheck.value);
-    if (!user && purpose === 'register') {
-      const meta = parseOtpMeta(challenge);
-      user = createUser({
-        email: emailCheck.value,
-        firstName: meta.firstName || '',
-        lastName: meta.lastName || ''
-      });
-    }
-    if (!user) {
-      return sendJson(res, 404, { error: 'Compte introuvable' });
-    }
-
-    user = markUserVerified(user.id);
-    if (passwordCheck) {
-      // Seul le detenteur du code choisit le mot de passe ; les sessions anterieures tombent.
-      setPasswordHash(user.id, await hashPassword(passwordCheck.value));
-      deleteSessionsForUser(user.id);
-      clearAttempts(user.email);
-      user = getUserById(user.id);
-    }
-    user = ensureAdminBootstrap(user);
-    const session = startSession(user.id);
+    const done = await completeAuthAfterOtp({
+      email: emailCheck.value,
+      purpose,
+      challengeMeta: meta,
+      enrollTotpSecret,
+      passwordCheck
+    });
+    if (!done.ok) return sendJson(res, done.status, { error: done.error });
 
     return sendJson(
       res,
       200,
       {
         ok: true,
-        user: publicUser(user),
-        expiresAt: session.expiresAt
+        user: publicUser(done.user),
+        expiresAt: done.session.expiresAt
       },
-      { 'Set-Cookie': buildSessionCookie(session.token, session.expiresAt) }
+      { 'Set-Cookie': buildSessionCookie(done.session.token, done.session.expiresAt) }
     );
   } catch (err) {
     return sendJson(res, 400, { error: err.message || 'Requête invalide' });
