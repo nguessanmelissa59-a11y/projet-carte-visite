@@ -1,6 +1,8 @@
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const NAME_RE = /^[\p{L}\p{M}\s'.-]{1,80}$/u;
 const OTP_RE = /^\d{6}$/;
+const PASSWORD_MIN_LENGTH = 8;
+const PASSWORD_MAX_LENGTH = 128;
 
 function validateEmail(email) {
   const value = String(email || '')
@@ -32,8 +34,38 @@ function validateOtpCode(code) {
   return { ok: true, value };
 }
 
+function normalizePassword(password) {
+  if (typeof password !== 'string') return '';
+  const value = password.normalize('NFKC');
+  return value.length > PASSWORD_MAX_LENGTH ? '' : value;
+}
+
+function validatePassword(password) {
+  if (typeof password !== 'string') {
+    return { ok: false, error: 'Mot de passe invalide' };
+  }
+  const value = password.normalize('NFKC');
+  if (value.length < PASSWORD_MIN_LENGTH) {
+    return {
+      ok: false,
+      error: `Le mot de passe doit contenir au moins ${PASSWORD_MIN_LENGTH} caractères`
+    };
+  }
+  if (value.length > PASSWORD_MAX_LENGTH) {
+    return {
+      ok: false,
+      error: `Le mot de passe ne peut pas dépasser ${PASSWORD_MAX_LENGTH} caractères`
+    };
+  }
+  return { ok: true, value };
+}
+
 module.exports = {
+  PASSWORD_MIN_LENGTH,
+  PASSWORD_MAX_LENGTH,
   validateEmail,
   validateName,
-  validateOtpCode
+  validateOtpCode,
+  validatePassword,
+  normalizePassword
 };

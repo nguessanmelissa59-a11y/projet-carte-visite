@@ -32,6 +32,7 @@ const stmtListUsersAdmin = db.prepare(`
     u.last_name,
     u.email_verified,
     u.role,
+    (u.password_hash != '') AS has_password,
     u.created_at,
     u.updated_at,
     (
