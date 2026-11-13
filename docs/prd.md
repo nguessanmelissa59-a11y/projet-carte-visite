@@ -88,11 +88,16 @@ Le mode `lz-string` reste un **repli** pour ouverture statique sans Node.
 | `POST` | `/api/auth/login/password` | Connexion par mot de passe (sans OTP) → session cookie |
 | `POST` | `/api/auth/verify` | Vérification OTP → session cookie (mot de passe facultatif à définir) |
 | `POST` | `/api/auth/password` | Définir / changer le mot de passe (session requise) |
+| `GET` | `/api/auth/providers` | Moyens disponibles : bouton Google, envoi réel des codes |
+| `GET` | `/api/auth/google/start` | Départ de la connexion Google (redirection) |
+| `GET` | `/api/auth/google/callback` | Retour de Google → session cookie |
 | `GET` | `/api/auth/me` | Utilisateur courant |
 | `POST` | `/api/auth/logout` | Fin de session |
 | `PATCH` | `/api/auth/profile` | Mise à jour profil compte |
 | `GET` | `/api/me/cards` | Cartes du compte connecté |
 | `GET` | `/auth` | Redirection vers `auth.html` |
+
+Fichiers statiques : seuls `index.html`, `auth.html`, `assets/` et `src/` sont servis (`backend/http/static-policy.js`). Le reste du projet (`.env`, base SQLite, code serveur) répond 404.
 
 Démarrage : `npm start` → `http://localhost:3000` + affichage IP LAN pour scan Wi-Fi.
 
@@ -174,7 +179,7 @@ Modules **séparés** : `/auth` (connexion) et `/register` (inscription), avec l
 
 1. Inscription seule (`/register` : prénom, nom, e-mail), toujours confirmée par un code OTP.
 2. Connexion seule (`/auth` : mot de passe ou code e-mail) ; lien « Créer un compte » si besoin.
-3. Réception OTP (e-mail ; en local, code aussi en console serveur / `devOtp`).
+3. Réception OTP : par e-mail si `SMTP_USER` / `SMTP_PASS` sont renseignés ; sinon mode local (console serveur / `devOtp`).
 4. Vérification → cookie de session. Un mot de passe peut être défini à cette étape.
 5. Connexions suivantes : mot de passe (sans code) ou code OTP, au choix.
 6. Mot de passe oublié : connexion par code, en saisissant un nouveau mot de passe à l’étape du code.
