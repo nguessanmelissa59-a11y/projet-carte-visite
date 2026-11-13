@@ -426,19 +426,39 @@ async function handlePasswordLogin(req, res) {
     if (!valid) return sendJson(res, 401, { error: LOGIN_FAILED_MESSAGE });
 
     clearAttempts(emailCheck.value);
-    const user = ensureAdminBootstrap(found);
-    const session = startSession(user.id);
 
-    return sendJson(
-      res,
-      200,
-      {
+    // Mot de passe OK : 2e facteur OTP obligatoire (pas de session ici).
+    if (found.hasTotp) {
+      return sendJson(res, 200, {
         ok: true,
-        user: publicUser(user),
-        expiresAt: session.expiresAt
-      },
-      { 'Set-Cookie': buildSessionCookie(session.token, session.expiresAt) }
-    );
+        otpIssued: true,
+        method: 'authenticator',
+        message: TOTP_LOGIN_MESSAGE,
+        email: emailCheck.value,
+        purpose: 'login',
+        expiresInSec: Math.round(OTP_TTL_MS / 1000)
+      });
+    }
+
+    const otp = await issueOtp({
+      email: emailCheck.value,
+      purpose: 'login',
+      meta: { afterPassword: true }
+    });
+    if (!otp.ok) return sendJson(res, otp.status || 429, { error: otp.error });
+
+    return sendJson(res, 200, {
+      ok: true,
+      otpIssued: true,
+      method: 'email',
+      message: MAIL_CONFIGURED
+        ? OTP_SENT_BY_EMAIL_MESSAGE
+        : OTP_CONSOLE_MESSAGE,
+      email: otp.email,
+      purpose: 'login',
+      expiresInSec: otp.expiresInSec,
+      ...(otp.devOtp ? { devOtp: otp.devOtp } : {})
+    });
   } catch {
     return sendJson(res, 400, { error: 'Requête invalide' });
   }

@@ -140,7 +140,10 @@ window.VCardApp.ApiService = (function () {
     });
     const data = await parseJson(res);
     if (!res.ok) throw new Error(data.error || 'Connexion impossible');
-    currentUser = data.user || null;
+    // Session seulement apres OTP : pas d'utilisateur tant que verify n'a pas reussi.
+    if (data.user && !data.otpIssued) {
+      currentUser = data.user;
+    }
     return data;
   }
 
