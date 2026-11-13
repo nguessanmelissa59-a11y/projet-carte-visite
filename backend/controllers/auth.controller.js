@@ -3,9 +3,13 @@ const { OTP_MAX_ATTEMPTS, OTP_TTL_MS } = require('../config/env');
 const {
   validateEmail,
   validateName,
-  validateOtpCode
+  validateOtpCode,
+  validatePassword,
+  normalizePassword
 } = require('../services/auth-validation');
 const { issueOtp } = require('../services/otp-service');
+const { hashPassword, verifyPassword } = require('../services/password-service');
+const { isLocked, registerAttempt, clearAttempts } = require('../services/login-throttle');
 const {
   startSession,
   resolveSessionFromRequest,
