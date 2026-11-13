@@ -644,6 +644,16 @@ function testSessionIdleAndLogout() {
   assert.match(main, /function startIdleWatchdog/);
   assert.match(main, /location\.replace\(authRedirectUrl/);
   assert.match(main, /btnLogoutEditor/);
+  assert.match(
+    main,
+    /editSlugParam && !ApiService\.isAuthenticated\(\)/,
+    'seul ?edit= exige une session, pas tout l’éditeur'
+  );
+  assert.doesNotMatch(
+    main,
+    /if \(!ApiService\.isAuthenticated\(\)\) \{\s*window\.location\.replace\(authRedirectUrl\('required'\)\);\s*return;\s*\}\s*startIdleWatchdog/,
+    'l’éditeur ne doit plus rediriger tout visiteur anonyme vers /auth'
+  );
 
   const api = read('src/services/api.js');
   assert.match(api, /getIdleTimeoutMs/);
@@ -661,6 +671,16 @@ function testSessionIdleAndLogout() {
   assert.match(server, /function requireEditorSession/);
   assert.match(server, /redirectToAuth/);
   assert.match(server, /Cache-Control': 'no-store'/);
+  assert.doesNotMatch(
+    server,
+    /!requireEditorSession\(req, res, parsedUrl\)/,
+    'index.html ne doit plus être bloqué sans session'
+  );
+
+  const authHtml = read('auth.html');
+  assert.match(authHtml, /id="authBackToEditor"/);
+  assert.match(authHtml, /id="authBrandHome"/);
+  assert.match(authHtml, /href="\/"/);
 
   const authPage = read('src/ui/auth-page.js');
   assert.match(authPage, /showSessionReason/);
