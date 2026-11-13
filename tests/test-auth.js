@@ -314,6 +314,7 @@ async function registerWithCode(email, verifyExtra = {}) {
       email,
       code: regRes.json().devOtp,
       purpose: 'register',
+      password: 'phrase de passe 42',
       ...verifyExtra
     }),
     verifyRes

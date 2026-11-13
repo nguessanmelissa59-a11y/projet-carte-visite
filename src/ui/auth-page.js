@@ -46,7 +46,27 @@
     await renderSessionState();
     await applyAuthProviders();
     showGoogleError();
+    showSessionReason();
   });
+
+  function showSessionReason() {
+    const params = new URLSearchParams(window.location.search);
+    const reason = params.get('reason');
+    if (!reason) return;
+    const messages = {
+      idle: 'Session expirée après 30 minutes d’inactivité. Reconnectez-vous.',
+      expired: 'Votre session n’est plus valide. Reconnectez-vous.',
+      required: 'Connectez-vous pour accéder à l’éditeur.',
+      logout: 'Vous êtes déconnecté.'
+    };
+    if (Object.prototype.hasOwnProperty.call(messages, reason)) {
+      setAuthMessage(messages[reason]);
+    }
+    params.delete('reason');
+    const query = params.toString();
+    const nextUrl = query ? `${window.location.pathname}?${query}` : window.location.pathname;
+    window.history.replaceState({}, '', nextUrl);
+  }
 
   function safeNextParam() {
     const next = new URLSearchParams(window.location.search).get('next');
@@ -357,10 +377,17 @@
 
     document.getElementById('otpForm').addEventListener('submit', async (event) => {
       event.preventDefault();
+      const passwordInput = document.getElementById('otpPassword');
+      if (pending.purpose === 'register') {
+        passwordInput.required = true;
+        if (!passwordInput.reportValidity()) {
+          setAuthMessage('Choisissez un mot de passe (8 caractères minimum) avec le code.');
+          return;
+        }
+      }
       setAuthMessage('Validation…');
       try {
         const code = document.getElementById('otpCode').value.trim();
-        const passwordInput = document.getElementById('otpPassword');
         await ApiService.verifyOtp({
           email: pending.email,
           code,
