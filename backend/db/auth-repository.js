@@ -264,7 +264,8 @@ function getSessionByToken(rawToken) {
       lastName: row.last_name,
       emailVerified: Boolean(row.email_verified),
       role: normalizeRole(row.role),
-      hasPassword: Boolean(row.has_password)
+      hasPassword: Boolean(row.has_password),
+      hasTotp: Boolean(row.has_totp)
     }
   };
 }
@@ -289,6 +290,15 @@ function getPasswordHash(userId) {
 
 function setPasswordHash(userId, passwordHash) {
   stmtSetPasswordHash.run(String(passwordHash || ''), new Date().toISOString(), userId);
+}
+
+function getTotpSecretEncrypted(userId) {
+  const row = stmtGetTotpSecret.get(userId);
+  return row ? String(row.totp_secret || '') : '';
+}
+
+function setTotpSecretEncrypted(userId, encryptedSecret) {
+  stmtSetTotpSecret.run(String(encryptedSecret || ''), new Date().toISOString(), userId);
 }
 
 function parseOtpMeta(row) {
@@ -336,6 +346,8 @@ module.exports = {
   deleteOtherSessionsForUser,
   getPasswordHash,
   setPasswordHash,
+  getTotpSecretEncrypted,
+  setTotpSecretEncrypted,
   parseOtpMeta,
   verifyOtpCode,
   hashValue
