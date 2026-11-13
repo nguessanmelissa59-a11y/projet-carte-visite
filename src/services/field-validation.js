@@ -29,6 +29,15 @@ window.VCardApp.FieldValidation = (function () {
       .slice(0, LIMITS.phone);
   }
 
+  // Valeurs chargees (brouillon local, lien partage, serveur) : meme filtre que la saisie.
+  function sanitizePhoneFields(data) {
+    if (!data || typeof data !== 'object') return data;
+    ['phone', 'whatsapp'].forEach((name) => {
+      data[name] = sanitizePhoneInput(data[name]).trim();
+    });
+    return data;
+  }
+
   function isPhoneValid(value) {
     const phone = String(value || '').trim();
     if (!phone) return true;
@@ -169,6 +178,7 @@ window.VCardApp.FieldValidation = (function () {
   return {
     LIMITS,
     sanitizePhoneInput,
+    sanitizePhoneFields,
     normalizeEmail,
     isPhoneValid,
     isEmailValid,
