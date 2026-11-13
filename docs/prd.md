@@ -174,14 +174,14 @@ Déclenchée par `?id=:slug`, `/?id=:slug&scan=1`, ou fallback `?data=` / `#data
 
 ### 4.3 Compte & auth (`auth.html`)
 
-Connexion **avec ou sans OTP** : code reçu par e-mail, ou mot de passe (facultatif).
+Connexion **avec ou sans OTP** : code reçu par e-mail, application authenticator (TOTP), ou mot de passe (facultatif).
 Modules **séparés** : `/auth` (connexion) et `/register` (inscription), avec liens croisés.
 
-1. Inscription seule (`/register` : prénom, nom, e-mail), toujours confirmée par un code OTP.
-2. Connexion seule (`/auth` : mot de passe ou code e-mail) ; lien « Créer un compte » si besoin.
-3. Réception OTP : par e-mail si `SMTP_USER` / `SMTP_PASS` sont renseignés ; sinon mode local (console serveur / `devOtp`).
-4. Vérification → cookie de session. Un mot de passe peut être défini à cette étape.
-5. Connexions suivantes : mot de passe (sans code) ou code OTP, au choix.
+1. Inscription seule (`/register` : prénom, nom, e-mail) : choix de confirmation **e-mail** ou **authenticator** (QR Code `otpauth://` à scanner).
+2. Connexion seule (`/auth` : mot de passe, code e-mail ou code authenticator) ; lien « Créer un compte » si besoin.
+3. Réception OTP e-mail : si `SMTP_USER` / `SMTP_PASS` sont renseignés ; sinon mode local (console serveur / `devOtp`). Authenticator : aucun e-mail, code généré par l’app (Google Authenticator, Authy, etc.).
+4. Vérification → cookie de session. Un mot de passe peut être défini à cette étape. L’enrôlement authenticator persiste un secret chiffré (`totp_secret`).
+5. Connexions suivantes : mot de passe (sans code), code e-mail ou code authenticator, au choix.
 6. Mot de passe oublié : connexion par code, en saisissant un nouveau mot de passe à l’étape du code.
 7. Accès profil compte, mot de passe et liste des cartes (`/api/me/cards`).
 8. Dans l’éditeur : hint « connectez-vous pour garder et modifier », lien compte dans le header.
@@ -238,7 +238,7 @@ slug (PK), identité, coordonnées, liens, bio, `photo_url`, `photo_base64`, `th
 
 ### `users`
 
-id, email (unique, NOCASE), prénom, nom, `email_verified`, `role`, `password_hash` (vide si aucun mot de passe), timestamps.
+id, email (unique, NOCASE), prénom, nom, `email_verified`, `role`, `password_hash` (vide si aucun mot de passe), `totp_secret` (secret authenticator chiffré, vide si non enrôlé), timestamps.
 
 ### `otp_challenges`
 
