@@ -42,16 +42,14 @@ window.VCardApp.VCardService = (function () {
     if (email) lines.push(`EMAIL;TYPE=PREF,INTERNET:${email}`);
     if (location) lines.push(`ADR;TYPE=WORK;CHARSET=UTF-8:;;${escapeValue(location)};;;;`);
 
-    if (linkedin) {
-      lines.push(`URL;TYPE=LinkedIn:${linkedin}`);
-      lines.push(`ITEM1.URL:${linkedin}`);
-      lines.push('ITEM1.X-ABLabel:LinkedIn');
-    }
-    if (portfolio) {
-      lines.push(`URL;TYPE=Portfolio:${portfolio}`);
-      lines.push(`ITEM2.URL:${portfolio}`);
-      lines.push('ITEM2.X-ABLabel:Portfolio');
-    }
+    // Une seule propriété URL par adresse distincte.
+    // Éviter URL + ITEM*.URL (certains scanners collent les URLs bout à bout).
+    const urls = [];
+    if (linkedin) urls.push(linkedin);
+    if (portfolio && portfolio !== linkedin) urls.push(portfolio);
+    urls.forEach((href) => {
+      lines.push(`URL:${href}`);
+    });
     if (bio) lines.push(`NOTE;CHARSET=UTF-8:${escapeValue(bio)}`);
 
     if (includePhotoBase64 && dataObj.photoBase64) {

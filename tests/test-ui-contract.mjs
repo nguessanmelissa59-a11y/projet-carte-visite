@@ -99,7 +99,11 @@ function testFieldValidationClient() {
   Function('window', source)(sandbox.window);
   const fv = sandbox.window.VCardApp.FieldValidation;
 
-  assert.equal(fv.sanitizePhoneInput('12ab34'), '1234');
+  assert.equal(fv.sanitizePhoneInput('12ab34'), '12 34');
+  assert.equal(fv.sanitizePhoneInput('+2250708154537'), '+225 07 08 15 45 37');
+  assert.equal(fv.sanitizePhoneInput('2250708091011'), '+225 07 08 09 10 11');
+  assert.equal(fv.sanitizePhoneInput('0708091011'), '07 08 09 10 11');
+  assert.equal(fv.formatPhoneDisplay('+225 07'), '+225 07');
 
   const loaded = fv.sanitizePhoneFields({
     phone: 'appel +225 07 08',
@@ -114,8 +118,12 @@ function testFieldValidationClient() {
     read('src/main.js'),
     /function populateForm\(\) \{\s*if \(FieldValidation\) FieldValidation\.sanitizePhoneFields\(state\);/
   );
+  assert.match(read('src/main.js'), /applyPhoneMask\(target\)/);
+  assert.match(source, /function formatPhoneDisplay/);
+  assert.match(source, /function applyPhoneMask/);
 
   assert.equal(fv.isPhoneValid('+225 07 08 09'), true);
+  assert.equal(fv.isPhoneValid('+225 07 08 15 45 37'), true);
   assert.equal(fv.isPhoneValid('hello'), false);
   assert.equal(fv.isEmailValid('a@b.com'), true);
   assert.equal(fv.isEmailValid('pas-un-mail'), false);
