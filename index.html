@@ -317,17 +317,17 @@
                 <span class="idx">4</span>
                 <h2>Couleur de la carte</h2>
               </div>
-              <div id="themeColorPicker" class="flex items-center gap-2.5 flex-wrap">
-                <button type="button" data-theme="forest" class="theme-swatch bg-[#0a6b45]" title="Forêt" aria-label="Thème forêt"></button>
-                <button type="button" data-theme="navy" class="theme-swatch bg-[#1a4f96]" title="Marine" aria-label="Thème marine"></button>
-                <button type="button" data-theme="bronze" class="theme-swatch bg-[#c45c1f]" title="Terracotta" aria-label="Thème terracotta"></button>
-                <button type="button" data-theme="bordeaux" class="theme-swatch bg-[#a11f35]" title="Bordeaux" aria-label="Thème bordeaux"></button>
-                <button type="button" data-theme="obsidian" class="theme-swatch bg-[#22262e]" title="Encre" aria-label="Thème encre"></button>
-                <button type="button" data-theme="cobalt" class="theme-swatch bg-[#1f6fbf]" title="Cobalt" aria-label="Thème cobalt"></button>
-                <button type="button" data-theme="teal" class="theme-swatch bg-[#0e8f78]" title="Sarcelle" aria-label="Thème sarcelle"></button>
-                <button type="button" data-theme="gold" class="theme-swatch bg-[#c2912a]" title="Or" aria-label="Thème or"></button>
-                <button type="button" data-theme="plum" class="theme-swatch bg-[#9a2f5c]" title="Prune" aria-label="Thème prune"></button>
-                <button type="button" data-theme="indigo" class="theme-swatch bg-[#4a4fb0]" title="Indigo" aria-label="Thème indigo"></button>
+              <div id="themeColorPicker" class="flex items-center gap-1 flex-wrap">
+                <button type="button" data-theme="forest" class="theme-swatch" title="Forêt" aria-label="Thème forêt"><span class="theme-swatch__dot" style="background:#0a6b45"></span></button>
+                <button type="button" data-theme="navy" class="theme-swatch" title="Marine" aria-label="Thème marine"><span class="theme-swatch__dot" style="background:#1a4f96"></span></button>
+                <button type="button" data-theme="bronze" class="theme-swatch" title="Terracotta" aria-label="Thème terracotta"><span class="theme-swatch__dot" style="background:#c45c1f"></span></button>
+                <button type="button" data-theme="bordeaux" class="theme-swatch" title="Bordeaux" aria-label="Thème bordeaux"><span class="theme-swatch__dot" style="background:#a11f35"></span></button>
+                <button type="button" data-theme="obsidian" class="theme-swatch" title="Encre" aria-label="Thème encre"><span class="theme-swatch__dot" style="background:#22262e"></span></button>
+                <button type="button" data-theme="cobalt" class="theme-swatch" title="Cobalt" aria-label="Thème cobalt"><span class="theme-swatch__dot" style="background:#1f6fbf"></span></button>
+                <button type="button" data-theme="teal" class="theme-swatch" title="Sarcelle" aria-label="Thème sarcelle"><span class="theme-swatch__dot" style="background:#0e8f78"></span></button>
+                <button type="button" data-theme="gold" class="theme-swatch" title="Or" aria-label="Thème or"><span class="theme-swatch__dot" style="background:#c2912a"></span></button>
+                <button type="button" data-theme="plum" class="theme-swatch" title="Prune" aria-label="Thème prune"><span class="theme-swatch__dot" style="background:#9a2f5c"></span></button>
+                <button type="button" data-theme="indigo" class="theme-swatch" title="Indigo" aria-label="Thème indigo"><span class="theme-swatch__dot" style="background:#4a4fb0"></span></button>
               </div>
             </div>
 
@@ -377,10 +377,13 @@
 
       <aside class="lg:col-span-6 order-2">
         <div class="panel preview-panel reveal reveal-delay-2">
-          <div class="preview-panel-toolbar flex items-center justify-between gap-2 flex-wrap">
-            <div class="mode-toggle" role="group" aria-label="Type d'aperçu">
-              <button type="button" id="tabPreviewMobile" class="is-active text-sm">Aperçu page</button>
-              <button type="button" id="tabPreviewCard" class="text-sm">Carte image</button>
+          <div class="preview-panel-toolbar">
+            <div class="flex items-center gap-3 flex-wrap min-w-0">
+              <span class="preview-live" aria-live="polite">Aperçu live</span>
+              <div class="mode-toggle" role="group" aria-label="Type d'aperçu">
+                <button type="button" id="tabPreviewMobile" class="is-active text-sm">Page</button>
+                <button type="button" id="tabPreviewCard" class="text-sm">Impression</button>
+              </div>
             </div>
 
             <button id="btnOpenFullPreview" type="button" class="btn btn-ghost text-sm min-h-11">
@@ -441,6 +444,9 @@
           </div>
           <span id="qrStatusBadge" class="status-chip shrink-0">Prêt</span>
         </div>
+        <p id="shareLockNotice" class="share-lock-notice" hidden>
+          Enregistrez d’abord votre carte pour activer le lien court scannable.
+        </p>
 
         <div class="qr-mode-spotlight" aria-labelledby="qrModeSpotlightTitle">
           <div class="qr-mode-spotlight__head">
