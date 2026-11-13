@@ -14,12 +14,15 @@ process.env.NODE_ENV = 'test';
 const {
   handleRegister,
   handleLogin,
+  handlePasswordLogin,
   handleVerifyOtp,
+  handleSetPassword,
   handleMe,
   handleLogout,
   handleUpdateProfile,
   handleMyCards
 } = require('../backend/controllers/auth.controller');
+const { hashPassword, verifyPassword } = require('../backend/services/password-service');
 const { handleSaveCard, handleGetCard } = require('../backend/controllers/card.controller');
 const { SESSION_COOKIE_NAME } = require('../backend/config/env');
 
