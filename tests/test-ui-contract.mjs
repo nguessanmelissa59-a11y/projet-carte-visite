@@ -350,6 +350,16 @@ function testCardTemplatesCatalog() {
     assert.match(canvasSource, new RegExp(`function ${helper}\\(`));
   }
   assert.match(canvasSource, /Hanko|hanko|sceau|TIMBRE QR|STATION QR|Constellation|blueprint/i);
+
+  // Couleur choisie (theme) appliquee au modele d'impression
+  assert.match(canvasSource, /function getAccent\(/);
+  assert.match(canvasSource, /function getQrAccent\(/);
+  assert.match(canvasSource, /await renderer\(ctx, state, qrMode, accentHex\)/);
+  assert.match(canvasSource, /const gold = accentHex/);
+  assert.match(read('index.html'), /id="cardThemeColorPicker"/);
+  assert.match(read('index.html'), /Couleurs du modèle/);
+  assert.match(read('src/main.js'), /theme-color-picker.*theme-swatch/s);
+  assert.match(read('src/main.js'), /updateVirtualCardPreview\(\)/);
 }
 
 function testProfileCardMarkup() {
