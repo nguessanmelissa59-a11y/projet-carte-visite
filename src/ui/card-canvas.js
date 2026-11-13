@@ -1019,106 +1019,6 @@ window.VCardApp.CardCanvasExporter = (function () {
     metro: drawMetro
   };
 
-  function getCardLinkLabel(state, qrMode) {
-    if (state.slug) {
-      try {
-        const host = (window.location && window.location.host) || 'evc.app';
-        return `${host}/c/${state.slug}`;
-      } catch {
-        return `/c/${state.slug}`;
-      }
-    }
-    return getDisplayUrl(state, qrMode);
-  }
-
-  async function drawVerso(ctx, state, qrMode, accentHex) {
-    ctx.fillStyle = '#fcfcf8';
-    ctx.fillRect(0, 0, WIDTH, HEIGHT);
-
-    ctx.strokeStyle = 'rgba(12, 24, 24, 0.1)';
-    ctx.lineWidth = 2;
-    drawRoundedRect(ctx, 18, 18, WIDTH - 36, HEIGHT - 36, 28);
-    ctx.stroke();
-
-    const frameX = 64;
-    const frameY = 90;
-    const frameSize = 460;
-    ctx.fillStyle = '#ffffff';
-    drawRoundedRect(ctx, frameX, frameY, frameSize, frameSize, 28);
-    ctx.fill();
-    ctx.strokeStyle = 'rgba(12, 24, 24, 0.12)';
-    ctx.lineWidth = 2;
-    drawRoundedRect(ctx, frameX, frameY, frameSize, frameSize, 28);
-    ctx.stroke();
-
-    const qrSize = 390;
-    const qrCanvas = await buildQrCanvas(state, qrMode, accentHex, qrSize);
-    const qrX = frameX + (frameSize - qrSize) / 2;
-    const qrY = frameY + (frameSize - qrSize) / 2;
-    ctx.drawImage(qrCanvas, qrX, qrY, qrSize, qrSize);
-
-    const textX = 580;
-    const textMax = 460;
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'alphabetic';
-    ctx.fillStyle = '#0a1714';
-    const title = 'Scannez pour enregistrer le contact';
-    const titleSize = fitText(
-      ctx,
-      title,
-      textMax,
-      42,
-      26,
-      (s) => `600 ${s}px 'Fraunces', Georgia, serif`
-    );
-    const titleLines = [];
-    const words = title.split(' ');
-    let line = '';
-    ctx.font = `600 ${titleSize}px 'Fraunces', Georgia, serif`;
-    words.forEach((word) => {
-      const next = line ? `${line} ${word}` : word;
-      if (ctx.measureText(next).width > textMax && line) {
-        titleLines.push(line);
-        line = word;
-      } else {
-        line = next;
-      }
-    });
-    if (line) titleLines.push(line);
-    let ty = 190;
-    titleLines.forEach((l) => {
-      ctx.fillText(l, textX, ty);
-      ty += titleSize + 10;
-    });
-
-    ctx.fillStyle = '#5b616c';
-    ctx.font = "400 22px 'Figtree', system-ui, sans-serif";
-    const subtitle = "Ouvrez l'appareil photo de votre téléphone et visez le code.";
-    const subWords = subtitle.split(' ');
-    let subLine = '';
-    const subLines = [];
-    subWords.forEach((word) => {
-      const next = subLine ? `${subLine} ${word}` : word;
-      if (ctx.measureText(next).width > textMax && subLine) {
-        subLines.push(subLine);
-        subLine = word;
-      } else {
-        subLine = next;
-      }
-    });
-    if (subLine) subLines.push(subLine);
-    ty += 18;
-    subLines.forEach((l) => {
-      ctx.fillText(l, textX, ty);
-      ty += 30;
-    });
-
-    const link = getCardLinkLabel(state, qrMode);
-    ctx.fillStyle = accentHex;
-    fitText(ctx, link, textMax, 24, 14, (s) => `600 ${s}px 'Figtree', system-ui, sans-serif`);
-    ctx.fillText(link, textX, Math.min(ty + 48, HEIGHT - 80));
-  }
-
   async function generateCardCanvas(state, qrMode) {
     if (document.fonts && document.fonts.ready) {
       try {
@@ -1146,22 +1046,11 @@ window.VCardApp.CardCanvasExporter = (function () {
     return canvas;
   }
 
+  /**
+   * Verso identique au recto (meme template, contacts et QR).
+   */
   async function generateVersoCanvas(state, qrMode) {
-    if (document.fonts && document.fonts.ready) {
-      try {
-        await document.fonts.ready;
-      } catch {
-        // ignore
-      }
-    }
-
-    const canvas = document.createElement('canvas');
-    canvas.width = WIDTH;
-    canvas.height = HEIGHT;
-    const ctx = canvas.getContext('2d');
-    const accentHex = getAccent(state);
-    await drawVerso(ctx, state, qrMode, accentHex);
-    return canvas;
+    return generateCardCanvas(state, qrMode);
   }
 
   async function paintGeneratedToTarget(targetCanvas, offscreen) {
