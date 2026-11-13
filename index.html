@@ -33,7 +33,7 @@
 
   <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
-<body class="app-shell antialiased selection:bg-[#0a6b45] selection:text-white dark:selection:bg-[#0e8556] dark:selection:text-white">
+<body class="app-shell antialiased selection:bg-[#ff6b21] selection:text-white dark:selection:bg-[#ff823f] dark:selection:text-white">
 
   <header id="editorHeader" class="studio-header sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-3">
@@ -47,7 +47,13 @@
       </div>
 
       <div class="flex items-center gap-2 shrink-0 flex-wrap justify-end">
-        <a id="btnAccountLink" href="/auth" class="btn btn-ink h-11 min-h-11 px-3 text-sm no-underline">
+        <div class="theme-mode" role="group" aria-label="Thème d’affichage">
+          <button type="button" class="theme-mode__btn" data-theme-mode="auto" aria-pressed="false">Auto</button>
+          <button type="button" class="theme-mode__btn" data-theme-mode="light" aria-pressed="false">Clair</button>
+          <button type="button" class="theme-mode__btn" data-theme-mode="dark" aria-pressed="false">Sombre</button>
+        </div>
+
+        <a id="btnAccountLink" href="/auth" class="btn btn-primary h-11 min-h-11 px-3 text-sm no-underline">
           <i data-lucide="user-round" class="w-3.5 h-3.5"></i>
           <span class="hidden sm:inline" id="accountLinkLabel">Se connecter</span>
         </a>
@@ -57,7 +63,7 @@
           <span class="hidden sm:inline">Aperçu</span>
         </button>
 
-        <button id="btnThemeToggle" type="button" aria-label="Basculer le thème" class="btn btn-secondary h-11 w-11 min-h-11 p-0">
+        <button id="btnThemeToggle" type="button" aria-label="Basculer le thème" class="btn btn-secondary h-11 w-11 min-h-11 p-0 sm:hidden">
           <i data-lucide="moon" class="w-3.5 h-3.5 dark:hidden"></i>
           <i data-lucide="sun" class="w-3.5 h-3.5 hidden dark:block"></i>
         </button>
@@ -68,7 +74,7 @@
   <main id="editorView" class="studio-main max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
     <div class="panel-intro reveal">
       <p class="eyebrow">Carte numérique</p>
-      <h1 class="hero-brand">Votre carte, prête à partager.</h1>
+      <h1 class="hero-brand">Votre carte, <mark class="hero-mark">prête à partager.</mark></h1>
       <p class="hero-lead">
         Renseignez vos infos, enregistrez, puis partagez le QR. Trois minutes suffisent.
       </p>
@@ -81,11 +87,11 @@
         <li><span>3</span> Partager le QR</li>
       </ol>
 
-      <div id="authSaveHint" class="hidden easy-banner">
-        <p class="m-0 text-sm">
-          Pour garder et modifier votre carte plus tard,
-          <a href="/auth" class="font-semibold underline underline-offset-2">connectez-vous d’abord</a>.
+      <div id="authSaveHint" class="hidden easy-banner easy-banner--auth">
+        <p class="m-0 text-sm sm:text-base">
+          Connectez-vous pour garder et modifier votre carte plus tard.
         </p>
+        <a href="/auth" class="btn easy-banner__cta h-11 min-h-11 px-4 text-sm">Se connecter</a>
       </div>
     </div>
 
