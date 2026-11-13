@@ -1,4 +1,4 @@
-const { getLanIpAddress, PORT } = require('../config/env');
+const { getLanIpAddress, PORT, SESSION_IDLE_MS } = require('../config/env');
 const {
   getCardBySlug,
   incrementScans,
@@ -20,7 +20,8 @@ function handleGetServerInfo(req, res) {
     lanOrigin: `http://${lanIp}:${PORT}`,
     auth: {
       otp: true,
-      sessionCookie: true
+      sessionCookie: true,
+      idleTimeoutMs: SESSION_IDLE_MS
     }
   });
 }

@@ -474,7 +474,10 @@ function handleMe(req, res) {
     return sendJson(res, 401, { error: 'Non authentifié' });
   }
   const user = ensureAdminBootstrap(session.user);
-  return sendJson(res, 200, { user: publicUser(user) });
+  return sendJson(res, 200, {
+    user: publicUser(user),
+    idleTimeoutMs: session.idleTimeoutMs
+  });
 }
 
 function handleLogout(req, res) {

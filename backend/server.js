@@ -2,6 +2,7 @@ const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
 const { PORT, HOST, PUBLIC_ROOT, getLanIpAddress } = require('./config/env');
+const { resolveSessionFromRequest } = require('./services/session-service');
 const {
   handleGetServerInfo,
   handleListCards,
