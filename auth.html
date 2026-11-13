@@ -100,6 +100,9 @@
             <button type="button" id="btnLoginOtp" class="btn btn-secondary h-11 min-h-11 w-full px-5">
               <span>Recevoir un code par e-mail</span>
             </button>
+            <button type="button" id="btnLoginTotp" class="btn btn-ghost h-11 min-h-11 w-full px-5">
+              <span>Code application authenticator</span>
+            </button>
           </form>
           <p class="auth-switch">
             Pas encore de compte ?
@@ -127,6 +130,25 @@
               <label for="regEmail" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">E-mail</label>
               <input id="regEmail" name="email" type="email" required maxlength="254" class="form-input" placeholder="vous@email.com" autocomplete="email" />
             </div>
+            <fieldset class="auth-method">
+              <legend class="auth-method__legend">Confirmer mon compte avec</legend>
+              <div class="auth-method__options" role="radiogroup" aria-label="Méthode de confirmation">
+                <label class="auth-method__option">
+                  <input type="radio" name="regOtpMethod" value="email" checked />
+                  <span>
+                    <strong>E-mail</strong>
+                    <small>Code à 6 chiffres reçu par message</small>
+                  </span>
+                </label>
+                <label class="auth-method__option">
+                  <input type="radio" name="regOtpMethod" value="authenticator" />
+                  <span>
+                    <strong>Authenticator</strong>
+                    <small>Scanner le QR Code avec votre app</small>
+                  </span>
+                </label>
+              </div>
+            </fieldset>
             <button type="submit" class="btn btn-primary h-11 min-h-11 w-full px-5">
               <span>Créer mon compte</span>
             </button>
@@ -146,6 +168,18 @@
         <p class="text-base text-[color:var(--ink-muted)] m-0" id="otpHint">
           Entrez le code à 6 chiffres reçu.
         </p>
+        <div id="totpEnrollBlock" class="auth-totp hidden">
+          <div class="auth-totp__frame">
+            <canvas id="totpQrCanvas" width="200" height="200" aria-label="QR Code authenticator"></canvas>
+          </div>
+          <p class="text-sm text-[color:var(--ink-muted)] m-0 text-center">
+            Ouvrez Google Authenticator, Authy ou une app compatible, puis scannez ce QR Code.
+          </p>
+          <details class="auth-totp__manual">
+            <summary>Saisie manuelle de la clé</summary>
+            <code id="totpManualSecret" class="auth-totp__secret"></code>
+          </details>
+        </div>
         <div>
           <label for="otpCode" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">Code à 6 chiffres</label>
           <input

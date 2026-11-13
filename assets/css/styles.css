@@ -1041,6 +1041,136 @@ html.dark .offline-notice {
   }
 }
 
+.auth-method {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-inline-size: 0;
+}
+
+.auth-method__legend {
+  margin: 0 0 0.65rem;
+  padding: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ink-muted);
+}
+
+.auth-method__options {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.65rem;
+}
+
+@media (min-width: 576px) {
+  .auth-method__options {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.auth-method__option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  min-height: 2.75rem;
+  margin: 0;
+  padding: 0.85rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--surface, #fff);
+  cursor: pointer;
+}
+
+.auth-method__option:has(input:checked) {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.auth-method__option input {
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--accent);
+}
+
+.auth-method__option span {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.auth-method__option strong {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.auth-method__option small {
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  color: var(--ink-muted);
+}
+
+.auth-totp {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  margin: 0.25rem 0 0.5rem;
+}
+
+.auth-totp__frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(100%, 13.5rem);
+  padding: 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  background: #fff;
+}
+
+.auth-totp__frame canvas {
+  display: block;
+  width: 100%;
+  max-width: 12rem;
+  height: auto;
+}
+
+.auth-totp__manual {
+  width: 100%;
+  font-size: 0.875rem;
+  color: var(--ink-muted);
+}
+
+.auth-totp__manual summary {
+  cursor: pointer;
+  min-height: 2.75rem;
+  display: flex;
+  align-items: center;
+  list-style: none;
+}
+
+.auth-totp__manual summary::-webkit-details-marker {
+  display: none;
+}
+
+.auth-totp__secret {
+  display: block;
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  word-break: break-all;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--line) 35%, transparent);
+}
+
 .inset-block {
   padding: 1rem 0 0;
   border-radius: 0;
