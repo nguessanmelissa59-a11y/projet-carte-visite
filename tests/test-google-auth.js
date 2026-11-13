@@ -261,7 +261,12 @@ test('compte existant : rattaché par e-mail, sans doublon', async () => {
   await handleRegister(createJsonReq({ email, firstName: 'Deja', lastName: 'Inscrit' }), regRes);
   const verifyRes = createMockRes();
   await handleVerifyOtp(
-    createJsonReq({ email, code: regRes.json().devOtp, purpose: 'register' }),
+    createJsonReq({
+      email,
+      code: regRes.json().devOtp,
+      purpose: 'register',
+      password: 'phrase de passe 42'
+    }),
     verifyRes
   );
   const existingId = verifyRes.json().user.id;

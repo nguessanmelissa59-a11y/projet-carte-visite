@@ -562,14 +562,29 @@ test('définir puis changer son mot de passe en session', async () => {
   const email = 'changement@example.com';
   const verifyRes = await registerWithCode(email);
   const cookie = cookieFrom(verifyRes);
+  assert.equal(verifyRes.json().user.hasPassword, true);
 
   const anonymous = await setPassword({ password: 'premiere phrase 1' }, '');
   assert.equal(anonymous.statusCode, 401);
 
-  const tooShort = await setPassword({ password: 'court' }, cookie);
+  const tooShort = await setPassword(
+    { password: 'court', currentPassword: 'phrase de passe 42' },
+    cookie
+  );
   assert.equal(tooShort.statusCode, 400);
 
-  const first = await setPassword({ password: 'premiere phrase 1' }, cookie);
+  const missingCurrent = await setPassword({ password: 'premiere phrase 1' }, cookie);
+  assert.equal(missingCurrent.statusCode, 403);
+  const wrongCurrent = await setPassword(
+    { password: 'premiere phrase 1', currentPassword: 'pas la bonne 9' },
+    cookie
+  );
+  assert.equal(wrongCurrent.statusCode, 403);
+
+  const first = await setPassword(
+    { password: 'premiere phrase 1', currentPassword: 'phrase de passe 42' },
+    cookie
+  );
   assert.equal(first.statusCode, 200);
   assert.equal(first.json().user.hasPassword, true);
   assert.doesNotMatch(first.body, /scrypt|passwordHash|password_hash/);
@@ -577,14 +592,6 @@ test('définir puis changer son mot de passe en session', async () => {
   const otherLogin = await passwordLogin(email, 'premiere phrase 1');
   assert.equal(otherLogin.statusCode, 200);
   const otherCookie = cookieFrom(otherLogin);
-
-  const missingCurrent = await setPassword({ password: 'seconde phrase 2' }, cookie);
-  assert.equal(missingCurrent.statusCode, 403);
-  const wrongCurrent = await setPassword(
-    { password: 'seconde phrase 2', currentPassword: 'pas la bonne 9' },
-    cookie
-  );
-  assert.equal(wrongCurrent.statusCode, 403);
 
   const changed = await setPassword(
     { password: 'seconde phrase 2', currentPassword: 'premiere phrase 1' },
@@ -602,14 +609,22 @@ test('changement de mot de passe refusé depuis une autre origine', async () => 
   const verifyRes = await registerWithCode('origine@example.com');
   const cookie = cookieFrom(verifyRes);
 
-  const req = createMockReq('POST', { password: 'phrase de passe 42' }, cookie);
+  const req = createMockReq(
+    'POST',
+    { password: 'autre phrase 99', currentPassword: 'phrase de passe 42' },
+    cookie
+  );
   req.headers.host = 'localhost:3000';
   req.headers.origin = 'http://localhost:5173';
   const crossOrigin = createMockRes();
   await handleSetPassword(req, crossOrigin);
   assert.equal(crossOrigin.statusCode, 403);
 
-  const sameReq = createMockReq('POST', { password: 'phrase de passe 42' }, cookie);
+  const sameReq = createMockReq(
+    'POST',
+    { password: 'autre phrase 99', currentPassword: 'phrase de passe 42' },
+    cookie
+  );
   sameReq.headers.host = 'localhost:3000';
   sameReq.headers.origin = 'http://localhost:3000';
   const sameOrigin = createMockRes();

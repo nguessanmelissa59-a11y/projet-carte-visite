@@ -90,7 +90,8 @@ async function registerAndLogin(email) {
     createMockReq('POST', '/api/auth/verify', {
       email,
       code: otp,
-      purpose: 'register'
+      purpose: 'register',
+      password: 'phrase de passe 42'
     }),
     verify
   );

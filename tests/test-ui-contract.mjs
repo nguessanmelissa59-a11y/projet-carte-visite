@@ -598,6 +598,39 @@ function testSharePublicButton() {
   assert.match(main, /window\.prompt\('Copiez ce lien :'/);
 }
 
+function testSessionIdleAndLogout() {
+  const html = read('index.html');
+  assert.match(html, /id="btnLogoutEditor"/);
+  assert.match(html, /Déconnexion/);
+
+  const main = read('src/main.js');
+  assert.match(main, /function forceLogoutAndLeave/);
+  assert.match(main, /function startIdleWatchdog/);
+  assert.match(main, /location\.replace\(authRedirectUrl/);
+  assert.match(main, /btnLogoutEditor/);
+
+  const api = read('src/services/api.js');
+  assert.match(api, /getIdleTimeoutMs/);
+  assert.match(api, /idleTimeoutMs/);
+
+  const env = read('backend/config/env.js');
+  assert.match(env, /SESSION_IDLE_MS/);
+  assert.match(env, /30 \* 60 \* 1000/);
+
+  const repo = read('backend/db/auth-repository.js');
+  assert.match(repo, /last_active_at/);
+  assert.match(repo, /stmtTouchSession/);
+
+  const server = read('backend/server.js');
+  assert.match(server, /function requireEditorSession/);
+  assert.match(server, /redirectToAuth/);
+  assert.match(server, /Cache-Control': 'no-store'/);
+
+  const authPage = read('src/ui/auth-page.js');
+  assert.match(authPage, /showSessionReason/);
+  assert.match(authPage, /30 minutes d’inactivité/);
+}
+
 function testAuthModulesSeparated() {
   const html = read('auth.html');
   const page = read('src/ui/auth-page.js');
@@ -712,6 +745,7 @@ function testAuthGoogleButton() {
 }
 
 const tests = [
+  ['session idle and logout', testSessionIdleAndLogout],
   ['auth modules separated', testAuthModulesSeparated],
   ['auth password or code', testAuthPasswordOrCode],
   ['auth google button', testAuthGoogleButton],

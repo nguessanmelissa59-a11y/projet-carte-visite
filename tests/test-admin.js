@@ -87,7 +87,12 @@ async function registerOnce(email, firstName, lastName) {
 
   const verifyRes = createMockRes();
   await handleVerifyOtp(
-    createMockReq('POST', { email, code: otp, purpose: 'register' }),
+    createMockReq('POST', {
+      email,
+      code: otp,
+      purpose: 'register',
+      password: 'phrase de passe 42'
+    }),
     verifyRes
   );
   assert.equal(verifyRes.statusCode, 200);

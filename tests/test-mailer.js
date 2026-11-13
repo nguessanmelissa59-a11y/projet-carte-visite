@@ -138,7 +138,12 @@ test('inscription : code envoyé par e-mail, absent de la réponse et des journa
   assert.ok(!logs.includes(code));
   assert.ok(!logs.includes(email));
 
-  const verifyRes = await call(handleVerifyOtp, { email, code, purpose: 'register' });
+  const verifyRes = await call(handleVerifyOtp, {
+    email,
+    code,
+    purpose: 'register',
+    password: 'phrase de passe 42'
+  });
   assert.equal(verifyRes.statusCode, 200);
   assert.equal(verifyRes.json().user.email, email);
 });
@@ -161,7 +166,12 @@ test('inscription : échec d’envoi signalé sans détail technique', async () 
 test('connexion par code : même réponse que le compte existe ou non', async () => {
   const email = 'connu@gmail.com';
   await call(handleRegister, { email, firstName: 'Compte', lastName: 'Connu' });
-  await call(handleVerifyOtp, { email, code: codeFrom(sent[0]), purpose: 'register' });
+  await call(handleVerifyOtp, {
+    email,
+    code: codeFrom(sent[0]),
+    purpose: 'register',
+    password: 'phrase de passe 42'
+  });
   sent.length = 0;
 
   const known = await call(handleLogin, { email });
@@ -191,7 +201,12 @@ test('connexion par code : même réponse que le compte existe ou non', async ()
 test('connexion par code : panne d’envoi ou plafond invisibles pour l’appelant', async () => {
   const email = 'plafond@gmail.com';
   await call(handleRegister, { email, firstName: 'Compte', lastName: 'Plafond' });
-  await call(handleVerifyOtp, { email, code: codeFrom(sent[0]), purpose: 'register' });
+  await call(handleVerifyOtp, {
+    email,
+    code: codeFrom(sent[0]),
+    purpose: 'register',
+    password: 'phrase de passe 42'
+  });
 
   for (let i = 0; i < 4; i += 1) {
     const res = await call(handleLogin, { email });

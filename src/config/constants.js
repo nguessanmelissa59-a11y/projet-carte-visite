@@ -8,86 +8,86 @@ window.VCardApp.Config = {
     editorial: {
       id: 'editorial',
       label: 'Éditorial',
-      blurb: 'Grille nette, QR latéral',
-      swatch: ['#ffffff', '#18181b', '#e4e4e7']
+      blurb: 'Swiss grid, colonnes, repères',
+      swatch: ['#fafaf9', '#18181b', '#e4e4e7']
     },
     minimal: {
       id: 'minimal',
       label: 'Minimaliste',
-      blurb: 'Beige doux, aéré',
-      swatch: ['#f3eee6', '#1c1917', '#d6d3d1']
+      blurb: 'Typo XXL, silence papier',
+      swatch: ['#f6f1ea', '#1c1917', '#d6d3d1']
     },
     corporate: {
       id: 'corporate',
       label: 'Corporate Tech',
-      blurb: 'Navy mat, filet bleu',
-      swatch: ['#0f2438', '#1d4e89', '#dbe7f3']
+      blurb: 'Bandeau navy, grille blueprint',
+      swatch: ['#e8eef6', '#0b1c2c', '#2f6fed']
     },
     creative: {
       id: 'creative',
       label: 'Créatif',
-      blurb: 'Vagues corail / ambre',
-      swatch: ['#ff7a59', '#f0abfc', '#fbbf24']
+      blurb: 'Diagonale corail, îlot blanc',
+      swatch: ['#fff8f1', '#ff6b4a', '#f59e0b']
     },
     eco: {
       id: 'eco',
       label: 'Naturel Éco',
-      blurb: 'Sauge et terre',
-      swatch: ['#eef2eb', '#4d7c5a', '#c26d3e']
+      blurb: 'Arcs botaniques, sauge',
+      swatch: ['#f3f6f0', '#4d7c5a', '#c26d3e']
     },
     prestige: {
       id: 'prestige',
       label: 'Prestige Luxe',
-      blurb: 'Noir et or',
+      blurb: 'Invitation centrée, or',
       swatch: ['#0a0a0a', '#c9a227', '#f5e6b8']
     },
     nocturne: {
       id: 'nocturne',
       label: 'Nocturne',
-      blurb: 'Charbon et argent',
-      swatch: ['#111113', '#a1a1aa', '#fafafa']
+      blurb: 'Constellation argentée',
+      swatch: ['#0c0c0e', '#a1a1aa', '#fafafa']
     },
     atelier: {
       id: 'atelier',
       label: 'Atelier',
-      blurb: 'Papier chaud, encre',
-      swatch: ['#f7f1e8', '#2a2118', '#8b5e3c']
+      blurb: 'Repères presse, timbre QR',
+      swatch: ['#f4ebdf', '#2a2118', '#8b5e3c']
     },
     lagoon: {
       id: 'lagoon',
       label: 'Lagoon',
-      blurb: 'Sarcelle et écume',
-      swatch: ['#ecfeff', '#0f766e', '#67e8f9']
+      blurb: 'Vagues empilées, écume',
+      swatch: ['#e6f7f8', '#0f766e', '#5eead4']
     },
     slate: {
       id: 'slate',
       label: 'Ardoise',
-      blurb: 'Bleu-gris architectural',
-      swatch: ['#f1f5f9', '#334155', '#64748b']
+      blurb: 'Coupe architecturale',
+      swatch: ['#f8fafc', '#1e293b', '#64748b']
     },
     sunset: {
       id: 'sunset',
       label: 'Sunset',
-      blurb: 'Ambre et corail chaud',
-      swatch: ['#fff7ed', '#ea580c', '#fb923c']
+      blurb: 'Horizon, disque solaire',
+      swatch: ['#1c0a05', '#ea580c', '#fb923c']
     },
     sumi: {
       id: 'sumi',
       label: 'Sumi',
-      blurb: 'Encre et vermillon',
-      swatch: ['#fafafa', '#111111', '#b91c1c']
+      blurb: 'Ma japonais, sceau hanko',
+      swatch: ['#f7f7f5', '#111111', '#b91c1c']
     },
     arctic: {
       id: 'arctic',
       label: 'Arctic',
-      blurb: 'Blanc et bleu acier',
-      swatch: ['#f8fafc', '#0284c7', '#1e293b']
+      blurb: 'Facette de glace, acier',
+      swatch: ['#f1f5f9', '#0284c7', '#7dd3fc']
     },
     metro: {
       id: 'metro',
       label: 'Métro',
-      blurb: 'Split géométrique bold',
-      swatch: ['#fef08a', '#18181b', '#fafafa']
+      blurb: 'Ligne jaune, stations contact',
+      swatch: ['#fafafa', '#18181b', '#fde047']
     }
   },
 
