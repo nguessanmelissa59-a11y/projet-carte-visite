@@ -8,6 +8,7 @@
   const QrView = window.VCardApp.QrView;
   const ProfileCardUI = window.VCardApp.ProfileCardUI;
   const CardCanvasExporter = window.VCardApp.CardCanvasExporter;
+  const LookupCombobox = window.VCardApp.LookupCombobox;
 
   let state = { ...DEMO_DATA };
   let qrMode = 'url';
@@ -16,6 +17,8 @@
   let saveTimeout = null;
   let draftTimeout = null;
   let rafPending = false;
+  let jobTitleCombo = null;
+  let organizationCombo = null;
 
   document.addEventListener('DOMContentLoaded', () => {
     StorageService.initTheme();
@@ -807,6 +810,29 @@
         if (previewMobileContainer) previewMobileContainer.classList.remove('hidden');
         if (previewCardContainer) previewCardContainer.classList.remove('hidden');
         updateVirtualCardPreview();
+      });
+    }
+
+    if (LookupCombobox && typeof LookupCombobox.mount === 'function') {
+      jobTitleCombo = LookupCombobox.mount({
+        inputId: 'jobTitle',
+        kind: 'job-titles',
+        labelCreate: 'Créer le poste',
+        onChange(value) {
+          state.jobTitle = String(value || '').trim().slice(0, 120);
+          scheduleRender();
+          schedulePersistence();
+        }
+      });
+      organizationCombo = LookupCombobox.mount({
+        inputId: 'organization',
+        kind: 'organizations',
+        labelCreate: 'Créer l’entreprise',
+        onChange(value) {
+          state.organization = String(value || '').trim().slice(0, 120);
+          scheduleRender();
+          schedulePersistence();
+        }
       });
     }
 
