@@ -1734,28 +1734,37 @@ window.VCardApp.CardCanvasExporter = (function () {
 
   /**
    * Contenu d'une page : chaque ligne place le recto (Im0) a gauche et le verso (Im1)
-   * a droite, grille centree, traits de coupe, puis libelle.
+   * a droite avec une gouttiere de coupe, grille centree, traits de coupe, puis libelle.
    */
   function buildPageContent(layout, pageW, pageH, cardW, cardH, label) {
     const mark = 8;
     const gap = 2;
+    const gutter = PRINT_PAIR_GUTTER_MM * MM_TO_PT;
+    const rowGap = PRINT_ROW_GAP_MM * MM_TO_PT;
     const cols = 2;
     const rows = Math.max(1, layout && layout.rows ? layout.rows : 1);
-    const gridW = cardW * cols;
-    const gridH = cardH * rows;
+    const gridW = cardW * cols + gutter;
+    const gridH = cardH * rows + rowGap * Math.max(0, rows - 1);
     const originX = (pageW - gridW) / 2;
     const originY = (pageH - gridH) / 2;
     const right = originX + gridW;
     const top = originY + gridH;
     const safeLabel = String(label || '')
       .replace(/[()\\]/g, ' ')
-      .slice(0, 90);
+      .slice(0, 110);
     const ops = [];
+    const xEdges = [originX, originX + cardW, originX + cardW + gutter, right];
+    const yEdges = [];
+    for (let row = 0; row < rows; row += 1) {
+      const y = originY + row * (cardH + rowGap);
+      yEdges.push(y, y + cardH);
+    }
+    const uniqueYEdges = [...new Set(yEdges.map((v) => Number(v.toFixed(4))))];
 
     for (let row = 0; row < rows; row += 1) {
-      const y = originY + row * cardH;
+      const y = originY + row * (cardH + rowGap);
       const xRecto = originX;
-      const xVerso = originX + cardW;
+      const xVerso = originX + cardW + gutter;
       ops.push(
         'q',
         `${cardW.toFixed(2)} 0 0 ${cardH.toFixed(2)} ${xRecto.toFixed(2)} ${y.toFixed(2)} cm`,
@@ -1769,15 +1778,15 @@ window.VCardApp.CardCanvasExporter = (function () {
     }
 
     ops.push('0.4 w', '0 0 0 RG');
-    for (let col = 0; col <= cols; col += 1) {
-      const x = (originX + col * cardW).toFixed(2);
+    for (const xRaw of xEdges) {
+      const x = xRaw.toFixed(2);
       ops.push(
         `${x} ${(originY - mark).toFixed(2)} m ${x} ${(originY - gap).toFixed(2)} l S`,
         `${x} ${(top + gap).toFixed(2)} m ${x} ${(top + mark).toFixed(2)} l S`
       );
     }
-    for (let row = 0; row <= rows; row += 1) {
-      const y = (originY + row * cardH).toFixed(2);
+    for (const yRaw of uniqueYEdges) {
+      const y = yRaw.toFixed(2);
       ops.push(
         `${(originX - mark).toFixed(2)} ${y} m ${(originX - gap).toFixed(2)} ${y} l S`,
         `${(right + gap).toFixed(2)} ${y} m ${(right + mark).toFixed(2)} ${y} l S`
@@ -1938,8 +1947,8 @@ window.VCardApp.CardCanvasExporter = (function () {
             pixelW: rectoPrint.width,
             pixelH: rectoPrint.height,
             label: isSheet
-              ? `Planche ${cardCount} cartes - recto | verso cote a cote - 85 x 55 mm - Imprimer a 100%`
-              : 'Recto | verso cote a cote - 85 x 55 mm - Fond perdu 3 mm / marges 4 mm - Imprimer a 100%'
+              ? `Planche ${cardCount} cartes - recto | verso - gouttiere ${PRINT_PAIR_GUTTER_MM} mm - 85 x 55 mm - Imprimer a 100%`
+              : `Recto | verso - gouttiere coupe ${PRINT_PAIR_GUTTER_MM} mm - 85 x 55 mm - Fond perdu 3 mm - Imprimer a 100%`
           },
           {
             jpegBytes: canvasToJpegBytes(versoPrint, 0.95),
@@ -1976,6 +1985,8 @@ window.VCardApp.CardCanvasExporter = (function () {
       pageHeightMm: PRINT_PAGE_HEIGHT_MM,
       cardWidthPx: PRINT_CARD_WIDTH_PX,
       cardHeightPx: PRINT_CARD_HEIGHT_PX,
+      pairGutterMm: PRINT_PAIR_GUTTER_MM,
+      rowGapMm: PRINT_ROW_GAP_MM,
       sheetCols: PRINT_LAYOUTS.sheet.cols,
       sheetRows: PRINT_LAYOUTS.sheet.rows
     };
