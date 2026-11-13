@@ -159,25 +159,88 @@
     setStep(1);
   }
 
+  function clearTotpEnrollUi() {
+    const block = document.getElementById('totpEnrollBlock');
+    const canvas = document.getElementById('totpQrCanvas');
+    const secretEl = document.getElementById('totpManualSecret');
+    if (block) block.classList.add('hidden');
+    if (secretEl) secretEl.textContent = '';
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+
+  function renderTotpQr(otpauthUrl) {
+    const canvas = document.getElementById('totpQrCanvas');
+    if (!canvas || !otpauthUrl) return;
+    if (!window.QRCode || typeof window.QRCode.toCanvas !== 'function') {
+      setAuthMessage('Impossible d’afficher le QR Code. Utilisez la clé manuelle ci-dessous.');
+      return;
+    }
+    window.QRCode.toCanvas(
+      canvas,
+      otpauthUrl,
+      {
+        width: 192,
+        margin: 1,
+        errorCorrectionLevel: 'M',
+        color: { dark: '#18181b', light: '#ffffff' }
+      },
+      (err) => {
+        if (err) {
+          setAuthMessage('QR Code illisible. Utilisez la clé manuelle ci-dessous.');
+        }
+      }
+    );
+  }
+
   function showCodeStep(data) {
     document.getElementById('authStepIdentity').classList.add('hidden');
     const otpForm = document.getElementById('otpForm');
     otpForm.classList.remove('hidden');
     setStep(2);
 
+    const method = data.method === 'authenticator' ? 'authenticator' : 'email';
+    pending.method = method;
+
     const hint = document.getElementById('otpHint');
     const devHint = document.getElementById('devOtpHint');
     const recipient = data.email || pending.email;
-    hint.textContent = emailDelivery
-      ? `Un code a été envoyé à ${recipient}. Pensez à regarder aussi les courriers indésirables.`
-      : `Un code a été préparé pour ${recipient}.`;
-    if (data.devOtp) {
-      devHint.classList.remove('hidden');
-      devHint.textContent = `Code local de test : ${data.devOtp}`;
-      document.getElementById('otpCode').value = data.devOtp;
+    const totpBlock = document.getElementById('totpEnrollBlock');
+
+    if (method === 'authenticator') {
+      clearTotpEnrollUi();
+      if (data.otpauthUrl && totpBlock) {
+        totpBlock.classList.remove('hidden');
+        const secretEl = document.getElementById('totpManualSecret');
+        if (secretEl) secretEl.textContent = data.totpSecret || '';
+        renderTotpQr(data.otpauthUrl);
+        hint.textContent =
+          'Scannez le QR Code avec votre application authenticator, puis saisissez le code à 6 chiffres.';
+      } else {
+        if (totpBlock) totpBlock.classList.add('hidden');
+        hint.textContent = `Entrez le code à 6 chiffres de votre application authenticator pour ${recipient}.`;
+      }
+      if (devHint) {
+        devHint.classList.add('hidden');
+        devHint.textContent = '';
+      }
+      document.getElementById('otpCode').value = '';
     } else {
-      devHint.classList.add('hidden');
-      devHint.textContent = '';
+      clearTotpEnrollUi();
+      hint.textContent = emailDelivery
+        ? `Un code a été envoyé à ${recipient}. Pensez à regarder aussi les courriers indésirables.`
+        : `Un code a été préparé pour ${recipient}.`;
+      if (data.devOtp) {
+        devHint.classList.remove('hidden');
+        devHint.textContent = `Code local de test : ${data.devOtp}`;
+        document.getElementById('otpCode').value = data.devOtp;
+      } else {
+        devHint.classList.add('hidden');
+        devHint.textContent = '';
+        document.getElementById('otpCode').value = '';
+      }
     }
 
     document.getElementById('otpPassword').value = '';
@@ -194,14 +257,24 @@
     window.location.href = safeNextParam() || '/';
   }
 
-  async function requestLoginCode() {
+  function selectedRegisterMethod() {
+    const checked = document.querySelector('input[name="regOtpMethod"]:checked');
+    return checked && checked.value === 'authenticator' ? 'authenticator' : 'email';
+  }
+
+  async function requestLoginCode(method) {
     const emailInput = document.getElementById('loginEmail');
     if (!emailInput.reportValidity()) return;
-    setAuthMessage('Envoi du code…');
+    const otpMethod = method === 'authenticator' ? 'authenticator' : 'email';
+    setAuthMessage(otpMethod === 'authenticator' ? 'Préparation…' : 'Envoi du code…');
     try {
       const email = emailInput.value.trim();
-      const data = await ApiService.login({ email });
-      pending = { email: data.email || email, purpose: 'login' };
+      const data = await ApiService.login({ email, method: otpMethod });
+      pending = {
+        email: data.email || email,
+        purpose: 'login',
+        method: data.method === 'authenticator' ? 'authenticator' : 'email'
+      };
       document.getElementById('loginPassword').value = '';
       showCodeStep(data);
       setAuthMessage(data.message || 'Entrez le code reçu.');
@@ -213,15 +286,24 @@
   function bindForms() {
     document.getElementById('registerForm').addEventListener('submit', async (event) => {
       event.preventDefault();
-      setAuthMessage('Envoi du code…');
+      const method = selectedRegisterMethod();
+      setAuthMessage(method === 'authenticator' ? 'Préparation du QR Code…' : 'Envoi du code…');
       try {
         const firstName = document.getElementById('regFirstName').value.trim();
         const lastName = document.getElementById('regLastName').value.trim();
         const email = document.getElementById('regEmail').value.trim();
-        const data = await ApiService.register({ email, firstName, lastName });
-        pending = { email: data.email, purpose: 'register' };
+        const data = await ApiService.register({ email, firstName, lastName, method });
+        pending = {
+          email: data.email,
+          purpose: 'register',
+          method: data.method === 'authenticator' ? 'authenticator' : 'email'
+        };
         showCodeStep(data);
-        setAuthMessage('Entrez le code pour activer votre compte.');
+        setAuthMessage(
+          method === 'authenticator'
+            ? 'Scannez le QR Code, puis validez le code affiché dans l’application.'
+            : 'Entrez le code pour activer votre compte.'
+        );
       } catch (err) {
         setAuthMessage(err.message || 'Impossible de créer le compte');
       }
