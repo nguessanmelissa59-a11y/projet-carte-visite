@@ -1,5 +1,13 @@
+const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
+
+// Secrets locaux : fichier .env a la racine, ignore par git. Les variables deja
+// definies gardent la priorite ; le fichier n'est jamais lu pendant les tests.
+const ENV_FILE = path.resolve(__dirname, '..', '..', '.env');
+if (process.env.NODE_ENV !== 'test' && fs.existsSync(ENV_FILE)) {
+  process.loadEnvFile(ENV_FILE);
+}
 
 function detectLanIpAddress() {
   const interfaces = os.networkInterfaces();
