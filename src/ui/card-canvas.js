@@ -455,8 +455,8 @@ window.VCardApp.CardCanvasExporter = (function () {
     });
   }
 
-  async function drawMinimal(ctx, state, qrMode) {
-    const ink = '#1c1917';
+  async function drawMinimal(ctx, state, qrMode, accentHex) {
+    const ink = accentHex || '#1c1917';
     ctx.fillStyle = '#f6f1ea';
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
@@ -509,9 +509,9 @@ window.VCardApp.CardCanvasExporter = (function () {
     });
   }
 
-  async function drawCorporate(ctx, state, qrMode) {
-    const deep = '#0b1c2c';
-    const accent = '#2f6fed';
+  async function drawCorporate(ctx, state, qrMode, accentHex) {
+    const deep = getQrAccent(state) || '#0b1c2c';
+    const accent = accentHex || '#2f6fed';
     const mist = '#e8eef6';
 
     ctx.fillStyle = mist;
@@ -610,7 +610,7 @@ window.VCardApp.CardCanvasExporter = (function () {
 
     await drawAvatar(ctx, state, 56, 56, 120, {
       radius: 60,
-      fill: '#7f1d1d',
+      fill: accent || '#7f1d1d',
       ring: '#ffffff',
       textColor: '#fff7ed'
     });
@@ -623,34 +623,34 @@ window.VCardApp.CardCanvasExporter = (function () {
       maxWidth: 360,
       nameSize: 32,
       nameColor: '#1c1917',
-      jobColor: '#c2410c',
-      orgColor: '#9a3412',
+      jobColor: accent,
+      orgColor: accent,
       orgUpper: false
     });
 
     drawContactRows(ctx, collectContacts(state).slice(0, 3), 84, 400, {
-      labelColor: '#ea580c',
+      labelColor: accent,
       valueColor: '#1c1917',
       gap: 48,
       maxWidth: 360,
       valueSize: 15
     });
 
-    await drawQrPanel(ctx, state, qrMode, '#9f1239', {
+    await drawQrPanel(ctx, state, qrMode, accent, {
       x: 720,
       y: 120,
       w: 320,
       h: 420,
       bg: '#ffffff',
       border: '#fdba74',
-      titleColor: '#9f1239',
-      subColor: '#9a3412',
+      titleColor: accent,
+      subColor: accent,
       radius: 24,
       qrSize: 210
     });
   }
 
-  async function drawEco(ctx, state, qrMode) {
+  async function drawEco(ctx, state, qrMode, accentHex) {
     ctx.fillStyle = '#f3f6f0';
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
@@ -678,14 +678,14 @@ window.VCardApp.CardCanvasExporter = (function () {
 
     await drawAvatar(ctx, state, 76, 76, 104, {
       radius: 52,
-      fill: '#4d7c5a',
+      fill: accentHex || '#4d7c5a',
       textColor: '#eef2eb'
     });
     drawIdentityBlock(ctx, state, 204, 118, {
       maxWidth: 430,
       nameSize: 34,
       nameColor: '#1f2a24',
-      jobColor: '#4d7c5a',
+      jobColor: accentHex || '#4d7c5a',
       orgColor: '#c26d3e'
     });
 
@@ -698,7 +698,7 @@ window.VCardApp.CardCanvasExporter = (function () {
       rule: '#e4ece1'
     });
 
-    await drawQrPanel(ctx, state, qrMode, '#4d7c5a', {
+    await drawQrPanel(ctx, state, qrMode, accentHex || '#4d7c5a', {
       x: 720,
       y: 90,
       w: 320,
@@ -706,15 +706,15 @@ window.VCardApp.CardCanvasExporter = (function () {
       bg: 'rgba(255,255,255,0.88)',
       border: '#c9d8c6',
       titleColor: '#1f2a24',
-      subColor: '#4d7c5a',
+      subColor: accentHex || '#4d7c5a',
       radius: 28,
       qrSize: 200,
       compact: true
     });
   }
 
-  async function drawPrestige(ctx, state, qrMode) {
-    const gold = '#c9a227';
+  async function drawPrestige(ctx, state, qrMode, accentHex) {
+    const gold = accentHex || '#c9a227';
     const cream = '#f5e6b8';
     ctx.fillStyle = '#0a0a0a';
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
@@ -784,7 +784,7 @@ window.VCardApp.CardCanvasExporter = (function () {
     });
   }
 
-  async function drawNocturne(ctx, state, qrMode) {
+  async function drawNocturne(ctx, state, qrMode, accentHex) {
     ctx.fillStyle = '#0c0c0e';
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
@@ -838,7 +838,7 @@ window.VCardApp.CardCanvasExporter = (function () {
       valueColor: '#e4e4e7',
       gap: 52,
       maxWidth: 560,
-      bullet: '#a1a1aa'
+      bullet: accentHex || '#a1a1aa'
     });
 
     await drawQrPanel(ctx, state, qrMode, '#09090b', {
@@ -847,7 +847,7 @@ window.VCardApp.CardCanvasExporter = (function () {
       w: 300,
       h: 500,
       bg: '#141416',
-      border: '#3f3f46',
+      border: accentHex || '#3f3f46',
       titleColor: '#fafafa',
       subColor: '#a1a1aa',
       radius: 14,
@@ -856,7 +856,7 @@ window.VCardApp.CardCanvasExporter = (function () {
     });
   }
 
-  async function drawAtelier(ctx, state, qrMode) {
+  async function drawAtelier(ctx, state, qrMode, accentHex) {
     ctx.fillStyle = '#f4ebdf';
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
     drawCornerMarks(ctx, 22, 18, '#2a2118');
@@ -878,8 +878,8 @@ window.VCardApp.CardCanvasExporter = (function () {
       ctx.stroke();
     }
 
-    drawMicroLabel(ctx, 'Atelier · épreuve', 56, 48, '#8b5e3c');
-    drawMicroLabel(ctx, 'Reg. A', WIDTH - 56, 48, '#8b5e3c', 'right');
+    drawMicroLabel(ctx, 'Atelier · épreuve', 56, 48, accentHex || '#8b5e3c');
+    drawMicroLabel(ctx, 'Reg. A', WIDTH - 56, 48, accentHex || '#8b5e3c', 'right');
 
     await drawAvatar(ctx, state, 56, 78, 118, {
       radius: 10,
@@ -890,7 +890,7 @@ window.VCardApp.CardCanvasExporter = (function () {
       maxWidth: 480,
       nameSize: 36,
       nameColor: '#2a2118',
-      jobColor: '#8b5e3c',
+      jobColor: accentHex || '#8b5e3c',
       orgColor: '#5c4030'
     });
 
@@ -913,7 +913,7 @@ window.VCardApp.CardCanvasExporter = (function () {
       border: '#2a2118',
       borderWidth: 2,
       titleColor: '#2a2118',
-      subColor: '#8b5e3c',
+      subColor: accentHex || '#8b5e3c',
       radius: 8,
       qrSize: 200,
       compact: true,
@@ -921,13 +921,14 @@ window.VCardApp.CardCanvasExporter = (function () {
     });
   }
 
-  async function drawLagoon(ctx, state, qrMode) {
+  async function drawLagoon(ctx, state, qrMode, accentHex) {
     ctx.fillStyle = '#e6f7f8';
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
+    const accent = accentHex || '#0f766e';
     const layers = [
-      ['#0f766e', 0, 118],
-      ['#14b8a6', 90, 100],
+      [accent, 0, 118],
+      [accent, 90, 100],
       ['#5eead4', 170, 70]
     ];
     layers.forEach(([color, y, h], i) => {
@@ -948,7 +949,7 @@ window.VCardApp.CardCanvasExporter = (function () {
 
     await drawAvatar(ctx, state, 72, 72, 100, {
       radius: 50,
-      fill: '#0f766e',
+      fill: accentHex || '#0f766e',
       ring: '#ffffff',
       textColor: '#ecfeff'
     });
@@ -963,13 +964,13 @@ window.VCardApp.CardCanvasExporter = (function () {
     }
 
     drawContactRows(ctx, collectContacts(state), 72, 260, {
-      labelColor: '#0f766e',
+      labelColor: accentHex || '#0f766e',
       valueColor: '#115e59',
       gap: 50,
       maxWidth: 560
     });
 
-    await drawQrPanel(ctx, state, qrMode, '#0f766e', {
+    await drawQrPanel(ctx, state, qrMode, accentHex || '#0f766e', {
       x: 720,
       y: 220,
       w: 320,
@@ -977,17 +978,17 @@ window.VCardApp.CardCanvasExporter = (function () {
       bg: '#ffffff',
       border: '#99f6e4',
       titleColor: '#134e4a',
-      subColor: '#0f766e',
+      subColor: accentHex || '#0f766e',
       radius: 20,
       qrSize: 190,
       compact: true
     });
   }
 
-  async function drawSlate(ctx, state, qrMode) {
+  async function drawSlate(ctx, state, qrMode, accentHex) {
     ctx.fillStyle = '#f8fafc';
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
-    ctx.fillStyle = '#1e293b';
+    ctx.fillStyle = accentHex || '#1e293b';
     ctx.fillRect(0, 0, 88, HEIGHT);
 
     ctx.save();
@@ -1014,7 +1015,7 @@ window.VCardApp.CardCanvasExporter = (function () {
 
     await drawAvatar(ctx, state, 160, 96, 100, {
       radius: 12,
-      fill: '#334155',
+      fill: accentHex || '#334155',
       textColor: '#f8fafc'
     });
     drawIdentityBlock(ctx, state, 284, 138, {
@@ -1022,7 +1023,7 @@ window.VCardApp.CardCanvasExporter = (function () {
       nameSize: 34,
       nameColor: '#0f172a',
       jobColor: '#64748b',
-      orgColor: '#334155',
+      orgColor: accentHex || '#334155',
       orgMono: true,
       orgUpper: true
     });
@@ -1035,7 +1036,7 @@ window.VCardApp.CardCanvasExporter = (function () {
       rule: '#e2e8f0'
     });
 
-    await drawQrPanel(ctx, state, qrMode, '#334155', {
+    await drawQrPanel(ctx, state, qrMode, accentHex || '#334155', {
       x: 740,
       y: 80,
       w: 300,
@@ -1050,22 +1051,23 @@ window.VCardApp.CardCanvasExporter = (function () {
     });
   }
 
-  async function drawSunset(ctx, state, qrMode) {
+  async function drawSunset(ctx, state, qrMode, accentHex) {
     ctx.fillStyle = '#1c0a05';
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
     const sky = ctx.createLinearGradient(0, 0, 0, HEIGHT * 0.7);
+    const sunAccent = accentHex || '#ea580c';
     sky.addColorStop(0, '#431407');
-    sky.addColorStop(0.35, '#9a3412');
-    sky.addColorStop(0.7, '#ea580c');
-    sky.addColorStop(1, '#fb923c');
+    sky.addColorStop(0.35, getQrAccent(state) || '#9a3412');
+    sky.addColorStop(0.7, sunAccent);
+    sky.addColorStop(1, sunAccent);
     ctx.fillStyle = sky;
     ctx.fillRect(0, 0, WIDTH, HEIGHT * 0.72);
 
     // Sun disk
     const sun = ctx.createRadialGradient(820, 210, 20, 820, 210, 160);
     sun.addColorStop(0, '#fde68a');
-    sun.addColorStop(0.45, '#fb923c');
+    sun.addColorStop(0.45, sunAccent);
     sun.addColorStop(1, 'rgba(251,146,60,0)');
     ctx.fillStyle = sun;
     ctx.beginPath();
@@ -1085,7 +1087,7 @@ window.VCardApp.CardCanvasExporter = (function () {
 
     await drawAvatar(ctx, state, 56, 56, 96, {
       radius: 48,
-      fill: '#7c2d12',
+      fill: getQrAccent(state) || '#7c2d12',
       ring: '#ffedd5',
       textColor: '#fff7ed'
     });
@@ -1094,7 +1096,7 @@ window.VCardApp.CardCanvasExporter = (function () {
     fitText(ctx, getFullName(state), 520, 36, 22, (s) => `700 ${s}px 'Fraunces', serif`);
     ctx.fillText(getFullName(state), 176, 100);
     if (state.jobTitle) {
-      ctx.fillStyle = '#fdba74';
+      ctx.fillStyle = accentHex || '#fdba74';
       ctx.font = "500 16px 'Figtree', sans-serif";
       ctx.fillText(state.jobTitle, 176, 130);
     }
@@ -1103,14 +1105,14 @@ window.VCardApp.CardCanvasExporter = (function () {
     drawRoundedRect(ctx, 48, 420, 620, 190, 18);
     ctx.fill();
     drawContactColumns(ctx, collectContacts(state).slice(0, 4), 72, 460, {
-      labelColor: '#c2410c',
+      labelColor: accentHex || '#c2410c',
       valueColor: '#7c2d12',
       colWidth: 260,
       gapX: 40,
       gapY: 70
     });
 
-    await drawQrPanel(ctx, state, qrMode, '#9a3412', {
+    await drawQrPanel(ctx, state, qrMode, getQrAccent(state) || accentHex || '#9a3412', {
       x: 720,
       y: 360,
       w: 320,
@@ -1128,13 +1130,13 @@ window.VCardApp.CardCanvasExporter = (function () {
     });
   }
 
-  async function drawSumi(ctx, state, qrMode) {
+  async function drawSumi(ctx, state, qrMode, accentHex) {
     ctx.fillStyle = '#f7f7f5';
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
     ctx.fillStyle = '#111111';
     ctx.fillRect(48, 48, 10, HEIGHT - 96);
-    ctx.fillStyle = '#b91c1c';
+    ctx.fillStyle = accentHex || '#b91c1c';
     ctx.fillRect(62, 48, 4, HEIGHT - 96);
 
     // Large empty ma, identity top
@@ -1148,7 +1150,7 @@ window.VCardApp.CardCanvasExporter = (function () {
       nameSize: 38,
       nameColor: '#111111',
       jobColor: '#525252',
-      orgColor: '#b91c1c',
+      orgColor: accentHex || '#b91c1c',
       orgMono: true,
       orgUpper: true
     });
@@ -1167,14 +1169,14 @@ window.VCardApp.CardCanvasExporter = (function () {
     ctx.save();
     ctx.translate(sealX, sealY);
     ctx.rotate(-0.12);
-    ctx.strokeStyle = '#b91c1c';
+    ctx.strokeStyle = accentHex || '#b91c1c';
     ctx.lineWidth = 3;
     drawRoundedRect(ctx, -46, -46, 92, 92, 8);
     ctx.stroke();
     ctx.fillStyle = 'rgba(185, 28, 28, 0.08)';
     drawRoundedRect(ctx, -46, -46, 92, 92, 8);
     ctx.fill();
-    ctx.fillStyle = '#b91c1c';
+    ctx.fillStyle = accentHex || '#b91c1c';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.font = "700 28px 'Fraunces', serif";
@@ -1189,7 +1191,7 @@ window.VCardApp.CardCanvasExporter = (function () {
       bg: '#ffffff',
       border: '#d4d4d4',
       titleColor: '#111111',
-      subColor: '#b91c1c',
+      subColor: accentHex || '#b91c1c',
       radius: 4,
       qrSize: 210,
       compact: true,
@@ -1197,7 +1199,7 @@ window.VCardApp.CardCanvasExporter = (function () {
     });
   }
 
-  async function drawArctic(ctx, state, qrMode) {
+  async function drawArctic(ctx, state, qrMode, accentHex) {
     ctx.fillStyle = '#f1f5f9';
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
@@ -1228,14 +1230,14 @@ window.VCardApp.CardCanvasExporter = (function () {
 
     await drawAvatar(ctx, state, 88, 88, 100, {
       radius: 16,
-      fill: '#0284c7',
+      fill: accentHex || '#0284c7',
       textColor: '#f0f9ff'
     });
     drawIdentityBlock(ctx, state, 214, 128, {
       maxWidth: 460,
       nameSize: 34,
       nameColor: '#0f172a',
-      jobColor: '#0284c7',
+      jobColor: accentHex || '#0284c7',
       orgColor: '#1e293b',
       orgMono: true,
       orgUpper: true
@@ -1249,7 +1251,7 @@ window.VCardApp.CardCanvasExporter = (function () {
       gapY: 68
     });
 
-    await drawQrPanel(ctx, state, qrMode, '#0ea5e9', {
+    await drawQrPanel(ctx, state, qrMode, accentHex || '#0ea5e9', {
       x: 740,
       y: 100,
       w: 280,
@@ -1257,23 +1259,23 @@ window.VCardApp.CardCanvasExporter = (function () {
       bg: '#f8fafc',
       border: '#bae6fd',
       titleColor: '#0f172a',
-      subColor: '#0284c7',
+      subColor: accentHex || '#0284c7',
       radius: 14,
       qrSize: 190,
       compact: true
     });
   }
 
-  async function drawMetro(ctx, state, qrMode) {
+  async function drawMetro(ctx, state, qrMode, accentHex) {
     ctx.fillStyle = '#fafafa';
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
     ctx.fillStyle = '#18181b';
     ctx.fillRect(0, 0, 400, HEIGHT);
-    ctx.fillStyle = '#fde047';
+    ctx.fillStyle = accentHex || '#fde047';
     ctx.fillRect(400, 0, 14, HEIGHT);
 
     // Route line
-    ctx.strokeStyle = '#fde047';
+    ctx.strokeStyle = accentHex || '#fde047';
     ctx.lineWidth = 4;
     ctx.beginPath();
     ctx.moveTo(56, 300);
@@ -1282,7 +1284,7 @@ window.VCardApp.CardCanvasExporter = (function () {
 
     await drawAvatar(ctx, state, 48, 48, 100, {
       radius: 8,
-      fill: '#fde047',
+      fill: accentHex || '#fde047',
       textColor: '#18181b'
     });
 
@@ -1292,7 +1294,7 @@ window.VCardApp.CardCanvasExporter = (function () {
     fitText(ctx, name, 280, 28, 16, (s) => `800 ${s}px 'Fraunces', serif`);
     ctx.fillText(name, 48, 190);
     if (state.jobTitle) {
-      ctx.fillStyle = '#fde047';
+      ctx.fillStyle = accentHex || '#fde047';
       fitText(ctx, state.jobTitle, 280, 14, 11, (s) => `500 ${s}px 'Figtree', sans-serif`);
       ctx.fillText(state.jobTitle, 48, 220);
     }
@@ -1303,7 +1305,7 @@ window.VCardApp.CardCanvasExporter = (function () {
     const stops = collectContacts(state).slice(0, 4);
     stops.forEach((item, i) => {
       const y = 320 + i * 58;
-      ctx.fillStyle = '#fde047';
+      ctx.fillStyle = accentHex || '#fde047';
       ctx.beginPath();
       ctx.arc(56, y, 7, 0, Math.PI * 2);
       ctx.fill();
