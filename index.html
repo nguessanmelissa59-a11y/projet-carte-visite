@@ -380,9 +380,25 @@
           <div class="preview-panel-toolbar">
             <div class="flex items-center gap-3 flex-wrap min-w-0">
               <span class="preview-live" aria-live="polite">Aperçu live</span>
-              <div class="mode-toggle" role="group" aria-label="Type d'aperçu">
-                <button type="button" id="tabPreviewMobile" class="is-active text-sm">Page</button>
-                <button type="button" id="tabPreviewCard" class="text-sm">Impression</button>
+              <div class="mode-toggle" role="radiogroup" aria-label="Type d'aperçu">
+                <button
+                  type="button"
+                  id="tabPreviewMobile"
+                  class="is-active text-sm"
+                  role="radio"
+                  aria-checked="true"
+                >
+                  Page
+                </button>
+                <button
+                  type="button"
+                  id="tabPreviewCard"
+                  class="text-sm"
+                  role="radio"
+                  aria-checked="false"
+                >
+                  Impression
+                </button>
               </div>
             </div>
 

@@ -1948,11 +1948,11 @@ html.dark .qr-frame {
 
 .mode-toggle {
   display: inline-flex;
-  padding: 0.2rem;
+  padding: 0.25rem;
   border-radius: 0.75rem;
-  border: 1px solid var(--line);
-  background: color-mix(in srgb, var(--surface) 65%, var(--surface-elevated));
-  box-shadow: none;
+  border: 1.5px solid color-mix(in srgb, var(--ink) 22%, var(--line));
+  background: color-mix(in srgb, var(--ink) 5%, var(--surface));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 55%, transparent);
 }
 
 .mode-toggle button {
@@ -1963,24 +1963,41 @@ html.dark .qr-frame {
   background: transparent;
   color: var(--ink-muted);
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 650;
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.mode-toggle:not(.mode-toggle--featured) button.is-active {
-  background: var(--surface-elevated);
+.mode-toggle button:hover,
+.mode-toggle button:focus-visible {
   color: var(--ink);
-  box-shadow: var(--shadow-control);
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+  outline: none;
+}
+
+.mode-toggle button.is-active {
+  background: var(--accent);
+  color: #fff;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 70%, #000),
+    0 2px 6px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+.mode-toggle button.is-active:hover,
+.mode-toggle button.is-active:focus-visible {
+  background: var(--accent-mid, var(--accent));
+  color: #fff;
 }
 
 html.dark .mode-toggle {
-  background: color-mix(in srgb, var(--surface) 70%, #000);
+  background: color-mix(in srgb, var(--surface) 80%, #000);
+  border-color: color-mix(in srgb, var(--ink) 22%, var(--line));
+  box-shadow: none;
 }
 
-html.dark .mode-toggle:not(.mode-toggle--featured) button.is-active {
-  background: var(--surface-elevated);
-  color: var(--ink);
+html.dark .mode-toggle button.is-active {
+  background: var(--accent);
+  color: #fff;
 }
 
 .reveal {
