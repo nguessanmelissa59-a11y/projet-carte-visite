@@ -444,6 +444,11 @@ html.dark[data-card-theme='obsidian'] .easy-steps li.is-active > span:first-chil
   color: #fff;
 }
 
+html.dark[data-card-theme='obsidian'] .btn-primary,
+html.dark[data-card-theme='obsidian'] .btn-ink {
+  color: #fff;
+}
+
 .easy-steps li.is-done {
   color: var(--ink);
 }
@@ -1098,13 +1103,13 @@ html.dark .mode-toggle--featured {
 
 html.dark .mode-toggle.mode-toggle--featured button.is-active {
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 html.dark .mode-toggle.mode-toggle--featured button.is-active .mode-toggle__tag {
-  border-color: rgba(255, 255, 255, 0.45);
-  background: rgba(255, 255, 255, 0.18);
-  color: #fff;
+  border-color: color-mix(in srgb, var(--on-accent) 45%, transparent);
+  background: color-mix(in srgb, var(--on-accent) 18%, transparent);
+  color: var(--on-accent);
 }
 
 .offline-teaser,
@@ -1990,7 +1995,7 @@ html.dark .qr-frame {
 
 .mode-toggle button.is-active {
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--accent) 70%, #000),
     0 2px 6px color-mix(in srgb, var(--accent) 35%, transparent);
@@ -1999,7 +2004,7 @@ html.dark .qr-frame {
 .mode-toggle button.is-active:hover,
 .mode-toggle button.is-active:focus-visible {
   background: var(--accent-mid, var(--accent));
-  color: #fff;
+  color: var(--on-accent);
 }
 
 html.dark .mode-toggle {
@@ -2010,7 +2015,7 @@ html.dark .mode-toggle {
 
 html.dark .mode-toggle button.is-active {
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 .reveal {
