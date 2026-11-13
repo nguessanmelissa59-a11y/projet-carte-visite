@@ -22,6 +22,7 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     StorageService.initTheme();
+    StorageService.bindThemeModeControls();
 
     const searchParams = new URLSearchParams(window.location.search);
     const cardIdParam = searchParams.get('id');

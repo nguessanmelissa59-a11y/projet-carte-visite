@@ -2,6 +2,8 @@ window.VCardApp = window.VCardApp || {};
 
 window.VCardApp.StorageService = (function () {
   const { STORAGE_KEY, THEME_STORAGE_KEY, DEMO_DATA } = window.VCardApp.Config;
+  const THEME_MODES = new Set(['auto', 'light', 'dark']);
+  let mediaQuery = null;
 
   function saveDraft(state) {
     try {
@@ -23,19 +25,79 @@ window.VCardApp.StorageService = (function () {
     return { ...DEMO_DATA };
   }
 
-  function initTheme() {
+  function getStoredThemeMode() {
     const saved = localStorage.getItem(THEME_STORAGE_KEY);
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (saved === 'dark' || (!saved && prefersDark)) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
+    if (THEME_MODES.has(saved)) return saved;
+    // Ancienne valeur booléenne light/dark uniquement.
+    if (saved === 'dark' || saved === 'light') return saved;
+    return 'auto';
+  }
+
+  function resolveDark(mode) {
+    if (mode === 'dark') return true;
+    if (mode === 'light') return false;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+
+  function applyThemeMode(mode) {
+    const next = THEME_MODES.has(mode) ? mode : 'auto';
+    const isDark = resolveDark(next);
+    document.documentElement.classList.toggle('dark', isDark);
+    document.documentElement.dataset.themeMode = next;
+    syncThemeModeButtons(next);
+  }
+
+  function syncThemeModeButtons(activeMode) {
+    document.querySelectorAll('[data-theme-mode]').forEach((btn) => {
+      const mode = btn.getAttribute('data-theme-mode');
+      const isActive = mode === activeMode;
+      btn.classList.toggle('is-active', isActive);
+      btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
+  }
+
+  function onSystemThemeChange() {
+    if (getStoredThemeMode() === 'auto') {
+      applyThemeMode('auto');
     }
+  }
+
+  function initTheme() {
+    applyThemeMode(getStoredThemeMode());
+    if (!mediaQuery) {
+      mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      if (typeof mediaQuery.addEventListener === 'function') {
+        mediaQuery.addEventListener('change', onSystemThemeChange);
+      } else if (typeof mediaQuery.addListener === 'function') {
+        mediaQuery.addListener(onSystemThemeChange);
+      }
+    }
+  }
+
+  function setThemeMode(mode) {
+    const next = THEME_MODES.has(mode) ? mode : 'auto';
+    localStorage.setItem(THEME_STORAGE_KEY, next);
+    applyThemeMode(next);
   }
 
   function toggleTheme() {
     const isDark = document.documentElement.classList.toggle('dark');
-    localStorage.setItem(THEME_STORAGE_KEY, isDark ? 'dark' : 'light');
+    const next = isDark ? 'dark' : 'light';
+    localStorage.setItem(THEME_STORAGE_KEY, next);
+    document.documentElement.dataset.themeMode = next;
+    syncThemeModeButtons(next);
+  }
+
+  function bindThemeModeControls(root) {
+    const scope = root || document;
+    scope.querySelectorAll('[data-theme-mode]').forEach((btn) => {
+      if (btn.dataset.boundThemeMode === '1') return;
+      btn.dataset.boundThemeMode = '1';
+      btn.addEventListener('click', () => {
+        setThemeMode(btn.getAttribute('data-theme-mode'));
+      });
+    });
+    syncThemeModeButtons(getStoredThemeMode());
   }
 
   function resizeImageToBase64(file, maxWidth, maxHeight, quality, callback) {
@@ -64,7 +126,9 @@ window.VCardApp.StorageService = (function () {
     loadDraft,
     initTheme,
     toggleTheme,
+    setThemeMode,
+    bindThemeModeControls,
+    getStoredThemeMode,
     resizeImageToBase64
   };
 })();
-
