@@ -42,12 +42,14 @@ const stmtUpsertCard = db.prepare(`
     slug, first_name, last_name, job_title, organization,
     phone, whatsapp, email, location, linkedin_url,
     portfolio_url, bio, photo_url, photo_base64, theme,
-    auto_download, scans, user_id, created_at, updated_at
+    auto_download, scans, user_id, job_title_id, organization_id,
+    created_at, updated_at
   ) VALUES (
     ?, ?, ?, ?, ?,
     ?, ?, ?, ?, ?,
     ?, ?, ?, ?, ?,
-    ?, ?, ?, ?, ?
+    ?, ?, ?, ?, ?,
+    ?, ?
   )
   ON CONFLICT(slug) DO UPDATE SET
     first_name = excluded.first_name,
@@ -66,6 +68,8 @@ const stmtUpsertCard = db.prepare(`
     theme = excluded.theme,
     auto_download = excluded.auto_download,
     user_id = COALESCE(excluded.user_id, cards.user_id),
+    job_title_id = excluded.job_title_id,
+    organization_id = excluded.organization_id,
     updated_at = excluded.updated_at
 `);
 
@@ -88,6 +92,8 @@ function mapRowToCard(row) {
     lastName: row.last_name,
     jobTitle: row.job_title,
     organization: row.organization,
+    jobTitleId: row.job_title_id || null,
+    organizationId: row.organization_id || null,
     phone: row.phone,
     whatsapp: row.whatsapp,
     email: row.email,
@@ -142,6 +148,8 @@ function upsertCard(payload, options = {}) {
     payload.autoDownload === false ? 0 : 1,
     existing ? existing.scans : 0,
     userId,
+    payload.jobTitleId || null,
+    payload.organizationId || null,
     existing ? existing.createdAt : now,
     now
   );
