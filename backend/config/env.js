@@ -35,9 +35,30 @@ const OTP_TTL_MS = Number(process.env.OTP_TTL_MS) || 10 * 60 * 1000;
 const OTP_RESEND_WINDOW_MS = Number(process.env.OTP_RESEND_WINDOW_MS) || 60 * 1000;
 const OTP_MAX_PER_WINDOW = Number(process.env.OTP_MAX_PER_WINDOW) || 3;
 const OTP_MAX_ATTEMPTS = Number(process.env.OTP_MAX_ATTEMPTS) || 5;
+
+const SMTP_HOST = String(process.env.SMTP_HOST || 'smtp.gmail.com').trim();
+const SMTP_PORT = Number(process.env.SMTP_PORT) || 465;
+const SMTP_USER = String(process.env.SMTP_USER || '').trim();
+// Google affiche ses mots de passe d'application par groupes separes d'espaces.
+const SMTP_PASS =
+  SMTP_HOST === 'smtp.gmail.com'
+    ? String(process.env.SMTP_PASS || '').replace(/\s+/g, '')
+    : String(process.env.SMTP_PASS || '');
+const MAIL_FROM = String(process.env.MAIL_FROM || SMTP_USER).trim();
+const MAIL_CONFIGURED = Boolean(SMTP_USER && SMTP_PASS);
+
+// Des que l'envoi d'e-mails est configure, le code n'est plus renvoye dans la
+// reponse HTTP, meme hors production (sauf demande explicite AUTH_EXPOSE_OTP=1).
 const AUTH_EXPOSE_OTP =
   process.env.AUTH_EXPOSE_OTP === '1' ||
-  (!IS_PRODUCTION && process.env.AUTH_EXPOSE_OTP !== '0');
+  (!IS_PRODUCTION && !MAIL_CONFIGURED && process.env.AUTH_EXPOSE_OTP !== '0');
+
+const GOOGLE_CLIENT_ID = String(process.env.GOOGLE_CLIENT_ID || '').trim();
+const GOOGLE_CLIENT_SECRET = String(process.env.GOOGLE_CLIENT_SECRET || '').trim();
+const GOOGLE_REDIRECT_URI = String(
+  process.env.GOOGLE_REDIRECT_URI || `http://localhost:${PORT}/api/auth/google/callback`
+).trim();
+const GOOGLE_CONFIGURED = Boolean(GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET);
 const LOGIN_MAX_ATTEMPTS = Number(process.env.LOGIN_MAX_ATTEMPTS) || 5;
 const LOGIN_LOCK_WINDOW_MS = Number(process.env.LOGIN_LOCK_WINDOW_MS) || 15 * 60 * 1000;
 
@@ -72,6 +93,16 @@ module.exports = {
   OTP_MAX_PER_WINDOW,
   OTP_MAX_ATTEMPTS,
   AUTH_EXPOSE_OTP,
+  SMTP_HOST,
+  SMTP_PORT,
+  SMTP_USER,
+  SMTP_PASS,
+  MAIL_FROM,
+  MAIL_CONFIGURED,
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  GOOGLE_REDIRECT_URI,
+  GOOGLE_CONFIGURED,
   LOGIN_MAX_ATTEMPTS,
   LOGIN_LOCK_WINDOW_MS,
   ADMIN_EMAILS,
