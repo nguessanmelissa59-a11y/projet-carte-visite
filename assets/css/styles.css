@@ -23,12 +23,13 @@ html.dark {
   --ink: #eef6f1;
   --ink-muted: #9db0a6;
   --line: rgba(238, 246, 241, 0.14);
-  --accent: #2ecf88;
-  --accent-soft: rgba(46, 207, 136, 0.2);
-  --accent-mid: #1fad6f;
+  /* Même teinte forêt que la carte (#0a6b45), pas de menthe séparée. */
+  --accent: #0a6b45;
+  --accent-soft: rgba(10, 107, 69, 0.28);
+  --accent-mid: #0e8556;
   --info-warm: rgba(255, 215, 194, 0.2);
-  --ambient-a: rgba(46, 207, 136, 0.12);
-  --ambient-b: rgba(154, 161, 173, 0.1);
+  --ambient-a: rgba(10, 107, 69, 0.18);
+  --ambient-b: rgba(14, 133, 86, 0.12);
   --shadow-panel: 0 12px 40px rgba(0, 0, 0, 0.4);
 }
 
@@ -121,11 +122,11 @@ html.dark[data-card-theme='obsidian'] {
 }
 
 html.dark[data-card-theme='forest'] {
-  --accent: #2ecf88;
-  --accent-soft: rgba(46, 207, 136, 0.22);
-  --accent-mid: #1fad6f;
-  --ambient-a: rgba(46, 207, 136, 0.14);
-  --ambient-b: rgba(10, 107, 69, 0.12);
+  --accent: #0a6b45;
+  --accent-soft: rgba(10, 107, 69, 0.28);
+  --accent-mid: #0e8556;
+  --ambient-a: rgba(10, 107, 69, 0.2);
+  --ambient-b: rgba(14, 133, 86, 0.14);
 }
 
 html.dark[data-card-theme='cobalt'] {
@@ -1471,9 +1472,9 @@ html.dark .qr-frame {
 }
 
 .status-chip[data-state='online'] {
-  color: #065f46;
-  border-color: rgba(6, 95, 70, 0.25);
-  background: rgba(6, 95, 70, 0.08);
+  color: var(--accent-mid, var(--accent));
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  background: var(--accent-soft);
 }
 
 .status-chip[data-state='offline'] {
