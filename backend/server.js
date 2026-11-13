@@ -25,6 +25,12 @@ const {
   handleAdminListUsers,
   handleAdminUpdateUserRole
 } = require('./controllers/admin.controller');
+const {
+  handleSearchJobTitles,
+  handleCreateJobTitle,
+  handleSearchOrganizations,
+  handleCreateOrganization
+} = require('./controllers/lookup.controller');
 
 const ADMIN_DIST = path.join(PUBLIC_ROOT, 'admin', 'dist');
 
@@ -165,6 +171,19 @@ const server = http.createServer((req, res) => {
   const adminUserRole = pathname.match(/^\/api\/admin\/users\/([a-zA-Z0-9_:-]+)\/role$/);
   if (req.method === 'PATCH' && adminUserRole) {
     return handleAdminUpdateUserRole(req, res, adminUserRole[1]);
+  }
+
+  if (req.method === 'GET' && pathname === '/api/lookups/job-titles') {
+    return handleSearchJobTitles(req, res);
+  }
+  if (req.method === 'POST' && pathname === '/api/lookups/job-titles') {
+    return handleCreateJobTitle(req, res);
+  }
+  if (req.method === 'GET' && pathname === '/api/lookups/organizations') {
+    return handleSearchOrganizations(req, res);
+  }
+  if (req.method === 'POST' && pathname === '/api/lookups/organizations') {
+    return handleCreateOrganization(req, res);
   }
 
   if (req.method === 'GET' && pathname === '/api/cards') {
