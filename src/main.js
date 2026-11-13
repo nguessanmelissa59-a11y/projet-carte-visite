@@ -19,6 +19,9 @@
   let rafPending = false;
   let jobTitleCombo = null;
   let organizationCombo = null;
+  let lastUserActivityAt = Date.now();
+  let idleWatchdogTimer = null;
+  let sessionGuardRunning = false;
 
   document.addEventListener('DOMContentLoaded', () => {
     StorageService.initTheme();
@@ -55,7 +58,71 @@
 
     // Asynchronous non-blocking backend sync
     initBackendConnection(cardIdParam, isScanEvent, editSlugParam);
+
+    window.addEventListener('pageshow', (event) => {
+      if (!event.persisted || isPublicScanView) return;
+      ApiService.refreshSession().then((user) => {
+        updateAuthChrome();
+        if (!user && ApiService.isAvailable()) {
+          window.location.replace(authRedirectUrl('expired'));
+        }
+      });
+    });
   });
+
+  function authRedirectUrl(reason) {
+    const params = new URLSearchParams();
+    const next = `${window.location.pathname}${window.location.search}`;
+    if (next && next !== '/' && /^\/(?![/\\])/.test(next)) {
+      params.set('next', next);
+    }
+    if (reason) params.set('reason', reason);
+    const query = params.toString();
+    return query ? `/auth?${query}` : '/auth';
+  }
+
+  async function forceLogoutAndLeave(reason) {
+    if (sessionGuardRunning) return;
+    sessionGuardRunning = true;
+    try {
+      if (ApiService.isAvailable()) {
+        await ApiService.logout();
+      }
+    } catch {
+      /* cookie deja invalide */
+    }
+    window.location.replace(authRedirectUrl(reason || 'logout'));
+  }
+
+  function markUserActivity() {
+    lastUserActivityAt = Date.now();
+  }
+
+  function startIdleWatchdog() {
+    if (idleWatchdogTimer || isPublicScanView) return;
+    const activityEvents = ['pointerdown', 'keydown', 'scroll', 'touchstart', 'mousemove'];
+    activityEvents.forEach((eventName) => {
+      window.addEventListener(eventName, markUserActivity, { passive: true });
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') markUserActivity();
+    });
+
+    idleWatchdogTimer = window.setInterval(async () => {
+      if (!ApiService.isAvailable() || !ApiService.isAuthenticated()) return;
+      const idleMs = ApiService.getIdleTimeoutMs ? ApiService.getIdleTimeoutMs() : 30 * 60 * 1000;
+      const idleFor = Date.now() - lastUserActivityAt;
+      if (idleFor >= idleMs) {
+        await forceLogoutAndLeave('idle');
+        return;
+      }
+      const user = await ApiService.refreshSession();
+      updateAuthChrome();
+      if (!user) {
+        await forceLogoutAndLeave('expired');
+      }
+    }, 60 * 1000);
+  }
 
   async function initBackendConnection(cardIdParam, isScanEvent, editSlugParam) {
     const backendStatus = await ApiService.checkBackend();
@@ -77,11 +144,14 @@
 
     if (isPublicScanView) return;
 
+    if (!ApiService.isAuthenticated()) {
+      window.location.replace(authRedirectUrl('required'));
+      return;
+    }
+
+    startIdleWatchdog();
+
     if (editSlugParam) {
-      if (!ApiService.isAuthenticated()) {
-        window.location.href = '/auth';
-        return;
-      }
       const serverCard = await ApiService.fetchCardBySlug(editSlugParam, false);
       if (serverCard) {
         if (serverCard.userId && serverCard.userId !== ApiService.getCurrentUser().id) {
@@ -95,21 +165,16 @@
       return;
     }
 
-    if (ApiService.isAuthenticated()) {
-      const myCards = await ApiService.fetchMyCards();
-      if (myCards.length) {
-        const preferred =
-          myCards.find((card) => card.slug === state.slug) || myCards[0];
-        const serverCard = await ApiService.fetchCardBySlug(preferred.slug, false);
-        if (serverCard) {
-          state = { ...DEMO_DATA, ...serverCard };
-          populateForm();
-        }
+    const myCards = await ApiService.fetchMyCards();
+    if (myCards.length) {
+      const preferred =
+        myCards.find((card) => card.slug === state.slug) || myCards[0];
+      const serverCard = await ApiService.fetchCardBySlug(preferred.slug, false);
+      if (serverCard) {
+        state = { ...DEMO_DATA, ...serverCard };
+        populateForm();
       }
-      renderAll(true);
-      return;
     }
-
     renderAll(true);
   }
 
@@ -117,6 +182,7 @@
     const user = ApiService.getCurrentUser();
     const accountLabel = document.getElementById('accountLinkLabel');
     const authHint = document.getElementById('authSaveHint');
+    const logoutBtn = document.getElementById('btnLogoutEditor');
     if (accountLabel) {
       accountLabel.textContent = user
         ? user.firstName || user.email.split('@')[0]
@@ -124,6 +190,9 @@
     }
     if (authHint) {
       authHint.classList.toggle('hidden', Boolean(user) || !ApiService.isAvailable());
+    }
+    if (logoutBtn) {
+      logoutBtn.classList.toggle('hidden', !user);
     }
   }
 
@@ -993,5 +1062,12 @@
     const btnThemeTogglePublic = document.getElementById('btnThemeTogglePublic');
     if (btnThemeToggle) btnThemeToggle.addEventListener('click', StorageService.toggleTheme);
     if (btnThemeTogglePublic) btnThemeTogglePublic.addEventListener('click', StorageService.toggleTheme);
+
+    const btnLogoutEditor = document.getElementById('btnLogoutEditor');
+    if (btnLogoutEditor) {
+      btnLogoutEditor.addEventListener('click', () => {
+        forceLogoutAndLeave('logout');
+      });
+    }
   }
 })();

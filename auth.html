@@ -204,7 +204,7 @@
           <p id="devOtpHint" class="hidden text-sm text-[color:var(--ink-muted)] mt-2 m-0"></p>
         </div>
         <div>
-          <label for="otpPassword" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">Mot de passe (facultatif)</label>
+          <label for="otpPassword" id="otpPasswordLabel" class="block text-sm font-medium text-[color:var(--ink-muted)] mb-1.5">Mot de passe</label>
           <input
             id="otpPassword"
             name="password"
@@ -215,7 +215,7 @@
             autocomplete="new-password"
           />
           <p id="otpPasswordHint" class="text-sm text-[color:var(--ink-muted)] mt-2 m-0">
-            Pour vous connecter sans code la prochaine fois. 8 caractères minimum.
+            Obligatoire à l’inscription. 8 caractères minimum.
           </p>
         </div>
         <button type="submit" class="btn btn-primary h-11 min-h-11 w-full px-5">

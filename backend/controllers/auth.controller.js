@@ -292,11 +292,21 @@ async function handleVerifyOtp(req, res) {
     if (!codeCheck.ok) return sendJson(res, 400, { error: codeCheck.error });
     if (!methodCheck.ok) return sendJson(res, 400, { error: methodCheck.error });
 
-    // Mot de passe facultatif, valide avant de toucher au code pour ne pas le consommer.
+    // Inscription : mot de passe obligatoire avec l'OTP. Connexion : facultatif
+    // (definir / remplacer). Valide avant de toucher au code pour ne pas le consommer.
     let passwordCheck = null;
-    if (body.password !== undefined && body.password !== null && body.password !== '') {
+    const passwordProvided =
+      body.password !== undefined && body.password !== null && body.password !== '';
+    if (purpose === 'register' || passwordProvided) {
       passwordCheck = validatePassword(body.password);
-      if (!passwordCheck.ok) return sendJson(res, 400, { error: passwordCheck.error });
+      if (!passwordCheck.ok) {
+        return sendJson(res, 400, {
+          error:
+            purpose === 'register' && !passwordProvided
+              ? 'Mot de passe requis pour créer le compte'
+              : passwordCheck.error
+        });
+      }
     }
 
     // Connexion TOTP deja enrole : pas de challenge e-mail, throttle par e-mail.

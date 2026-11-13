@@ -244,11 +244,22 @@
       }
     }
 
-    document.getElementById('otpPassword').value = '';
-    document.getElementById('otpPasswordHint').textContent =
-      pending.purpose === 'register'
-        ? 'Pour vous connecter sans code la prochaine fois. 8 caractères minimum.'
+    const passwordInput = document.getElementById('otpPassword');
+    const passwordLabel = document.getElementById('otpPasswordLabel');
+    const passwordHint = document.getElementById('otpPasswordHint');
+    const registerNeedsPassword = pending.purpose === 'register';
+    passwordInput.value = '';
+    passwordInput.required = registerNeedsPassword;
+    if (passwordLabel) {
+      passwordLabel.textContent = registerNeedsPassword
+        ? 'Mot de passe'
+        : 'Mot de passe (facultatif)';
+    }
+    if (passwordHint) {
+      passwordHint.textContent = registerNeedsPassword
+        ? 'Obligatoire pour créer le compte. 8 caractères minimum.'
         : 'Renseignez-le pour définir ou remplacer votre mot de passe. 8 caractères minimum.';
+    }
     document.getElementById('otpCode').focus();
   }
 
@@ -416,7 +427,8 @@
       setSessionMessage('');
       await renderSessionState();
       showIdentityStep();
-      setAuthMessage('Vous êtes déconnecté.');
+      setAuthMessage('Vous êtes déconnecté. Connectez-vous pour revenir à l’éditeur.');
+      window.history.replaceState({}, '', buildAuthHref(authMode));
     });
   }
 
