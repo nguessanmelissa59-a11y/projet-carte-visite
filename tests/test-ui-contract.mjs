@@ -185,6 +185,7 @@ function testCssAtmosphere() {
   const css = read('assets/css/styles.css');
   for (const token of [
     '--accent',
+    '--on-accent',
     '--brand: #ff6b21',
     '--surface: #f7f7f5',
     '--accent: #0a6b45',
@@ -210,6 +211,10 @@ function testCssAtmosphere() {
   assert.doesNotMatch(css, /html\.dark[^{]*\{[^}]*--accent:\s*#2ecf88/);
   assert.doesNotMatch(css, /html\.dark\[data-card-theme='forest'\][^{]*\{[^}]*--accent:\s*#2ecf88/);
   assert.match(css, /html\.dark\[data-card-theme='forest'\][^{]*\{[^}]*--accent:\s*#0a6b45/);
+  // Pastilles claires en dark : texte sombre sur fond accent (Page / Lien web / Contact).
+  assert.match(css, /html\.dark\[data-card-theme='bronze'\][^{]*\{[^}]*--on-accent:\s*#18181b/);
+  assert.match(css, /html\.dark\[data-card-theme='obsidian'\][^{]*\{[^}]*--on-accent:\s*#18181b/);
+  assert.match(css, /\.mode-toggle button\.is-active[^{]*\{[^}]*color:\s*var\(--on-accent\)/);
 }
 
 function testBrandCharterAndHero() {
