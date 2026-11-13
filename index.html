@@ -451,18 +451,46 @@
         <div class="qr-mode-spotlight" aria-labelledby="qrModeSpotlightTitle">
           <div class="qr-mode-spotlight__head">
             <div class="min-w-0">
-              <p id="qrModeSpotlightTitle" class="qr-mode-spotlight__kicker">Type de QR</p>
+              <p id="qrModeSpotlightTitle" class="qr-mode-spotlight__kicker">Mode du QR</p>
               <p class="qr-mode-spotlight__lead">
-                Le mode <strong>Contact</strong> encode votre fiche dans le QR&nbsp;: enregistrement
-                immédiat, même sans réseau.
+                Basculez entre <strong>Lien web</strong> et <strong>Contact</strong>.
+                Le mode Contact encode votre fiche dans le QR&nbsp;: enregistrement immédiat,
+                même sans réseau.
               </p>
             </div>
-            <div class="mode-toggle mode-toggle--featured" role="group" aria-label="Type de QR">
-              <button type="button" id="qrModeUrl" class="is-active">Lien web</button>
-              <button type="button" id="qrModeVcard" aria-describedby="qrModeVcardHint">
-                Contact
-                <span class="mode-toggle__tag" id="qrModeVcardHint">Hors-ligne</span>
-              </button>
+            <div class="qr-mode-switch">
+              <div class="qr-mode-switch__meta">
+                <span class="qr-mode-switch__label" id="qrModeSwitchLabel">Changer de mode</span>
+                <span class="qr-mode-switch__hint" id="qrModeSwitchHint">Touchez une option</span>
+              </div>
+              <div
+                class="mode-toggle mode-toggle--featured"
+                role="radiogroup"
+                aria-labelledby="qrModeSwitchLabel"
+                aria-describedby="qrModeSwitchHint"
+              >
+                <button
+                  type="button"
+                  id="qrModeUrl"
+                  class="is-active"
+                  role="radio"
+                  aria-checked="true"
+                >
+                  <i data-lucide="link-2" class="mode-toggle__icon" aria-hidden="true"></i>
+                  <span class="mode-toggle__text">Lien web</span>
+                </button>
+                <button
+                  type="button"
+                  id="qrModeVcard"
+                  role="radio"
+                  aria-checked="false"
+                  aria-describedby="qrModeVcardHint"
+                >
+                  <i data-lucide="contact" class="mode-toggle__icon" aria-hidden="true"></i>
+                  <span class="mode-toggle__text">Contact</span>
+                  <span class="mode-toggle__tag" id="qrModeVcardHint">Hors-ligne</span>
+                </button>
+              </div>
             </div>
           </div>
 

@@ -906,8 +906,11 @@
     function setQrMode(nextMode) {
       qrMode = nextMode === 'vcard' ? 'vcard' : 'url';
       if (qrModeUrlBtn && qrModeVcardBtn) {
-        qrModeUrlBtn.classList.toggle('is-active', qrMode === 'url');
-        qrModeVcardBtn.classList.toggle('is-active', qrMode === 'vcard');
+        const urlOn = qrMode === 'url';
+        qrModeUrlBtn.classList.toggle('is-active', urlOn);
+        qrModeVcardBtn.classList.toggle('is-active', !urlOn);
+        qrModeUrlBtn.setAttribute('aria-checked', urlOn ? 'true' : 'false');
+        qrModeVcardBtn.setAttribute('aria-checked', urlOn ? 'false' : 'true');
       }
       QrView.renderCanvas(state, qrMode, true);
       if (window.lucide) window.lucide.createIcons();
