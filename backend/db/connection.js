@@ -102,6 +102,7 @@ function ensureColumn(tableName, columnName, columnSql) {
 ensureColumn('cards', 'user_id', 'user_id TEXT');
 ensureColumn('users', 'role', "role TEXT NOT NULL DEFAULT 'user'");
 ensureColumn('users', 'password_hash', "password_hash TEXT NOT NULL DEFAULT ''");
+ensureColumn('users', 'totp_secret', "totp_secret TEXT NOT NULL DEFAULT ''");
 ensureColumn('cards', 'job_title_id', 'job_title_id TEXT');
 ensureColumn('cards', 'organization_id', 'organization_id TEXT');
 
