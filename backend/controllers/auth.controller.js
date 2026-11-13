@@ -86,10 +86,12 @@ async function handleRegister(req, res) {
     const emailCheck = validateEmail(body.email);
     const firstNameCheck = validateName(body.firstName, 'Prénom');
     const lastNameCheck = validateName(body.lastName, 'Nom');
+    const methodCheck = validateOtpMethod(body.method);
 
     if (!emailCheck.ok) return sendJson(res, 400, { error: emailCheck.error });
     if (!firstNameCheck.ok) return sendJson(res, 400, { error: firstNameCheck.error });
     if (!lastNameCheck.ok) return sendJson(res, 400, { error: lastNameCheck.error });
+    if (!methodCheck.ok) return sendJson(res, 400, { error: methodCheck.error });
 
     const existing = getUserByEmail(emailCheck.value);
     if (existing && existing.emailVerified) {
@@ -111,19 +113,43 @@ async function handleRegister(req, res) {
       });
     }
 
+    const meta = {
+      firstName: firstNameCheck.value,
+      lastName: lastNameCheck.value
+    };
+
+    if (methodCheck.value === 'authenticator') {
+      const otp = await issueTotpEnrollment({
+        email: emailCheck.value,
+        purpose: 'register',
+        meta
+      });
+      if (!otp.ok) return sendJson(res, otp.status || 429, { error: otp.error });
+
+      return sendJson(res, 200, {
+        ok: true,
+        otpIssued: true,
+        method: 'authenticator',
+        message: TOTP_ENROLL_MESSAGE,
+        email: otp.email,
+        purpose: 'register',
+        expiresInSec: otp.expiresInSec,
+        otpauthUrl: otp.otpauthUrl,
+        totpSecret: otp.totpSecret
+      });
+    }
+
     const otp = await issueOtp({
       email: emailCheck.value,
       purpose: 'register',
-      meta: {
-        firstName: firstNameCheck.value,
-        lastName: lastNameCheck.value
-      }
+      meta
     });
     if (!otp.ok) return sendJson(res, otp.status || 429, { error: otp.error });
 
     return sendJson(res, 200, {
       ok: true,
       otpIssued: true,
+      method: 'email',
       message: MAIL_CONFIGURED ? OTP_SENT_BY_EMAIL_MESSAGE : OTP_CONSOLE_MESSAGE,
       email: otp.email,
       purpose: 'register',
@@ -139,7 +165,22 @@ async function handleLogin(req, res) {
   try {
     const body = await readJsonBody(req, 64 * 1024);
     const emailCheck = validateEmail(body.email);
+    const methodCheck = validateOtpMethod(body.method || 'email');
     if (!emailCheck.ok) return sendJson(res, 400, { error: emailCheck.error });
+    if (!methodCheck.ok) return sendJson(res, 400, { error: methodCheck.error });
+
+    if (methodCheck.value === 'authenticator') {
+      // Reponse uniforme : ne pas reveler si le compte a un TOTP.
+      return sendJson(res, 200, {
+        ok: true,
+        otpIssued: true,
+        method: 'authenticator',
+        message: TOTP_LOGIN_MESSAGE,
+        email: emailCheck.value,
+        purpose: 'login',
+        expiresInSec: Math.round(OTP_TTL_MS / 1000)
+      });
+    }
 
     const user = getUserByEmail(emailCheck.value);
 
@@ -157,6 +198,7 @@ async function handleLogin(req, res) {
       return sendJson(res, 200, {
         ok: true,
         otpIssued: true,
+        method: 'email',
         message: 'Si un compte existe pour cet e-mail, un code vient d’être envoyé.',
         email: emailCheck.value,
         purpose: 'login',
@@ -169,6 +211,7 @@ async function handleLogin(req, res) {
       return sendJson(res, 200, {
         ok: true,
         otpIssued: true,
+        method: 'email',
         message: 'Si un compte existe, un code OTP a été préparé.',
         email: emailCheck.value,
         purpose: 'login',
@@ -186,6 +229,7 @@ async function handleLogin(req, res) {
     return sendJson(res, 200, {
       ok: true,
       otpIssued: true,
+      method: 'email',
       message: OTP_CONSOLE_MESSAGE,
       email: otp.email,
       purpose: 'login',
