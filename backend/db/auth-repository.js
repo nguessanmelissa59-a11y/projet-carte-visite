@@ -69,7 +69,8 @@ const stmtInsertSession = db.prepare(`
   VALUES (?, ?, ?, ?, ?)
 `);
 const stmtGetSessionByTokenHash = db.prepare(`
-  SELECT s.*, u.email, u.first_name, u.last_name, u.email_verified, u.role
+  SELECT s.*, u.email, u.first_name, u.last_name, u.email_verified, u.role,
+    (u.password_hash != '') AS has_password
   FROM sessions s
   JOIN users u ON u.id = s.user_id
   WHERE s.token_hash = ?
@@ -77,6 +78,14 @@ const stmtGetSessionByTokenHash = db.prepare(`
 const stmtDeleteSession = db.prepare('DELETE FROM sessions WHERE id = ?');
 const stmtDeleteExpiredSessions = db.prepare('DELETE FROM sessions WHERE expires_at < ?');
 const stmtDeleteUserSessions = db.prepare('DELETE FROM sessions WHERE user_id = ?');
+const stmtDeleteOtherUserSessions = db.prepare(
+  'DELETE FROM sessions WHERE user_id = ? AND id != ?'
+);
+
+const stmtGetPasswordHash = db.prepare('SELECT password_hash FROM users WHERE id = ?');
+const stmtSetPasswordHash = db.prepare(`
+  UPDATE users SET password_hash = ?, updated_at = ? WHERE id = ?
+`);
 
 function normalizeEmail(email) {
   return String(email || '')
@@ -98,6 +107,8 @@ function mapUser(row) {
     lastName: row.last_name,
     emailVerified: Boolean(row.email_verified),
     role: normalizeRole(row.role),
+    // Le hash ne sort jamais du repository : seul un indicateur est expose.
+    hasPassword: Boolean(row.has_password ?? row.password_hash),
     createdAt: row.created_at,
     updatedAt: row.updated_at
   };
@@ -245,7 +256,8 @@ function getSessionByToken(rawToken) {
       firstName: row.first_name,
       lastName: row.last_name,
       emailVerified: Boolean(row.email_verified),
-      role: normalizeRole(row.role)
+      role: normalizeRole(row.role),
+      hasPassword: Boolean(row.has_password)
     }
   };
 }
@@ -257,6 +269,19 @@ function deleteSession(sessionId) {
 
 function deleteSessionsForUser(userId) {
   stmtDeleteUserSessions.run(userId);
+}
+
+function deleteOtherSessionsForUser(userId, keepSessionId) {
+  stmtDeleteOtherUserSessions.run(userId, keepSessionId);
+}
+
+function getPasswordHash(userId) {
+  const row = stmtGetPasswordHash.get(userId);
+  return row ? String(row.password_hash || '') : '';
+}
+
+function setPasswordHash(userId, passwordHash) {
+  stmtSetPasswordHash.run(String(passwordHash || ''), new Date().toISOString(), userId);
 }
 
 function parseOtpMeta(row) {
@@ -301,6 +326,9 @@ module.exports = {
   getSessionByToken,
   deleteSession,
   deleteSessionsForUser,
+  deleteOtherSessionsForUser,
+  getPasswordHash,
+  setPasswordHash,
   parseOtpMeta,
   verifyOtpCode,
   hashValue
