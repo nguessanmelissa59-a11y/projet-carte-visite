@@ -170,14 +170,16 @@ Déclenchée par `?id=:slug`, `/?id=:slug&scan=1`, ou fallback `?data=` / `#data
 ### 4.3 Compte & auth (`auth.html`)
 
 Connexion **avec ou sans OTP** : code reçu par e-mail, ou mot de passe (facultatif).
+Modules **séparés** : `/auth` (connexion) et `/register` (inscription), avec liens croisés.
 
-1. Inscription (prénom, nom, e-mail), toujours confirmée par un code OTP.
-2. Réception OTP (e-mail ; en local, code aussi en console serveur / `devOtp`).
-3. Vérification → cookie de session. Un mot de passe peut être défini à cette étape.
-4. Connexions suivantes : mot de passe (sans code) ou code OTP, au choix.
-5. Mot de passe oublié : connexion par code, en saisissant un nouveau mot de passe à l’étape du code.
-6. Accès profil compte, mot de passe et liste des cartes (`/api/me/cards`).
-7. Dans l’éditeur : hint « connectez-vous pour garder et modifier », lien compte dans le header.
+1. Inscription seule (`/register` : prénom, nom, e-mail), toujours confirmée par un code OTP.
+2. Connexion seule (`/auth` : mot de passe ou code e-mail) ; lien « Créer un compte » si besoin.
+3. Réception OTP (e-mail ; en local, code aussi en console serveur / `devOtp`).
+4. Vérification → cookie de session. Un mot de passe peut être défini à cette étape.
+5. Connexions suivantes : mot de passe (sans code) ou code OTP, au choix.
+6. Mot de passe oublié : connexion par code, en saisissant un nouveau mot de passe à l’étape du code.
+7. Accès profil compte, mot de passe et liste des cartes (`/api/me/cards`).
+8. Dans l’éditeur : hint « connectez-vous pour garder et modifier », lien compte dans le header.
 
 Règles mot de passe :
 

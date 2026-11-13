@@ -423,6 +423,32 @@ function testSharePublicButton() {
   assert.match(main, /window\.prompt\('Copiez ce lien :'/);
 }
 
+function testAuthModulesSeparated() {
+  const html = read('auth.html');
+  const page = read('src/ui/auth-page.js');
+  const server = read('backend/server.js');
+  const css = read('assets/css/styles.css');
+
+  assert.match(html, /id="authLoginPanel"/);
+  assert.match(html, /id="authRegisterPanel"/);
+  assert.match(html, /id="authRegisterPanel"[^>]*class="[^"]*\bhidden\b/);
+  assert.match(html, /id="linkToRegister"/);
+  assert.match(html, /id="linkToLogin"/);
+  assert.match(html, /Pas encore de compte \?/);
+  assert.match(html, /Déjà inscrit \?/);
+  assert.doesNotMatch(html, /auth-divider/);
+
+  assert.match(page, /function resolveAuthMode/);
+  assert.match(page, /function applyAuthMode/);
+  assert.match(page, /mode === 'register'/);
+  assert.match(page, /buildAuthHref\('register'\)/);
+
+  assert.match(server, /pathname === '\/register'/);
+  assert.match(server, /params\.set\('mode', 'register'\)/);
+  assert.match(css, /\.auth-switch/);
+  assert.match(css, /\.auth-switch__link/);
+}
+
 function testAuthPasswordOrCode() {
   const html = read('auth.html');
   const page = read('src/ui/auth-page.js');
@@ -460,6 +486,7 @@ function testAuthPasswordOrCode() {
 }
 
 const tests = [
+  ['auth modules separated', testAuthModulesSeparated],
   ['auth password or code', testAuthPasswordOrCode],
   ['html contracts', testHtmlContracts],
   ['offline mode notice', testOfflineModeNotice],
