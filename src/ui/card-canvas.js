@@ -18,9 +18,12 @@ window.VCardApp.CardCanvasExporter = (function () {
   const PRINT_PAGE_HEIGHT_MM = 297;
   const MM_TO_PT = 72 / 25.4;
 
-  /** Impositions A4 : une carte centree, ou planche de cartes bord a bord a decouper. */
+  /**
+   * Impositions A4 : chaque ligne est une paire recto | verso cote a cote.
+   * cols reste a 2 (recto puis verso) ; rows = nombre de cartes completes.
+   */
   const PRINT_LAYOUTS = {
-    single: { id: 'single', cols: 1, rows: 1 },
+    single: { id: 'single', cols: 2, rows: 1 },
     sheet: { id: 'sheet', cols: 2, rows: 5 }
   };
 
