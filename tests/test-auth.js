@@ -124,16 +124,30 @@ test('inscription OTP puis session cookie', async () => {
   assert.equal(regBody.otpIssued, true);
   assert.ok(regBody.devOtp);
 
-  const verifyRes = createMockRes();
+  const withoutPassword = createMockRes();
   await handleVerifyOtp(
     createMockReq('POST', {
       email: 'ami@example.com',
       code: regBody.devOtp,
       purpose: 'register'
     }),
+    withoutPassword
+  );
+  assert.equal(withoutPassword.statusCode, 400);
+  assert.match(String(withoutPassword.json().error || ''), /mot de passe/i);
+
+  const verifyRes = createMockRes();
+  await handleVerifyOtp(
+    createMockReq('POST', {
+      email: 'ami@example.com',
+      code: regBody.devOtp,
+      purpose: 'register',
+      password: 'phrase de passe 42'
+    }),
     verifyRes
   );
   assert.equal(verifyRes.statusCode, 200);
+  assert.equal(verifyRes.json().user.hasPassword, true);
   const cookie = cookieFrom(verifyRes);
   assert.ok(cookie.includes(SESSION_COOKIE_NAME));
 
@@ -160,7 +174,8 @@ test('sauvegarde carte réservée au propriétaire connecté', async () => {
     createMockReq('POST', {
       email: 'owner@example.com',
       code: otp,
-      purpose: 'register'
+      purpose: 'register',
+      password: 'phrase de passe 42'
     }),
     verifyRes
   );
@@ -251,7 +266,8 @@ test('profil utilisateur modifiable en session', async () => {
     createMockReq('POST', {
       email: 'edit@example.com',
       code: regRes.json().devOtp,
-      purpose: 'register'
+      purpose: 'register',
+      password: 'phrase de passe 42'
     }),
     verifyRes
   );
