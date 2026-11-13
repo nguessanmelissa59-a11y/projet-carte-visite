@@ -13,6 +13,7 @@ const {
   MAIL_CONFIGURED
 } = require('../config/env');
 const { sendOtpEmail } = require('./mailer');
+const { generateSecret, buildOtpauthUrl } = require('./totp-service');
 
 function generateOtpCode() {
   return String(crypto.randomInt(0, 1_000_000)).padStart(6, '0');
@@ -99,8 +100,46 @@ function getCurrentOtp(email, purpose) {
   return getActiveOtp(email, purpose);
 }
 
+/**
+ * Inscription via application authenticator : secret TOTP + URI otpauth
+ * (QR a scanner). Aucun e-mail envoye.
+ */
+async function issueTotpEnrollment({ email, purpose, meta }) {
+  const cleanEmail = normalizeEmail(email);
+  const gate = canRequestOtp(cleanEmail);
+  if (!gate.ok) return gate;
+
+  const secret = generateSecret();
+  // code_hash ne doit pas matcher un code a 6 chiffres saisi au hasard.
+  const placeholder = `totp:${crypto.randomBytes(16).toString('hex')}`;
+  createOtpChallenge({
+    email: cleanEmail,
+    purpose,
+    code: placeholder,
+    ttlMs: OTP_TTL_MS,
+    meta: {
+      ...(meta || {}),
+      method: 'authenticator',
+      totpSecret: secret
+    }
+  });
+
+  return {
+    ok: true,
+    email: cleanEmail,
+    purpose,
+    method: 'authenticator',
+    delivery: 'authenticator',
+    otpauthUrl: buildOtpauthUrl({ secret, email: cleanEmail }),
+    // Cle manuelle si le scan QR echoue (meme secret que dans l'URI).
+    totpSecret: secret,
+    expiresInSec: Math.round(OTP_TTL_MS / 1000)
+  };
+}
+
 module.exports = {
   issueOtp,
+  issueTotpEnrollment,
   getCurrentOtp,
   generateOtpCode
 };
