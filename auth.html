@@ -65,6 +65,16 @@
 
     <section id="authGuestPanel" class="panel panel-pad p-5 sm:p-6 reveal reveal-delay-1">
       <div id="authStepIdentity">
+        <div id="googleAuthBlock" class="hidden">
+          <a id="btnGoogleAuth" class="btn btn-secondary h-11 min-h-11 w-full px-5 no-underline" href="/api/auth/google/start">
+            <span>Continuer avec Google</span>
+          </a>
+          <p class="text-sm text-[color:var(--ink-muted)] mt-2 m-0">
+            Avec votre adresse Gmail, sans code ni mot de passe.
+          </p>
+          <div class="auth-divider" aria-hidden="true"></div>
+        </div>
+
         <div id="authLoginPanel">
           <div class="section-label">
             <span class="idx">1</span>

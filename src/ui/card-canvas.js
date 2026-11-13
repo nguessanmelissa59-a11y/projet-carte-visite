@@ -1289,7 +1289,8 @@ window.VCardApp.CardCanvasExporter = (function () {
       throw new Error('PDF imprimable: aucune page');
     }
 
-    const pageLayout = layout && layout.cols > 0 && layout.rows > 0 ? layout : PRINT_LAYOUTS.single;
+    const hasGrid = layout && layout.cols > 0 && layout.rows > 0;
+    const pageLayout = hasGrid ? layout : PRINT_LAYOUTS.single;
     const pageW = PRINT_PAGE_WIDTH_MM * MM_TO_PT;
     const pageH = PRINT_PAGE_HEIGHT_MM * MM_TO_PT;
     const cardW = PRINT_CARD_WIDTH_MM * MM_TO_PT;

@@ -2,11 +2,22 @@
   const ApiService = window.VCardApp && window.VCardApp.ApiService;
   const StorageService = window.VCardApp && window.VCardApp.StorageService;
 
+  // purpose reste vide tant qu'aucun code n'a été demandé : la page suit alors l'URL.
   let pending = {
     email: '',
-    purpose: 'register'
+    purpose: ''
   };
   let authMode = 'login';
+  let emailDelivery = false;
+
+  const GOOGLE_ERROR_MESSAGES = {
+    google_unavailable:
+      'La connexion avec Google n’est pas disponible ici. Utilisez votre e-mail ci-dessous.',
+    google_cancelled: 'Connexion avec Google annulée.',
+    google_email:
+      'Cette adresse n’est pas gérée par Google. Créez votre compte avec votre e-mail ci-dessous.',
+    google_failed: 'La connexion avec Google n’a pas abouti. Réessayez.'
+  };
 
   document.addEventListener('DOMContentLoaded', async () => {
     if (!ApiService || !StorageService) {
@@ -31,7 +42,42 @@
       return;
     }
     await renderSessionState();
+    await applyAuthProviders();
+    showGoogleError();
   });
+
+  function safeNextParam() {
+    const next = new URLSearchParams(window.location.search).get('next');
+    // Chemin local uniquement : "//hote" et "/\hote" sortent du site.
+    return next && /^\/(?![/\\])/.test(next) ? next : '';
+  }
+
+  async function applyAuthProviders() {
+    const providers = await ApiService.fetchAuthProviders();
+    emailDelivery = providers.emailDelivery;
+
+    const block = document.getElementById('googleAuthBlock');
+    const link = document.getElementById('btnGoogleAuth');
+    if (!block || !link) return;
+    const next = safeNextParam();
+    link.href = next
+      ? `/api/auth/google/start?next=${encodeURIComponent(next)}`
+      : '/api/auth/google/start';
+    block.classList.toggle('hidden', !providers.google);
+  }
+
+  // Le paramètre d'URL sert de clé dans une liste fixe : il n'est jamais affiché tel quel.
+  function showGoogleError() {
+    const params = new URLSearchParams(window.location.search);
+    const key = params.get('error');
+    if (!key) return;
+    if (Object.hasOwn(GOOGLE_ERROR_MESSAGES, key)) {
+      setAuthMessage(GOOGLE_ERROR_MESSAGES[key]);
+    }
+    params.delete('error');
+    const query = params.toString();
+    window.history.replaceState(null, '', window.location.pathname + (query ? `?${query}` : ''));
+  }
 
   function resolveAuthMode() {
     const params = new URLSearchParams(window.location.search);

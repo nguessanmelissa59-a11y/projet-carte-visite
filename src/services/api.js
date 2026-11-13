@@ -103,6 +103,19 @@ window.VCardApp.ApiService = (function () {
     return data;
   }
 
+  async function fetchAuthProviders() {
+    const fallback = { google: false, emailDelivery: false };
+    if (!backendAvailable) return fallback;
+    try {
+      const res = await fetch('/api/auth/providers', { method: 'GET', credentials: 'include' });
+      if (!res.ok) return fallback;
+      const data = await parseJson(res);
+      return { google: data.google === true, emailDelivery: data.emailDelivery === true };
+    } catch {
+      return fallback;
+    }
+  }
+
   async function loginWithPassword({ email, password }) {
     const res = await fetch('/api/auth/login/password', {
       method: 'POST',
@@ -253,6 +266,7 @@ window.VCardApp.ApiService = (function () {
     refreshSession,
     register,
     login,
+    fetchAuthProviders,
     loginWithPassword,
     setPassword,
     verifyOtp,
