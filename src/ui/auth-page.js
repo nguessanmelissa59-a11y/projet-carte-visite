@@ -105,7 +105,10 @@
   function showIdentityStep() {
     document.getElementById('authStepIdentity').classList.remove('hidden');
     document.getElementById('otpForm').classList.add('hidden');
-    applyAuthMode(pending.purpose === 'register' ? 'register' : authMode || 'login');
+    let mode = resolveAuthMode();
+    if (pending.purpose === 'register') mode = 'register';
+    else if (pending.purpose === 'login') mode = 'login';
+    applyAuthMode(mode);
     setStep(1);
   }
 
