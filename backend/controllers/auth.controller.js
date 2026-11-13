@@ -4,11 +4,17 @@ const {
   validateEmail,
   validateName,
   validateOtpCode,
+  validateOtpMethod,
   validatePassword,
   normalizePassword
 } = require('../services/auth-validation');
-const { issueOtp } = require('../services/otp-service');
+const { issueOtp, issueTotpEnrollment } = require('../services/otp-service');
 const { hashPassword, verifyPassword } = require('../services/password-service');
+const {
+  encryptSecret,
+  decryptSecret,
+  verifyTotp
+} = require('../services/totp-service');
 const { isLocked, registerAttempt, clearAttempts } = require('../services/login-throttle');
 const {
   startSession,
@@ -31,6 +37,8 @@ const {
   verifyOtpCode,
   getPasswordHash,
   setPasswordHash,
+  getTotpSecretEncrypted,
+  setTotpSecretEncrypted,
   deleteSessionsForUser,
   deleteOtherSessionsForUser
 } = require('../db/auth-repository');
@@ -39,6 +47,9 @@ const { listCardsByUserId } = require('../db/repository');
 const OTP_CONSOLE_MESSAGE =
   'Code OTP envoyé. Vérifiez votre e-mail (ou la console serveur en local).';
 const OTP_SENT_BY_EMAIL_MESSAGE = 'Code envoyé. Vérifiez votre boîte e-mail.';
+const TOTP_ENROLL_MESSAGE =
+  'Scannez le QR Code avec votre application authenticator, puis saisissez le code à 6 chiffres.';
+const TOTP_LOGIN_MESSAGE = 'Entrez le code à 6 chiffres de votre application authenticator.';
 const LOGIN_FAILED_MESSAGE = 'E-mail ou mot de passe incorrect';
 const LOGIN_LOCKED_MESSAGE =
   'Trop de tentatives. Réessayez plus tard ou connectez-vous avec un code.';
@@ -52,7 +63,8 @@ function publicUser(user) {
     lastName: user.lastName,
     emailVerified: Boolean(user.emailVerified),
     role: user.role === 'admin' ? 'admin' : 'user',
-    hasPassword: Boolean(user.hasPassword)
+    hasPassword: Boolean(user.hasPassword),
+    hasTotp: Boolean(user.hasTotp)
   };
 }
 
