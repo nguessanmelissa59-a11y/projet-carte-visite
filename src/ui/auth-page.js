@@ -293,16 +293,23 @@
         const lastName = document.getElementById('regLastName').value.trim();
         const email = document.getElementById('regEmail').value.trim();
         const data = await ApiService.register({ email, firstName, lastName, method });
+        const resolvedMethod = data.method === 'authenticator' ? 'authenticator' : 'email';
+        if (method === 'authenticator' && (resolvedMethod !== 'authenticator' || !data.otpauthUrl)) {
+          setAuthMessage(
+            'Le QR Authenticator n’est pas disponible sur ce serveur. Arrêtez npm start, relancez-le, puis réessayez.'
+          );
+          return;
+        }
         pending = {
           email: data.email,
           purpose: 'register',
-          method: data.method === 'authenticator' ? 'authenticator' : 'email'
+          method: resolvedMethod
         };
         showCodeStep(data);
         setAuthMessage(
-          method === 'authenticator'
-            ? 'Scannez le QR Code, puis validez le code affiché dans l’application.'
-            : 'Entrez le code pour activer votre compte.'
+          resolvedMethod === 'authenticator'
+            ? data.message || 'Scannez le QR Code, puis validez le code affiché dans l’application.'
+            : data.message || 'Entrez le code pour activer votre compte.'
         );
       } catch (err) {
         setAuthMessage(err.message || 'Impossible de créer le compte');
