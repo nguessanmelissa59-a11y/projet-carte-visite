@@ -19,6 +19,7 @@ const {
 } = require('../services/session-service');
 const {
   getUserByEmail,
+  getUserById,
   createUser,
   updateUserProfile,
   markUserVerified,
@@ -27,9 +28,17 @@ const {
   incrementOtpAttempts,
   consumeOtp,
   parseOtpMeta,
-  verifyOtpCode
+  verifyOtpCode,
+  getPasswordHash,
+  setPasswordHash,
+  deleteSessionsForUser,
+  deleteOtherSessionsForUser
 } = require('../db/auth-repository');
 const { listCardsByUserId } = require('../db/repository');
+
+const LOGIN_FAILED_MESSAGE = 'E-mail ou mot de passe incorrect';
+const LOGIN_LOCKED_MESSAGE =
+  'Trop de tentatives. Réessayez plus tard ou connectez-vous avec un code.';
 
 function publicUser(user) {
   if (!user) return null;
@@ -39,8 +48,21 @@ function publicUser(user) {
     firstName: user.firstName,
     lastName: user.lastName,
     emailVerified: Boolean(user.emailVerified),
-    role: user.role === 'admin' ? 'admin' : 'user'
+    role: user.role === 'admin' ? 'admin' : 'user',
+    hasPassword: Boolean(user.hasPassword)
   };
+}
+
+// Le cookie SameSite=Lax ne couvre pas une page servie par le meme site sur une
+// autre origine : on refuse donc toute origine differente de l'hote appele.
+function isSameOriginRequest(req) {
+  const origin = req.headers.origin;
+  if (!origin) return true;
+  try {
+    return new URL(origin).host === req.headers.host;
+  } catch {
+    return false;
+  }
 }
 
 async function handleRegister(req, res) {
@@ -57,7 +79,7 @@ async function handleRegister(req, res) {
     const existing = getUserByEmail(emailCheck.value);
     if (existing && existing.emailVerified) {
       return sendJson(res, 409, {
-        error: 'Un compte existe déjà pour cet e-mail. Connectez-vous par OTP.'
+        error: 'Un compte existe déjà pour cet e-mail. Connectez-vous.'
       });
     }
 
@@ -148,6 +170,13 @@ async function handleVerifyOtp(req, res) {
     if (!emailCheck.ok) return sendJson(res, 400, { error: emailCheck.error });
     if (!codeCheck.ok) return sendJson(res, 400, { error: codeCheck.error });
 
+    // Mot de passe facultatif, valide avant de toucher au code pour ne pas le consommer.
+    let passwordCheck = null;
+    if (body.password !== undefined && body.password !== null && body.password !== '') {
+      passwordCheck = validatePassword(body.password);
+      if (!passwordCheck.ok) return sendJson(res, 400, { error: passwordCheck.error });
+    }
+
     const challenge = getActiveOtp(emailCheck.value, purpose);
     if (!challenge) {
       return sendJson(res, 400, { error: 'Code expiré ou introuvable. Demandez un nouveau OTP.' });
@@ -177,6 +206,13 @@ async function handleVerifyOtp(req, res) {
     }
 
     user = markUserVerified(user.id);
+    if (passwordCheck) {
+      // Seul le detenteur du code choisit le mot de passe ; les sessions anterieures tombent.
+      setPasswordHash(user.id, await hashPassword(passwordCheck.value));
+      deleteSessionsForUser(user.id);
+      clearAttempts(user.email);
+      user = getUserById(user.id);
+    }
     user = ensureAdminBootstrap(user);
     const session = startSession(user.id);
 
