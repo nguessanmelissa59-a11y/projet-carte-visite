@@ -176,11 +176,15 @@ function testCssAtmosphere() {
   const css = read('assets/css/styles.css');
   for (const token of [
     '--accent',
-    '--surface: #f6f0e2',
+    '--brand: #ff6b21',
+    '--surface: #f4f1ea',
     '--accent: #0a6b45',
     '--info-warm',
     '.beta-chip',
     '.btn-ink',
+    '.hero-mark',
+    '.theme-mode',
+    '.easy-banner--auth',
     'body.app-shell',
     '.phone-shell',
     '.profile-card',
@@ -197,6 +201,24 @@ function testCssAtmosphere() {
   assert.doesNotMatch(css, /html\.dark[^{]*\{[^}]*--accent:\s*#2ecf88/);
   assert.doesNotMatch(css, /html\.dark\[data-card-theme='forest'\][^{]*\{[^}]*--accent:\s*#2ecf88/);
   assert.match(css, /html\.dark\[data-card-theme='forest'\][^{]*\{[^}]*--accent:\s*#0a6b45/);
+}
+
+function testBrandCharterAndHero() {
+  const html = read('index.html');
+  const css = read('assets/css/styles.css');
+  const storage = read('src/services/storage.js');
+
+  assert.match(html, /Votre carte, <mark class="hero-mark">prête à partager\.<\/mark>/);
+  assert.match(html, /easy-banner--auth/);
+  assert.match(html, /Connectez-vous pour garder et modifier votre carte plus tard\./);
+  assert.match(html, /data-theme-mode="auto"/);
+  assert.match(html, /data-theme-mode="light"/);
+  assert.match(html, /data-theme-mode="dark"/);
+  assert.match(html, /theme-color" content="#ff6b21"/);
+  assert.match(css, /\.btn-primary[^{]*\{[^}]*var\(--brand\)/);
+  assert.match(css, /\.brand-mark[^{]*\{[^}]*var\(--brand\)/);
+  assert.match(storage, /function setThemeMode/);
+  assert.match(storage, /bindThemeModeControls/);
 }
 
 function testForestGreenTintUnified() {

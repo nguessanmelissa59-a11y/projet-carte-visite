@@ -1767,19 +1767,28 @@ html.dark .qr-frame {
   min-height: 2.75rem;
   padding: 0 0.85rem;
   border: 0;
-  border-radius: 0.5rem;
+  border-radius: 0.1rem;
   background: transparent;
   color: var(--ink-muted);
   font-size: 0.875rem;
-  font-weight: 550;
+  font-weight: 600;
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .mode-toggle button.is-active {
+  background: var(--line-strong);
+  color: #fff;
+  box-shadow: none;
+}
+
+html.dark .mode-toggle {
   background: var(--surface-elevated);
-  color: var(--ink);
-  box-shadow: 0 1px 2px rgba(20, 18, 15, 0.08);
+}
+
+html.dark .mode-toggle button.is-active {
+  background: #fff;
+  color: #111;
 }
 
 .reveal {

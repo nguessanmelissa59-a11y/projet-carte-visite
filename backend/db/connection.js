@@ -105,6 +105,13 @@ ensureColumn('users', 'password_hash', "password_hash TEXT NOT NULL DEFAULT ''")
 ensureColumn('users', 'totp_secret', "totp_secret TEXT NOT NULL DEFAULT ''");
 ensureColumn('cards', 'job_title_id', 'job_title_id TEXT');
 ensureColumn('cards', 'organization_id', 'organization_id TEXT');
+ensureColumn('sessions', 'last_active_at', 'last_active_at TEXT');
+
+db.exec(`
+  UPDATE sessions
+  SET last_active_at = created_at
+  WHERE last_active_at IS NULL OR last_active_at = ''
+`);
 
 db.exec(`
   CREATE INDEX IF NOT EXISTS idx_cards_user_id ON cards(user_id);

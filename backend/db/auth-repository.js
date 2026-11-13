@@ -1,6 +1,6 @@
 const crypto = require('node:crypto');
 const { db, newId } = require('./connection');
-const { isAdminEmail } = require('../config/env');
+const { isAdminEmail, SESSION_IDLE_MS } = require('../config/env');
 
 const ROLES = Object.freeze({ USER: 'user', ADMIN: 'admin' });
 
