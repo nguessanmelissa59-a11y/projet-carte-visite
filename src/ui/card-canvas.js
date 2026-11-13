@@ -18,6 +18,18 @@ window.VCardApp.CardCanvasExporter = (function () {
   const PRINT_PAGE_HEIGHT_MM = 297;
   const MM_TO_PT = 72 / 25.4;
 
+  /** Impositions A4 : une carte centree, ou planche de cartes bord a bord a decouper. */
+  const PRINT_LAYOUTS = {
+    single: { id: 'single', cols: 1, rows: 1 },
+    sheet: { id: 'sheet', cols: 2, rows: 5 }
+  };
+
+  function resolvePrintLayout(layoutId) {
+    return Object.prototype.hasOwnProperty.call(PRINT_LAYOUTS, layoutId)
+      ? PRINT_LAYOUTS[layoutId]
+      : PRINT_LAYOUTS.single;
+  }
+
   function loadImage(src) {
     return new Promise((resolve) => {
       if (!src) return resolve(null);
