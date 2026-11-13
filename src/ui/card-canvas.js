@@ -1222,15 +1222,16 @@ window.VCardApp.CardCanvasExporter = (function () {
   }
 
   /**
-   * Contenu d'une page : grille de cartes centree sur la feuille, traits de coupe
-   * dans les marges au droit de chaque ligne de decoupe, puis libelle.
-   * La grille etant centree, recto et verso se superposent en impression recto verso.
+   * Contenu d'une page : chaque ligne place le recto (Im0) a gauche et le verso (Im1)
+   * a droite, grille centree, traits de coupe, puis libelle.
    */
   function buildPageContent(layout, pageW, pageH, cardW, cardH, label) {
     const mark = 8;
     const gap = 2;
-    const gridW = cardW * layout.cols;
-    const gridH = cardH * layout.rows;
+    const cols = 2;
+    const rows = Math.max(1, layout && layout.rows ? layout.rows : 1);
+    const gridW = cardW * cols;
+    const gridH = cardH * rows;
     const originX = (pageW - gridW) / 2;
     const originY = (pageH - gridH) / 2;
     const right = originX + gridW;
@@ -1240,28 +1241,31 @@ window.VCardApp.CardCanvasExporter = (function () {
       .slice(0, 90);
     const ops = [];
 
-    for (let row = 0; row < layout.rows; row += 1) {
-      for (let col = 0; col < layout.cols; col += 1) {
-        const x = originX + col * cardW;
-        const y = originY + row * cardH;
-        ops.push(
-          'q',
-          `${cardW.toFixed(2)} 0 0 ${cardH.toFixed(2)} ${x.toFixed(2)} ${y.toFixed(2)} cm`,
-          '/Im0 Do',
-          'Q'
-        );
-      }
+    for (let row = 0; row < rows; row += 1) {
+      const y = originY + row * cardH;
+      const xRecto = originX;
+      const xVerso = originX + cardW;
+      ops.push(
+        'q',
+        `${cardW.toFixed(2)} 0 0 ${cardH.toFixed(2)} ${xRecto.toFixed(2)} ${y.toFixed(2)} cm`,
+        '/Im0 Do',
+        'Q',
+        'q',
+        `${cardW.toFixed(2)} 0 0 ${cardH.toFixed(2)} ${xVerso.toFixed(2)} ${y.toFixed(2)} cm`,
+        '/Im1 Do',
+        'Q'
+      );
     }
 
     ops.push('0.4 w', '0 0 0 RG');
-    for (let col = 0; col <= layout.cols; col += 1) {
+    for (let col = 0; col <= cols; col += 1) {
       const x = (originX + col * cardW).toFixed(2);
       ops.push(
         `${x} ${(originY - mark).toFixed(2)} m ${x} ${(originY - gap).toFixed(2)} l S`,
         `${x} ${(top + gap).toFixed(2)} m ${x} ${(top + mark).toFixed(2)} l S`
       );
     }
-    for (let row = 0; row <= layout.rows; row += 1) {
+    for (let row = 0; row <= rows; row += 1) {
       const y = (originY + row * cardH).toFixed(2);
       ops.push(
         `${(originX - mark).toFixed(2)} ${y} m ${(originX - gap).toFixed(2)} ${y} l S`,
@@ -1269,7 +1273,6 @@ window.VCardApp.CardCanvasExporter = (function () {
       );
     }
 
-    // Le libelle reste sous les traits de coupe, sans sortir de la zone imprimable.
     const labelY = Math.max(originY - 28, 12);
     ops.push(
       'BT /F1 9 Tf 0.35 0.35 0.35 rg',
@@ -1281,9 +1284,9 @@ window.VCardApp.CardCanvasExporter = (function () {
   }
 
   /**
-   * Construit un PDF A4 multi-pages. Chaque page repete son image selon l'imposition :
-   * une carte 85x55 centree (defaut) ou une planche de cartes identiques.
-   * @param {Array<{jpegBytes: Uint8Array, pixelW: number, pixelH: number, label: string}>} pages
+   * Construit un PDF A4 d'une page : recto et verso cote a cote (une ou plusieurs paires).
+   * @param {Array<{jpegBytes: Uint8Array, pixelW: number, pixelH: number, label?: string}>} pages
+   *        pages[0] = recto, pages[1] = verso
    * @param {{cols: number, rows: number}} [layout]
    */
   function buildPrintablePdfBytes(pages, layout) {
@@ -1292,6 +1295,8 @@ window.VCardApp.CardCanvasExporter = (function () {
       throw new Error('PDF imprimable: aucune page');
     }
 
+    const recto = pageList[0];
+    const verso = pageList[1] || pageList[0];
     const hasGrid = layout && layout.cols > 0 && layout.rows > 0;
     const pageLayout = hasGrid ? layout : PRINT_LAYOUTS.single;
     const pageW = PRINT_PAGE_WIDTH_MM * MM_TO_PT;
@@ -1301,6 +1306,9 @@ window.VCardApp.CardCanvasExporter = (function () {
     const encoder = new TextEncoder();
     const chunks = [];
     const offsets = [0];
+    const label =
+      recto.label ||
+      'Recto + verso 85 x 55 mm - cote a cote - Imprimer a 100%';
 
     function sizeOf() {
       return chunks.reduce((n, c) => n + c.length, 0);
@@ -1316,66 +1324,49 @@ window.VCardApp.CardCanvasExporter = (function () {
       return offsets.length - 1;
     }
 
+    function writeJpegImage(objId, face) {
+      startObj();
+      write(
+        `${objId} 0 obj\n<< /Type /XObject /Subtype /Image ` +
+          `/Width ${face.pixelW} /Height ${face.pixelH} ` +
+          `/ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode ` +
+          `/Length ${face.jpegBytes.length} >>\nstream\n`
+      );
+      write(face.jpegBytes);
+      write('endstream\nendobj\n');
+    }
+
     write('%PDF-1.4\n%\xFF\xFF\xFF\xFF\n');
+
+    const pageObjId = 3;
+    const rectoImageObjId = 4;
+    const versoImageObjId = 5;
+    const contentObjId = 6;
+    const fontObjId = 7;
 
     startObj();
     write('1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n');
 
-    const pageObjIds = [];
-    const pagePayloads = [];
-
-    pageList.forEach((page, index) => {
-      const pageObjId = 3 + index * 3;
-      const imageObjId = pageObjId + 1;
-      const contentObjId = pageObjId + 2;
-      pageObjIds.push(pageObjId);
-      pagePayloads.push({
-        pageObjId,
-        imageObjId,
-        contentObjId,
-        jpegBytes: page.jpegBytes,
-        pixelW: page.pixelW,
-        pixelH: page.pixelH,
-        label:
-          page.label ||
-          `Carte 85 x 55 mm - page ${index + 1} - Imprimer a echelle reelle`
-      });
-    });
-
-    const fontObjId = 3 + pageList.length * 3;
-    const kids = pageObjIds.map((id) => `${id} 0 R`).join(' ');
+    startObj();
+    write('2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n');
 
     startObj();
     write(
-      `2 0 obj\n<< /Type /Pages /Kids [${kids}] /Count ${pageList.length} >>\nendobj\n`
+      `${pageObjId} 0 obj\n<< /Type /Page /Parent 2 0 R ` +
+        `/MediaBox [0 0 ${pageW.toFixed(2)} ${pageH.toFixed(2)}] ` +
+        `/Resources << /XObject << /Im0 ${rectoImageObjId} 0 R /Im1 ${versoImageObjId} 0 R >> ` +
+        `/Font << /F1 ${fontObjId} 0 R >> >> /Contents ${contentObjId} 0 R >>\nendobj\n`
     );
 
-    pagePayloads.forEach((page) => {
-      startObj();
-      write(
-        `${page.pageObjId} 0 obj\n<< /Type /Page /Parent 2 0 R ` +
-          `/MediaBox [0 0 ${pageW.toFixed(2)} ${pageH.toFixed(2)}] ` +
-          `/Resources << /XObject << /Im0 ${page.imageObjId} 0 R >> ` +
-          `/Font << /F1 ${fontObjId} 0 R >> >> /Contents ${page.contentObjId} 0 R >>\nendobj\n`
-      );
+    writeJpegImage(rectoImageObjId, recto);
+    writeJpegImage(versoImageObjId, verso);
 
-      startObj();
-      write(
-        `${page.imageObjId} 0 obj\n<< /Type /XObject /Subtype /Image ` +
-          `/Width ${page.pixelW} /Height ${page.pixelH} ` +
-          `/ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode ` +
-          `/Length ${page.jpegBytes.length} >>\nstream\n`
-      );
-      write(page.jpegBytes);
-      write('endstream\nendobj\n');
-
-      const content = buildPageContent(pageLayout, pageW, pageH, cardW, cardH, page.label);
-      const contentBytes = encoder.encode(content);
-      startObj();
-      write(`${page.contentObjId} 0 obj\n<< /Length ${contentBytes.length} >>\nstream\n`);
-      write(contentBytes);
-      write('\nendstream\nendobj\n');
-    });
+    const content = buildPageContent(pageLayout, pageW, pageH, cardW, cardH, label);
+    const contentBytes = encoder.encode(content);
+    startObj();
+    write(`${contentObjId} 0 obj\n<< /Length ${contentBytes.length} >>\nstream\n`);
+    write(contentBytes);
+    write('\nendstream\nendobj\n');
 
     startObj();
     write(
