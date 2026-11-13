@@ -216,7 +216,7 @@ Hauteur tactile ≥ 44 px. Transition couleur ~150 ms. Pas de pulse permanent.
 ### 6.6 Carte imprimee 85×55 mm (p03)
 
 - Recto : bandeau theme + identite + contacts + QR.
-- Verso : meme rendu que le recto (impression recto-verso coherente).
+- Verso : meme charte visuelle, face sobre (logo / organisation / lieu), sans recopier les contacts.
 - Export : fond perdu **3 mm**, marges de securite **4 mm**.
 
 ### 6.7 Ecran partage (p05)
