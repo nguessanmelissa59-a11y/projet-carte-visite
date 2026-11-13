@@ -71,7 +71,38 @@
       devHint.classList.add('hidden');
       devHint.textContent = '';
     }
+
+    document.getElementById('otpPassword').value = '';
+    document.getElementById('otpPasswordHint').textContent =
+      pending.purpose === 'register'
+        ? 'Pour vous connecter sans code la prochaine fois. 8 caractères minimum.'
+        : 'Renseignez-le pour définir ou remplacer votre mot de passe. 8 caractères minimum.';
     document.getElementById('otpCode').focus();
+  }
+
+  function finishLogin() {
+    setStep(3);
+    setAuthMessage('Connexion réussie.');
+    const next = new URLSearchParams(window.location.search).get('next');
+    // Chemin local uniquement : "//hote" et "/\hote" sortent du site.
+    const safeNext = next && /^\/(?![/\\])/.test(next) ? next : '/';
+    window.location.href = safeNext;
+  }
+
+  async function requestLoginCode() {
+    const emailInput = document.getElementById('loginEmail');
+    if (!emailInput.reportValidity()) return;
+    setAuthMessage('Envoi du code…');
+    try {
+      const email = emailInput.value.trim();
+      const data = await ApiService.login({ email });
+      pending = { email: data.email || email, purpose: 'login' };
+      document.getElementById('loginPassword').value = '';
+      showCodeStep(data);
+      setAuthMessage(data.message || 'Entrez le code reçu.');
+    } catch (err) {
+      setAuthMessage(err.message || 'Connexion impossible');
+    }
   }
 
   function bindForms() {
