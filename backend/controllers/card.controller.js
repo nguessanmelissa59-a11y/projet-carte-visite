@@ -60,7 +60,21 @@ async function handleSaveCard(req, res) {
       });
     }
 
-    const saved = upsertCard(sanitized, { userId: session.userId });
+    const job = sanitized.jobTitle ? jobTitles.findOrCreate(sanitized.jobTitle) : null;
+    const org = sanitized.organization
+      ? organizations.findOrCreate(sanitized.organization)
+      : null;
+
+    const saved = upsertCard(
+      {
+        ...sanitized,
+        jobTitle: job ? job.name : '',
+        organization: org ? org.name : '',
+        jobTitleId: job ? job.id : null,
+        organizationId: org ? org.id : null
+      },
+      { userId: session.userId }
+    );
     sendJson(res, 200, { card: saved });
   } catch (err) {
     sendJson(res, 400, { error: err.message || 'Requete invalide' });
