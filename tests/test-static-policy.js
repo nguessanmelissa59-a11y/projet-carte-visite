@@ -2,8 +2,16 @@
 
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
 const path = require('node:path');
 const { isPublicStaticPath } = require('../backend/http/static-policy');
+
+test('le serveur applique la liste avant de lire le disque', () => {
+  const server = fs.readFileSync(path.join(__dirname, '..', 'backend', 'server.js'), 'utf8');
+  const guard = server.indexOf('if (!isPublicStaticPath(safePath))');
+  assert.ok(guard > 0, 'controle absent de serveStaticFile');
+  assert.ok(guard < server.indexOf('fs.stat(fullPath'), 'controle place apres la lecture');
+});
 
 test('fichiers publics : pages, assets et scripts front', () => {
   for (const allowed of [
