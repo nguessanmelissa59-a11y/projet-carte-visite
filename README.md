@@ -58,6 +58,48 @@ npm start
 
 Le serveur demarre sur `http://localhost:3000` et affiche egalement l'adresse IP reseau locale (`http://192.168.x.x:3000`) utilisee automatiquement dans le QR Code pour permettre le scan direct depuis un smartphone connecte au meme Wi-Fi.
 
+## Configuration (`.env`)
+
+Copier `.env.example` en `.env` a la racine du projet, renseigner les valeurs, puis relancer `npm start`. Le fichier `.env` est lu au demarrage, ignore par Git et jamais servi par le serveur. Une variable deja definie dans le terminal garde la priorite.
+
+Apres un `git pull` ou sur une nouvelle machine : `npm install` (une dependance : `nodemailer`, pour l'envoi SMTP).
+
+### Envoi des codes par e-mail
+
+Sans configuration, le code est affiche dans la console du serveur et dans la page (mode local). Pour l'envoyer reellement depuis une adresse Gmail :
+
+1. Activer la validation en deux etapes sur le compte Google expediteur.
+2. Creer un mot de passe d'application : <https://myaccount.google.com/apppasswords>.
+3. Dans `.env` :
+
+```text
+SMTP_USER=votre.adresse@gmail.com
+SMTP_PASS=mot de passe d'application (16 lettres)
+```
+
+Des que ces deux valeurs sont presentes, le code n'apparait plus ni dans la page ni dans la console.
+
+### Connexion avec Google
+
+1. Google Cloud Console > API et services > Ecran de consentement OAuth : type « Externe », puis publier l'application (ou ajouter les adresses de test).
+2. Identifiants > Creer des identifiants > ID client OAuth > « Application Web ».
+3. URI de redirection autorisee : `http://localhost:3000/api/auth/google/callback`.
+4. Dans `.env` :
+
+```text
+GOOGLE_CLIENT_ID=....apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=...
+```
+
+Le bouton « Continuer avec Google » apparait alors sur `/auth` et `/register`. Il n'est affiche que sur l'adresse declaree chez Google : `http://localhost:3000` en local, pas l'adresse IP du Wi-Fi (Google refuse les adresses IP privees). En ligne, declarer l'URI `https://votre-domaine/api/auth/google/callback` et la reporter dans `GOOGLE_REDIRECT_URI`.
+
+## Tests
+
+```powershell
+npm test
+node tests/test-ui-contract.mjs
+```
+
 ## Admin React (`/admin`)
 
 Interface d'administration (stats, cartes, utilisateurs / roles) reservee aux comptes `admin`.
@@ -68,7 +110,7 @@ Interface d'administration (stats, cartes, utilisateurs / roles) reservee aux co
 $env:ADMIN_EMAILS="toi@exemple.com"
 ```
 
-Ou copier `.env.example` et exporter les variables avant `npm start`.
+Ou renseigner `ADMIN_EMAILS` dans le fichier `.env` (voir Configuration).
 
 2. Construire le front admin :
 
