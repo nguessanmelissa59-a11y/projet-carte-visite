@@ -623,6 +623,8 @@ function testAuthPasswordOrCode() {
   assert.match(page, /selectedRegisterMethod/);
   assert.match(page, /renderTotpQr/);
   assert.match(page, /requestLoginCode\('authenticator'\)/);
+  // Si le serveur ignore method=authenticator, ne pas afficher un faux message « scannez le QR ».
+  assert.match(page, /resolvedMethod !== 'authenticator' \|\| !data\.otpauthUrl/);
   assert.match(api, /if \(method\) payload\.method = method/);
 
   assert.match(html, /id="loginPassword"[^>]*type="password"[^>]*autocomplete="current-password"/);
