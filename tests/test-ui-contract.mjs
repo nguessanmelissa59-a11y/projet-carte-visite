@@ -741,6 +741,9 @@ function testAuthPasswordOrCode() {
   assert.match(api, /async function setPassword/);
 
   assert.match(page, /ApiService\.loginWithPassword/);
+  assert.match(page, /data\.otpIssued/);
+  assert.match(page, /showCodeStep\(data\)/);
+  assert.match(html, />\s*Valider\s*</);
   assert.match(
     page,
     /getElementById\('btnLoginOtp'\)\.addEventListener\('click', \(\) => requestLoginCode\('email'\)\)/

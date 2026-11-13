@@ -140,7 +140,7 @@
       lead.textContent =
         authMode === 'register'
           ? 'Créez votre compte, puis confirmez-le par e-mail ou en scannant un QR Code avec votre authenticator.'
-          : 'Connectez-vous avec votre mot de passe, un code e-mail ou votre application authenticator.';
+          : 'Connectez-vous avec mot de passe + code OTP, ou uniquement avec un code e-mail / authenticator.';
     }
 
     document.title =
@@ -528,7 +528,7 @@
     currentInput.required = hasPassword;
     const hasTotp = Boolean(user && user.hasTotp);
     document.getElementById('passwordStatus').textContent = hasPassword
-      ? 'Un mot de passe est défini. La connexion par code e-mail ou authenticator reste possible.'
+      ? 'Un mot de passe est défini. À la connexion, un code OTP sera aussi demandé.'
       : hasTotp
         ? 'Aucun mot de passe : connectez-vous avec votre authenticator ou un code e-mail.'
         : 'Aucun mot de passe : vous vous connectez avec un code reçu par e-mail.';
