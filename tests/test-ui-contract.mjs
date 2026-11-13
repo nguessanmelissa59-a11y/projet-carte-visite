@@ -827,12 +827,22 @@ function testAuthGoogleButton() {
   assert.doesNotMatch(page, /setAuthMessage\(params\.get/);
 }
 
+function testClientVcardUrlUniqueness() {
+  const source = read('src/services/vcard.js');
+  assert.match(source, /generateVCardString/);
+  assert.match(source, /portfolio && portfolio !== linkedin/);
+  assert.doesNotMatch(source, /ITEM1\.URL/);
+  assert.doesNotMatch(source, /ITEM2\.URL/);
+  assert.match(source, /lines\.push\(`URL:\$\{href\}`\)/);
+}
+
 const tests = [
   ['session idle and logout', testSessionIdleAndLogout],
   ['auth modules separated', testAuthModulesSeparated],
   ['auth password or code', testAuthPasswordOrCode],
   ['auth google button', testAuthGoogleButton],
   ['html contracts', testHtmlContracts],
+  ['client vcard url uniqueness', testClientVcardUrlUniqueness],
   ['offline mode notice', testOfflineModeNotice],
   ['field validation client', testFieldValidationClient],
   ['lookup combobox ui', testLookupComboboxUi],
