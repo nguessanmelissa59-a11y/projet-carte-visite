@@ -33,6 +33,7 @@ const stmtListUsersAdmin = db.prepare(`
     u.email_verified,
     u.role,
     (u.password_hash != '') AS has_password,
+    (u.totp_secret != '') AS has_totp,
     u.created_at,
     u.updated_at,
     (
@@ -70,7 +71,8 @@ const stmtInsertSession = db.prepare(`
 `);
 const stmtGetSessionByTokenHash = db.prepare(`
   SELECT s.*, u.email, u.first_name, u.last_name, u.email_verified, u.role,
-    (u.password_hash != '') AS has_password
+    (u.password_hash != '') AS has_password,
+    (u.totp_secret != '') AS has_totp
   FROM sessions s
   JOIN users u ON u.id = s.user_id
   WHERE s.token_hash = ?
@@ -85,6 +87,10 @@ const stmtDeleteOtherUserSessions = db.prepare(
 const stmtGetPasswordHash = db.prepare('SELECT password_hash FROM users WHERE id = ?');
 const stmtSetPasswordHash = db.prepare(`
   UPDATE users SET password_hash = ?, updated_at = ? WHERE id = ?
+`);
+const stmtGetTotpSecret = db.prepare('SELECT totp_secret FROM users WHERE id = ?');
+const stmtSetTotpSecret = db.prepare(`
+  UPDATE users SET totp_secret = ?, updated_at = ? WHERE id = ?
 `);
 
 function normalizeEmail(email) {
@@ -107,8 +113,9 @@ function mapUser(row) {
     lastName: row.last_name,
     emailVerified: Boolean(row.email_verified),
     role: normalizeRole(row.role),
-    // Le hash ne sort jamais du repository : seul un indicateur est expose.
+    // Le hash / secret ne sortent jamais du repository : seuls des indicateurs.
     hasPassword: Boolean(row.has_password ?? row.password_hash),
+    hasTotp: Boolean(row.has_totp ?? row.totp_secret),
     createdAt: row.created_at,
     updatedAt: row.updated_at
   };

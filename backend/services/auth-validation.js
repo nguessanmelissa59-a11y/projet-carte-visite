@@ -34,6 +34,16 @@ function validateOtpCode(code) {
   return { ok: true, value };
 }
 
+function validateOtpMethod(method) {
+  const value = String(method || 'email')
+    .trim()
+    .toLowerCase();
+  if (value === 'email' || value === 'authenticator') {
+    return { ok: true, value };
+  }
+  return { ok: false, error: 'Méthode de vérification invalide' };
+}
+
 function normalizePassword(password) {
   if (typeof password !== 'string') return '';
   const value = password.normalize('NFKC');
@@ -66,6 +76,7 @@ module.exports = {
   validateEmail,
   validateName,
   validateOtpCode,
+  validateOtpMethod,
   validatePassword,
   normalizePassword
 };
