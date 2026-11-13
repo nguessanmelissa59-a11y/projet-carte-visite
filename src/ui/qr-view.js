@@ -91,11 +91,6 @@ window.VCardApp.QrView = (function () {
     ctx.drawImage(img, x + pad, y + pad, logoSize, logoSize);
     ctx.restore();
 
-    ctx.strokeStyle = 'rgba(24, 24, 27, 0.12)';
-    ctx.lineWidth = Math.max(1, Math.round(size * 0.004));
-    drawRoundedRect(ctx, x, y, box, box, radius);
-    ctx.stroke();
-
     return true;
   }
 

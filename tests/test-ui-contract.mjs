@@ -150,6 +150,12 @@ function testQrLogoOverlay() {
   assert.match(source, /LOGO_RATIO = 0\.18/);
   assert.match(source, /resolveErrorCorrection/);
   assert.match(source, /if \(hasLogo\) return 'H'/);
+  const overlayBody = source.slice(
+    source.indexOf('async function overlayLogo'),
+    source.indexOf('function resolveErrorCorrection')
+  );
+  assert.ok(overlayBody.length > 0, 'overlayLogo body not found');
+  assert.doesNotMatch(overlayBody, /strokeStyle|\.stroke\(/, 'logo overlay must not draw an outline');
   assert.doesNotMatch(source, /javascript:/i);
   assert.match(source, /\^https\?:/);
 
