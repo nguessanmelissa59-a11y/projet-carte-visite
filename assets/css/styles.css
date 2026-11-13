@@ -821,8 +821,12 @@ body.print-preview-open {
 
 .offline-notice {
   border: 1px solid color-mix(in srgb, var(--accent) 42%, transparent);
-  background: color-mix(in srgb, var(--accent-soft, var(--accent)) 88%, #fff);
+  background: var(--accent-soft);
   box-shadow: inset 3px 0 0 var(--accent);
+}
+
+html.dark .offline-notice {
+  background: color-mix(in srgb, var(--accent) 18%, var(--surface));
 }
 
 .offline-notice__badge {

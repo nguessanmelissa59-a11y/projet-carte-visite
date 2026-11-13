@@ -388,9 +388,10 @@ function testOfflineModeNotice() {
   assert.match(html, /qr-mode-spotlight/);
   assert.match(html, /mode-toggle--featured/);
   assert.match(html, /Hors-ligne/);
+  assert.match(html, /qr-mode-spotlight[\s\S]*?id="qrModeUrl"/);
   assert.doesNotMatch(
     html,
-    /easy-advanced-body[\s\S]*id="qrModeUrl"/,
+    /Personnaliser le QR[\s\S]*?id="qrModeUrl"/,
     'le choix de mode ne doit plus être enterré dans Personnaliser'
   );
 
