@@ -71,8 +71,19 @@ window.VCardApp.CardCanvasExporter = (function () {
     return `${state.firstName || ''} ${state.lastName || ''}`.trim() || 'Votre Nom';
   }
 
+  function getThemePalette(state) {
+    return (THEME_PALETTES && THEME_PALETTES[state.theme]) || {};
+  }
+
+  /** Accent visuel carte (bandeaux, filets, or → couleur choisie). */
   function getAccent(state) {
-    const palette = (THEME_PALETTES && THEME_PALETTES[state.theme]) || {};
+    const palette = getThemePalette(state);
+    return palette.bannerColor || palette.qrDark || '#0a6b45';
+  }
+
+  /** Teinte plus foncée pour modules QR (meilleur contraste de scan). */
+  function getQrAccent(state) {
+    const palette = getThemePalette(state);
     return palette.qrDark || palette.bannerColor || '#0a6b45';
   }
 
@@ -350,7 +361,7 @@ window.VCardApp.CardCanvasExporter = (function () {
       ctx.stroke();
     }
 
-    const qrCanvas = await buildQrCanvas(state, qrMode, accentHex, qrSize);
+    const qrCanvas = await buildQrCanvas(state, qrMode, getQrAccent(state) || accentHex, qrSize);
     const box = qrSize + 16;
     const boxX = x + (w - box) / 2;
     const boxY = y + pad;
@@ -1341,13 +1352,47 @@ window.VCardApp.CardCanvasExporter = (function () {
       state.cardTemplate && RENDERERS[state.cardTemplate] ? state.cardTemplate : 'editorial';
     const tpl = (CARD_TEMPLATES && CARD_TEMPLATES[templateId]) || {};
     const swatch = tpl.swatch || ['#ffffff', '#18181b', '#e4e4e7'];
+    const themeAccent = getAccent(state);
     const darkFaces = new Set(['nocturne', 'prestige', 'metro', 'sunset']);
+    const isDark = darkFaces.has(templateId);
+
+    // Le modèle garde sa structure ; la couleur choisie remplace l’accent de charte.
+    if (templateId === 'metro') {
+      return {
+        id: templateId,
+        bg: '#fafafa',
+        accent: '#18181b',
+        secondary: themeAccent,
+        isDark: true
+      };
+    }
+
+    if (templateId === 'prestige' || templateId === 'sunset') {
+      return {
+        id: templateId,
+        bg: themeAccent,
+        accent: '#0a0a0a',
+        secondary: swatch[2] || '#f5e6b8',
+        isDark: true
+      };
+    }
+
+    if (templateId === 'nocturne') {
+      return {
+        id: templateId,
+        bg: '#0c0c0e',
+        accent: '#18181b',
+        secondary: themeAccent,
+        isDark: true
+      };
+    }
+
     return {
       id: templateId,
       bg: swatch[0],
-      accent: swatch[1],
-      secondary: swatch[2] || swatch[1],
-      isDark: darkFaces.has(templateId)
+      accent: themeAccent,
+      secondary: swatch[2] || themeAccent,
+      isDark
     };
   }
 
