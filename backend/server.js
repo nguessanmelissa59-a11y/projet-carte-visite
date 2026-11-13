@@ -60,14 +60,41 @@ const MIME_TYPES = {
   '.vcf': 'text/vcard; charset=utf-8'
 };
 
-function sendFile(res, fullPath) {
+function sendFile(res, fullPath, extraHeaders = {}) {
   const ext = path.extname(fullPath).toLowerCase();
   const contentType = MIME_TYPES[ext] || 'application/octet-stream';
-  res.writeHead(200, { 'Content-Type': contentType });
+  res.writeHead(200, { 'Content-Type': contentType, ...extraHeaders });
   fs.createReadStream(fullPath).pipe(res);
 }
 
-function serveStaticFile(req, res, pathname) {
+function isPublicCardView(parsedUrl) {
+  return parsedUrl.searchParams.has('id') || parsedUrl.searchParams.has('data');
+}
+
+function redirectToAuth(res, nextPath) {
+  const safeNext =
+    nextPath && nextPath.startsWith('/') && !nextPath.startsWith('//') ? nextPath : '/';
+  const location =
+    safeNext === '/' ? '/auth' : `/auth?next=${encodeURIComponent(safeNext)}`;
+  res.writeHead(302, {
+    Location: location,
+    'Cache-Control': 'no-store'
+  });
+  res.end();
+}
+
+function requireEditorSession(req, res, parsedUrl) {
+  if (isPublicCardView(parsedUrl)) return true;
+  if (resolveSessionFromRequest(req)) return true;
+  const nextPath =
+    parsedUrl.pathname === '/index.html'
+      ? `/${parsedUrl.search || ''}`
+      : `${parsedUrl.pathname}${parsedUrl.search || ''}`;
+  redirectToAuth(res, nextPath === '/?' ? '/' : nextPath);
+  return false;
+}
+
+function serveStaticFile(req, res, pathname, parsedUrl) {
   const relativePath = pathname === '/' ? 'index.html' : pathname.replace(/^\/+/, '');
   const safePath = path.normalize(relativePath).replace(/^(\.\.(\/|\\|$))+/, '');
   const fullPath = path.join(PUBLIC_ROOT, safePath);
@@ -84,13 +111,25 @@ function serveStaticFile(req, res, pathname) {
     return;
   }
 
+  if (
+    (safePath === 'index.html' || pathname === '/') &&
+    parsedUrl &&
+    !requireEditorSession(req, res, parsedUrl)
+  ) {
+    return;
+  }
+
   fs.stat(fullPath, (err, stats) => {
     if (err || !stats.isFile()) {
       res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
       res.end('Fichier introuvable');
       return;
     }
-    sendFile(res, fullPath);
+    const headers =
+      safePath === 'index.html' || safePath === 'auth.html'
+        ? { 'Cache-Control': 'no-store' }
+        : {};
+    sendFile(res, fullPath, headers);
   });
 }
 
@@ -273,7 +312,7 @@ const server = http.createServer((req, res) => {
     return serveAdminSpa(req, res, pathname);
   }
 
-  serveStaticFile(req, res, pathname);
+  serveStaticFile(req, res, pathname, parsedUrl);
 });
 
 server.listen(PORT, HOST, () => {
