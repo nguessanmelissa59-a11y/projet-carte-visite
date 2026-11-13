@@ -124,34 +124,41 @@
 
     document.getElementById('loginForm').addEventListener('submit', async (event) => {
       event.preventDefault();
-      setAuthMessage('Vérification…');
+      const passwordInput = document.getElementById('loginPassword');
+      const password = passwordInput.value;
+      if (!password) {
+        setAuthMessage('Saisissez votre mot de passe, ou recevez un code par e-mail.');
+        passwordInput.focus();
+        return;
+      }
+      setAuthMessage('Connexion…');
       try {
         const email = document.getElementById('loginEmail').value.trim();
-        const data = await ApiService.login({ email });
-        pending = { email: data.email || email, purpose: 'login' };
-        showCodeStep(data);
-        setAuthMessage(data.message || 'Entrez le code reçu.');
+        await ApiService.loginWithPassword({ email, password });
+        passwordInput.value = '';
+        finishLogin();
       } catch (err) {
+        passwordInput.value = '';
         setAuthMessage(err.message || 'Connexion impossible');
       }
     });
+
+    document.getElementById('btnLoginOtp').addEventListener('click', requestLoginCode);
 
     document.getElementById('otpForm').addEventListener('submit', async (event) => {
       event.preventDefault();
       setAuthMessage('Validation…');
       try {
         const code = document.getElementById('otpCode').value.trim();
+        const passwordInput = document.getElementById('otpPassword');
         await ApiService.verifyOtp({
           email: pending.email,
           code,
-          purpose: pending.purpose
+          purpose: pending.purpose,
+          password: passwordInput.value
         });
-        setStep(3);
-        setAuthMessage('Connexion réussie.');
-        const next = new URLSearchParams(window.location.search).get('next');
-        const safeNext =
-          next && next.startsWith('/') && !next.startsWith('//') ? next : '/';
-        window.location.href = safeNext;
+        passwordInput.value = '';
+        finishLogin();
       } catch (err) {
         setAuthMessage(err.message || 'Code incorrect');
       }
@@ -179,8 +186,31 @@
       }
     });
 
+    document.getElementById('passwordForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const currentInput = document.getElementById('currentPassword');
+      const newInput = document.getElementById('newPassword');
+      setPasswordMessage('Enregistrement…');
+      try {
+        const user = await ApiService.setPassword({
+          currentPassword: currentInput.value,
+          password: newInput.value
+        });
+        currentInput.value = '';
+        newInput.value = '';
+        renderPasswordSection(user);
+        setPasswordMessage('Mot de passe enregistré. Les autres appareils ont été déconnectés.');
+      } catch (err) {
+        currentInput.value = '';
+        setPasswordMessage(err.message || 'Mot de passe non enregistré');
+      }
+    });
+
     document.getElementById('btnLogout').addEventListener('click', async () => {
       await ApiService.logout();
+      document.getElementById('currentPassword').value = '';
+      document.getElementById('newPassword').value = '';
+      setPasswordMessage('');
       setSessionMessage('');
       await renderSessionState();
       showIdentityStep();
@@ -208,6 +238,7 @@
     document.getElementById('sessionEmail').textContent = user.email;
     document.getElementById('profileFirstName').value = user.firstName || '';
     document.getElementById('profileLastName').value = user.lastName || '';
+    renderPasswordSection(user);
 
     const cards = await ApiService.fetchMyCards();
     const list = document.getElementById('myCardsList');
@@ -234,6 +265,25 @@
         list.appendChild(li);
       });
     }
+  }
+
+  function renderPasswordSection(user) {
+    const hasPassword = Boolean(user && user.hasPassword);
+    const currentField = document.getElementById('currentPasswordField');
+    const currentInput = document.getElementById('currentPassword');
+    currentField.classList.toggle('hidden', !hasPassword);
+    currentInput.required = hasPassword;
+    document.getElementById('passwordStatus').textContent = hasPassword
+      ? 'Un mot de passe est défini. La connexion par code reste possible, y compris si vous l’oubliez.'
+      : 'Aucun mot de passe : vous vous connectez avec un code reçu par e-mail.';
+    document.getElementById('passwordSubmitLabel').textContent = hasPassword
+      ? 'Changer le mot de passe'
+      : 'Définir un mot de passe';
+  }
+
+  function setPasswordMessage(text) {
+    const el = document.getElementById('passwordMessage');
+    if (el) el.textContent = text || '';
   }
 
   function setAuthMessage(text) {
