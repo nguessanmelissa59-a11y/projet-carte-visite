@@ -96,7 +96,7 @@ async function handleRegister(req, res) {
       });
     }
 
-    const otp = issueOtp({
+    const otp = await issueOtp({
       email: emailCheck.value,
       purpose: 'register',
       meta: {
@@ -104,12 +104,12 @@ async function handleRegister(req, res) {
         lastName: lastNameCheck.value
       }
     });
-    if (!otp.ok) return sendJson(res, 429, { error: otp.error });
+    if (!otp.ok) return sendJson(res, otp.status || 429, { error: otp.error });
 
     return sendJson(res, 200, {
       ok: true,
       otpIssued: true,
-      message: 'Code OTP envoyé. Vérifiez votre e-mail (ou la console serveur en local).',
+      message: MAIL_CONFIGURED ? OTP_SENT_BY_EMAIL_MESSAGE : OTP_CONSOLE_MESSAGE,
       email: otp.email,
       purpose: 'register',
       expiresInSec: otp.expiresInSec,
