@@ -15,7 +15,6 @@ process.env.NODE_ENV = 'test';
 
 const {
   handleRegister,
-  handleLogin,
   handleVerifyOtp
 } = require('../backend/controllers/auth.controller');
 const {
@@ -74,18 +73,25 @@ function cookieFrom(res) {
 
 async function registerAndLogin(email) {
   const reg = createMockRes();
-  await handleRegister(createMockReq('POST', '/api/auth/register', { email }), reg);
+  await handleRegister(
+    createMockReq('POST', '/api/auth/register', {
+      email,
+      firstName: 'Lookup',
+      lastName: 'User'
+    }),
+    reg
+  );
   assert.equal(reg.statusCode, 200);
   const otp = reg.json().devOtp;
   assert.ok(otp);
 
-  const login = createMockRes();
-  await handleLogin(createMockReq('POST', '/api/auth/login', { email }), login);
-  const loginOtp = login.json().devOtp || otp;
-
   const verify = createMockRes();
   await handleVerifyOtp(
-    createMockReq('POST', '/api/auth/verify', { email, code: loginOtp }),
+    createMockReq('POST', '/api/auth/verify', {
+      email,
+      code: otp,
+      purpose: 'register'
+    }),
     verify
   );
   assert.equal(verify.statusCode, 200);
