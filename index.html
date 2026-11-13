@@ -379,9 +379,63 @@
         <div class="share-band-head">
           <div class="min-w-0">
             <h2 id="shareBandTitle" class="font-display font-semibold text-base m-0 tracking-tight">Partager</h2>
-            <p class="text-sm text-[color:var(--ink-muted)] mt-0.5 m-0">Scannez ou envoyez le lien après enregistrement</p>
+            <p id="shareBandSubtitle" class="text-sm text-[color:var(--ink-muted)] mt-0.5 m-0">
+              Choisissez le type de QR, puis scannez ou envoyez
+            </p>
           </div>
           <span id="qrStatusBadge" class="status-chip shrink-0">Prêt</span>
+        </div>
+
+        <div class="qr-mode-spotlight" aria-labelledby="qrModeSpotlightTitle">
+          <div class="qr-mode-spotlight__head">
+            <div class="min-w-0">
+              <p id="qrModeSpotlightTitle" class="qr-mode-spotlight__kicker">Type de QR</p>
+              <p class="qr-mode-spotlight__lead">
+                Le mode <strong>Contact</strong> encode votre fiche dans le QR&nbsp;: enregistrement
+                immédiat, même sans réseau.
+              </p>
+            </div>
+            <div class="mode-toggle mode-toggle--featured" role="group" aria-label="Type de QR">
+              <button type="button" id="qrModeUrl" class="is-active">Lien web</button>
+              <button type="button" id="qrModeVcard" aria-describedby="qrModeVcardHint">
+                Contact
+                <span class="mode-toggle__tag" id="qrModeVcardHint">Hors-ligne</span>
+              </button>
+            </div>
+          </div>
+
+          <div id="offlineModeTeaser" class="offline-teaser" role="note">
+            <i data-lucide="contact" class="offline-teaser__icon" aria-hidden="true"></i>
+            <div class="min-w-0">
+              <p class="offline-teaser__title">Passez en Contact pour un QR autonome</p>
+              <p class="offline-teaser__text">
+                Ideal salon / networking&nbsp;: le téléphone propose d’ajouter le contact
+                sans ouvrir un site.
+              </p>
+            </div>
+            <button type="button" id="btnSwitchToVcard" class="btn btn-primary offline-teaser__cta">
+              Activer Contact
+            </button>
+          </div>
+
+          <div id="offlineModeNotice" class="offline-notice" role="status" hidden>
+            <div class="offline-notice__badge">
+              <i data-lucide="wifi-off" class="offline-notice__icon" aria-hidden="true"></i>
+              <span class="offline-notice__std">vCard 3.0</span>
+            </div>
+            <div class="min-w-0">
+              <p class="offline-notice__title">Mode vCard 3.0 Direct (Hors-ligne)</p>
+              <p class="offline-notice__text">
+                Vos coordonnées sont inscrites dans le QR lui-même&nbsp;: le scan propose
+                d’enregistrer le contact sans Internet ni serveur.
+              </p>
+              <ul class="offline-notice__points">
+                <li>Fonctionne sans couverture réseau</li>
+                <li>Ajout natif dans le carnet d’adresses</li>
+                <li>Compatible iPhone et Android</li>
+              </ul>
+            </div>
+          </div>
         </div>
 
         <div class="qr-stage share-band-stage">
@@ -390,17 +444,6 @@
           </div>
 
           <div class="share-band-actions min-w-0">
-            <div id="offlineModeNotice" class="offline-notice" role="status" hidden>
-              <i data-lucide="wifi-off" class="offline-notice__icon" aria-hidden="true"></i>
-              <div class="min-w-0">
-                <p class="offline-notice__title">Mode vCard 3.0 Direct (Hors-ligne)</p>
-                <p class="offline-notice__text">
-                  Vos coordonnées sont inscrites dans le QR lui-même : le scan propose
-                  d’enregistrer le contact sans Internet ni serveur.
-                </p>
-              </div>
-            </div>
-
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <button id="btnCopyLink" type="button" class="btn btn-primary w-full text-sm">
                 <i data-lucide="copy" class="w-3.5 h-3.5"></i>
@@ -434,10 +477,6 @@
         <details class="easy-advanced mt-4">
           <summary>Personnaliser le QR</summary>
           <div class="easy-advanced-body space-y-4">
-            <div class="mode-toggle" role="group" aria-label="Type de QR">
-              <button type="button" id="qrModeUrl" class="is-active">Lien</button>
-              <button type="button" id="qrModeVcard">Contact</button>
-            </div>
             <div>
               <label class="block text-sm font-medium text-[color:var(--ink-muted)] mb-2">Logo au centre (optionnel)</label>
               <div class="flex items-center gap-3">
