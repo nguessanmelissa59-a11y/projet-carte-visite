@@ -330,7 +330,11 @@
       }
     });
 
-    document.getElementById('btnLoginOtp').addEventListener('click', requestLoginCode);
+    document.getElementById('btnLoginOtp').addEventListener('click', () => requestLoginCode('email'));
+    const btnLoginTotp = document.getElementById('btnLoginTotp');
+    if (btnLoginTotp) {
+      btnLoginTotp.addEventListener('click', () => requestLoginCode('authenticator'));
+    }
 
     document.getElementById('otpForm').addEventListener('submit', async (event) => {
       event.preventDefault();
@@ -342,9 +346,11 @@
           email: pending.email,
           code,
           purpose: pending.purpose,
+          method: pending.method || 'email',
           password: passwordInput.value
         });
         passwordInput.value = '';
+        clearTotpEnrollUi();
         finishLogin();
       } catch (err) {
         setAuthMessage(err.message || 'Code incorrect');
@@ -354,6 +360,7 @@
     const backBtn = document.getElementById('btnBackToEmail');
     if (backBtn) {
       backBtn.addEventListener('click', () => {
+        clearTotpEnrollUi();
         showIdentityStep();
         setAuthMessage('');
       });
@@ -460,9 +467,12 @@
     const currentInput = document.getElementById('currentPassword');
     currentField.classList.toggle('hidden', !hasPassword);
     currentInput.required = hasPassword;
+    const hasTotp = Boolean(user && user.hasTotp);
     document.getElementById('passwordStatus').textContent = hasPassword
-      ? 'Un mot de passe est défini. La connexion par code reste possible, y compris si vous l’oubliez.'
-      : 'Aucun mot de passe : vous vous connectez avec un code reçu par e-mail.';
+      ? 'Un mot de passe est défini. La connexion par code e-mail ou authenticator reste possible.'
+      : hasTotp
+        ? 'Aucun mot de passe : connectez-vous avec votre authenticator ou un code e-mail.'
+        : 'Aucun mot de passe : vous vous connectez avec un code reçu par e-mail.';
     document.getElementById('passwordSubmitLabel').textContent = hasPassword
       ? 'Changer le mot de passe'
       : 'Définir un mot de passe';
