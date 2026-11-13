@@ -12,7 +12,9 @@ const {
 const {
   handleRegister,
   handleLogin,
+  handlePasswordLogin,
   handleVerifyOtp,
+  handleSetPassword,
   handleMe,
   handleLogout,
   handleUpdateProfile,
@@ -145,6 +147,12 @@ const server = http.createServer((req, res) => {
   }
   if (req.method === 'POST' && pathname === '/api/auth/logout') {
     return handleLogout(req, res);
+  }
+  if (req.method === 'POST' && pathname === '/api/auth/login/password') {
+    return handlePasswordLogin(req, res);
+  }
+  if (req.method === 'POST' && pathname === '/api/auth/password') {
+    return handleSetPassword(req, res);
   }
   if (req.method === 'PATCH' && pathname === '/api/auth/profile') {
     return handleUpdateProfile(req, res);
