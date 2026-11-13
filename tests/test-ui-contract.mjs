@@ -332,9 +332,11 @@ function testPrintableCardExport() {
   assert.match(source, /function buildPrintablePdfBytes/);
   assert.match(source, /function generateVersoCanvas/);
   assert.match(source, /function renderVersoToCanvas/);
-  assert.match(source, /return generateCardCanvas\(state, qrMode\)/);
-  assert.match(source, /Verso identique au recto/);
-  assert.doesNotMatch(source, /Scannez pour enregistrer le contact/);
+  assert.match(source, /async function drawVerso/);
+  assert.match(source, /function getVersoPalette/);
+  assert.match(source, /function getBrandTitle/);
+  assert.match(source, /face branding/);
+  assert.doesNotMatch(source, /Verso identique au recto/);
   assert.match(source, /application\/pdf/);
   assert.match(source, /recto-verso_85x55mm\.pdf/);
   assert.match(source, /getPrintSpecs/);

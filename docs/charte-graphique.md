@@ -13,7 +13,7 @@ Previews rendues : `docs/maquette-pages/page-01.png` … `page-05.png`.
 |---|---|---|---|
 | 01 | Desktop A4 | Creation + apercu | Nav, hero, stepper 1–3, formulaire sections 1–4, apercu mobile live |
 | 02 | Mobile | Fiche publique | Header theme raye, avatar initiales, CTA contacts, liste coords, footer EVC |
-| 03 | Print | Recto / verso 85×55 mm | Identite + contacts + QR ; verso = meme face que le recto ; fond perdu 3 mm, marge 4 mm |
+| 03 | Print | Recto / verso 85×55 mm | Recto : identite + contacts + QR ; verso : meme charte, branding (logo / org) ; fond perdu 3 mm, marge 4 mm |
 | 04 | Mobile | Formulaire etape 1/3 | Hero compact, qui etes-vous, joindre, couleur, CTA enregistrer |
 | 05 | Desktop | Partage etape 3/3 | QR court, lien, actions export (QR, PDF, vcf, WhatsApp), perso QR, banner compte |
 
