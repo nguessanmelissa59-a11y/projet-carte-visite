@@ -76,11 +76,18 @@ window.VCardApp.ApiService = (function () {
       }
       const data = await parseJson(res);
       currentUser = data.user || null;
+      if (Number(data.idleTimeoutMs) > 0) {
+        idleTimeoutMs = Number(data.idleTimeoutMs);
+      }
       return currentUser;
     } catch {
       currentUser = null;
       return null;
     }
+  }
+
+  function getIdleTimeoutMs() {
+    return idleTimeoutMs;
   }
 
   async function register({ email, firstName, lastName, method }) {
@@ -289,6 +296,7 @@ window.VCardApp.ApiService = (function () {
     isAvailable,
     getCurrentUser,
     isAuthenticated,
+    getIdleTimeoutMs,
     getShortProfileUrl,
     getDirectVcfUrl
   };
