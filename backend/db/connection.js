@@ -115,25 +115,72 @@ function newId(prefix) {
   return `${prefix}_${crypto.randomBytes(12).toString('hex')}`;
 }
 
+function seedLookupNames(tableName, idPrefix, names) {
+  const now = new Date().toISOString();
+  const insert = db.prepare(
+    `INSERT OR IGNORE INTO ${tableName} (id, name, name_key, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?)`
+  );
+  for (const raw of names) {
+    const name = String(raw || '').trim().replace(/\s+/g, ' ');
+    if (!name) continue;
+    insert.run(newId(idPrefix), name, name.toLowerCase(), now, now);
+  }
+}
+
 function seedLookupFromCards(tableName, columnName) {
   const rows = db.prepare(
     `SELECT DISTINCT TRIM(${columnName}) AS name
      FROM cards
      WHERE TRIM(${columnName}) != ''`
   ).all();
-  const now = new Date().toISOString();
-  const insert = db.prepare(
-    `INSERT OR IGNORE INTO ${tableName} (id, name, name_key, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?)`
+  seedLookupNames(
+    tableName,
+    tableName === 'job_titles' ? 'job' : 'org',
+    rows.map((row) => row.name)
   );
-  for (const row of rows) {
-    const name = String(row.name || '').trim();
-    if (!name) continue;
-    const nameKey = name.toLowerCase();
-    insert.run(newId(tableName === 'job_titles' ? 'job' : 'org'), name, nameKey, now, now);
-  }
 }
 
+const SEED_JOB_TITLES = [
+  'Directeur Technique',
+  'Directrice Générale',
+  'Chef de Projet',
+  'Product Owner',
+  'Développeur Full Stack',
+  'Développeuse Frontend',
+  'Ingénieur Logiciel',
+  'Ingénieure Logiciel',
+  'Responsable Marketing',
+  'Commercial',
+  'Commerciale',
+  'Consultant',
+  'Consultante',
+  'Designer UX/UI',
+  'Responsable RH',
+  'Analyste Données',
+  'Architecte Solutions',
+  'Community Manager'
+];
+
+const SEED_ORGANIZATIONS = [
+  'NovaTech Africa',
+  'EVC Melissa',
+  'Orange CI',
+  'MTN Côte d’Ivoire',
+  'Wave',
+  'Société Générale Côte d’Ivoire',
+  'Capgemini',
+  'SoftLab Abidjan',
+  'Agence Digitale Kourou',
+  'Université Félix Houphouët-Boigny',
+  'Startup Factory',
+  'Cabinet Koné & Associés',
+  'Africa Tech Hub',
+  'Green Energy West Africa'
+];
+
+seedLookupNames('job_titles', 'job', SEED_JOB_TITLES);
+seedLookupNames('organizations', 'org', SEED_ORGANIZATIONS);
 seedLookupFromCards('job_titles', 'job_title');
 seedLookupFromCards('organizations', 'organization');
 
