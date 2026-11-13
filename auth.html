@@ -31,7 +31,7 @@
   <script src="assets/vendor/qrcode.min.js"></script>
   <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
-<body class="app-shell antialiased selection:bg-[#0a6b45] selection:text-white dark:selection:bg-[#0e8556] dark:selection:text-white">
+<body class="app-shell antialiased selection:bg-[#ff6b21] selection:text-white dark:selection:bg-[#ff823f] dark:selection:text-white">
 
   <header class="studio-header sticky top-0 z-40">
     <div class="max-w-lg mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-3">
@@ -40,10 +40,17 @@
         <span class="font-display font-semibold text-base tracking-tight">EVC</span>
         <span class="beta-chip" title="Version bêta">Bêta</span>
       </a>
-      <button id="btnThemeToggle" type="button" aria-label="Basculer le thème" class="btn btn-secondary h-11 w-11 min-h-11 p-0">
-        <i data-lucide="moon" class="w-3.5 h-3.5 dark:hidden"></i>
-        <i data-lucide="sun" class="w-3.5 h-3.5 hidden dark:block"></i>
-      </button>
+      <div class="flex items-center gap-2">
+        <div class="theme-mode hidden sm:inline-flex" role="group" aria-label="Thème d’affichage">
+          <button type="button" class="theme-mode__btn" data-theme-mode="auto" aria-pressed="false">Auto</button>
+          <button type="button" class="theme-mode__btn" data-theme-mode="light" aria-pressed="false">Clair</button>
+          <button type="button" class="theme-mode__btn" data-theme-mode="dark" aria-pressed="false">Sombre</button>
+        </div>
+        <button id="btnThemeToggle" type="button" aria-label="Basculer le thème" class="btn btn-secondary h-11 w-11 min-h-11 p-0 sm:hidden">
+          <i data-lucide="moon" class="w-3.5 h-3.5 dark:hidden"></i>
+          <i data-lucide="sun" class="w-3.5 h-3.5 hidden dark:block"></i>
+        </button>
+      </div>
     </div>
   </header>
 

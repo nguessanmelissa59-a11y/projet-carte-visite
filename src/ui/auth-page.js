@@ -31,6 +31,7 @@
     }
 
     StorageService.initTheme();
+    StorageService.bindThemeModeControls();
     authMode = resolveAuthMode();
     applyAuthMode(authMode);
     bindThemeToggle();
