@@ -201,6 +201,7 @@ Deja partiellement couvert par `backend/services/auth-validation.js`.
 | email | trim, lower, max 254, regex pragmatique | Alignement avec `assertEmail` carte |
 | firstName / lastName | `NAME_RE` Unicode lettres, max 80 | Reutiliser au rendu profil |
 | OTP `code` | exactement 6 chiffres | Rate-limit : `OTP_MAX_ATTEMPTS`, `OTP_MAX_PER_WINDOW` |
+| `password` | chaine, 8 a 128 caracteres, NFKC | Hash scrypt (`password-service.js`) ; jamais renvoye ni logge ; plafond `LOGIN_MAX_ATTEMPTS` par e-mail ; defini seulement avec un OTP valide ou une session |
 
 Regles auth :
 

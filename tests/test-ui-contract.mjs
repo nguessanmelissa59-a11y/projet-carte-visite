@@ -405,6 +405,24 @@ function testOfflineModeNotice() {
   assert.doesNotMatch(qrView, /urlDisplay\.textContent = [^;]*Mode vCard/);
 }
 
+function testSharePublicButton() {
+  const html = read('index.html');
+  const main = read('src/main.js');
+
+  assert.match(html, /id="btnSharePublic"/);
+  assert.match(html, /id="btnSharePublic"[\s\S]{0,220}?Partager/);
+  assert.match(html, /data-lucide="share-2"/);
+
+  assert.match(main, /async function sharePublicProfile/);
+  assert.match(main, /async function copyTextToClipboard/);
+  assert.match(main, /navigator\.share/);
+  assert.match(main, /AbortError/);
+  assert.match(main, /btnSharePublic/);
+  assert.match(main, /sharePublicProfile\(\)/);
+  assert.match(main, /document\.execCommand\('copy'\)/);
+  assert.match(main, /window\.prompt\('Copiez ce lien :'/);
+}
+
 function testAuthPasswordOrCode() {
   const html = read('auth.html');
   const page = read('src/ui/auth-page.js');
@@ -457,7 +475,8 @@ const tests = [
   ['profile card markup', testProfileCardMarkup],
   ['printable card export', testPrintableCardExport],
   ['print preview requires visualization', testPrintPreviewRequiresVisualization],
-  ['toast centered', testToastCentered]
+  ['toast centered', testToastCentered],
+  ['share public button', testSharePublicButton]
 ];
 
 let failed = 0;
