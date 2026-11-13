@@ -31,7 +31,8 @@ function testHtmlContracts() {
     'qrLogoUpload',
     'qrLogoUrl',
     'qrLogoPreview',
-    'btnRemoveQrLogo'
+    'btnRemoveQrLogo',
+    'btnLogoutEditor'
   ];
 
   for (const id of requiredIds) {

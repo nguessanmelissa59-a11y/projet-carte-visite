@@ -319,6 +319,48 @@ test('logout invalide la session', async () => {
   assert.equal(meRes.statusCode, 401);
 });
 
+test('session expire apres inactivite (idle)', async () => {
+  assert.ok(SESSION_IDLE_MS >= 60 * 1000, 'SESSION_IDLE_MS trop court');
+  const infoRes = createMockRes();
+  handleGetServerInfo(createMockReq('GET'), infoRes);
+  assert.equal(infoRes.statusCode, 200);
+  assert.equal(infoRes.json().auth.idleTimeoutMs, SESSION_IDLE_MS);
+
+  const loginRes = createMockRes();
+  await handleLogin(createMockReq('POST', { email: 'idle.user@example.com' }), loginRes);
+  const verifyRes = createMockRes();
+  await handleVerifyOtp(
+    createMockReq('POST', {
+      email: 'idle.user@example.com',
+      code: loginRes.json().devOtp,
+      purpose: 'login'
+    }),
+    verifyRes
+  );
+  const cookie = cookieFrom(verifyRes);
+  assert.ok(cookie.includes(SESSION_COOKIE_NAME));
+
+  const meOk = createMockRes();
+  handleMe(createMockReq('GET', null, cookie), meOk);
+  assert.equal(meOk.statusCode, 200);
+  assert.equal(meOk.json().idleTimeoutMs, SESSION_IDLE_MS);
+
+  const rawToken = decodeURIComponent(cookie.slice(`${SESSION_COOKIE_NAME}=`.length));
+  const staleIso = new Date(Date.now() - SESSION_IDLE_MS - 1000).toISOString();
+  const updated = db
+    .prepare('UPDATE sessions SET last_active_at = ? WHERE token_hash = ?')
+    .run(staleIso, hashValue(rawToken));
+  assert.equal(updated.changes, 1);
+
+  const meIdle = createMockRes();
+  handleMe(createMockReq('GET', null, cookie), meIdle);
+  assert.equal(meIdle.statusCode, 401);
+
+  const meAgain = createMockRes();
+  handleMe(createMockReq('GET', null, cookie), meAgain);
+  assert.equal(meAgain.statusCode, 401);
+});
+
 async function registerWithCode(email, verifyExtra = {}) {
   const regRes = createMockRes();
   await handleRegister(
