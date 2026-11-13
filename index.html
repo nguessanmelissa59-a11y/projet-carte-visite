@@ -83,19 +83,57 @@
 
   <main id="editorView" class="studio-main max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
     <div class="panel-intro reveal">
-      <p class="eyebrow">Carte numérique</p>
+      <p class="eyebrow">EVC Melissa</p>
       <h1 class="hero-brand">Votre carte, <mark class="hero-mark">prête à partager.</mark></h1>
       <p class="hero-lead">
-        Renseignez vos infos, enregistrez, puis partagez le QR. Trois minutes suffisent.
+        Remplissez, enregistrez, partagez. L’aperçu suit chaque geste — trois minutes, et c’est prêt.
       </p>
     </div>
 
     <div class="editor-strip reveal">
-      <ol class="easy-steps" aria-label="Comment faire">
-        <li class="is-active"><span>1</span> Vos infos</li>
-        <li><span>2</span> Enregistrer</li>
-        <li><span>3</span> Partager le QR</li>
+      <ol id="flowSteps" class="easy-steps" aria-label="Parcours de création">
+        <li
+          data-step="infos"
+          data-step-target="vcardForm"
+          data-step-focus="firstName"
+          class="is-active"
+          role="button"
+          tabindex="0"
+        >
+          <span>1</span>
+          <span class="easy-steps__copy">
+            <strong>Vos infos</strong>
+            <em data-step-state>Nom et un contact requis</em>
+          </span>
+        </li>
+        <li
+          data-step="save"
+          data-step-target="btnSaveServerBottom"
+          data-step-focus="btnSaveServer,btnSaveServerBottom"
+          role="button"
+          tabindex="0"
+        >
+          <span>2</span>
+          <span class="easy-steps__copy">
+            <strong>Enregistrer</strong>
+            <em data-step-state id="saveStatus">Non enregistrée</em>
+          </span>
+        </li>
+        <li
+          data-step="share"
+          data-step-target="shareBandTitle"
+          data-step-focus="btnCopyLink"
+          role="button"
+          tabindex="0"
+        >
+          <span>3</span>
+          <span class="easy-steps__copy">
+            <strong>Partager</strong>
+            <em data-step-state>QR et lien prêts</em>
+          </span>
+        </li>
       </ol>
+      <p id="flowHint" class="flow-hint" hidden></p>
 
       <div id="authSaveHint" class="hidden easy-banner easy-banner--auth">
         <p class="m-0 text-sm sm:text-base">

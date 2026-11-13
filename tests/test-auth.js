@@ -326,17 +326,7 @@ test('session expire apres inactivite (idle)', async () => {
   assert.equal(infoRes.statusCode, 200);
   assert.equal(infoRes.json().auth.idleTimeoutMs, SESSION_IDLE_MS);
 
-  const loginRes = createMockRes();
-  await handleLogin(createMockReq('POST', { email: 'idle.user@example.com' }), loginRes);
-  const verifyRes = createMockRes();
-  await handleVerifyOtp(
-    createMockReq('POST', {
-      email: 'idle.user@example.com',
-      code: loginRes.json().devOtp,
-      purpose: 'login'
-    }),
-    verifyRes
-  );
+  const verifyRes = await registerWithCode('idle.user@example.com');
   const cookie = cookieFrom(verifyRes);
   assert.ok(cookie.includes(SESSION_COOKIE_NAME));
 

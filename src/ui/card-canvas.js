@@ -1399,20 +1399,40 @@ window.VCardApp.CardCanvasExporter = (function () {
     ctx.fillStyle = palette.bg;
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
-    if (palette.id === 'sunset' || palette.id === 'creative') {
+    if (palette.id === 'sunset') {
       const sky = ctx.createLinearGradient(0, 0, 0, HEIGHT);
-      sky.addColorStop(0, palette.secondary);
+      sky.addColorStop(0, '#431407');
       sky.addColorStop(0.45, palette.accent);
-      sky.addColorStop(1, '#7c2d12');
+      sky.addColorStop(1, palette.secondary);
       ctx.fillStyle = sky;
-      ctx.fillRect(0, 0, WIDTH * 0.42, HEIGHT);
-      ctx.fillStyle = palette.bg;
+      ctx.fillRect(0, 0, WIDTH, HEIGHT);
+      ctx.fillStyle = '#fde68a';
+      ctx.globalAlpha = 0.35;
       ctx.beginPath();
-      ctx.moveTo(WIDTH * 0.34, 0);
-      ctx.quadraticCurveTo(WIDTH * 0.48, HEIGHT * 0.28, WIDTH * 0.36, HEIGHT * 0.55);
-      ctx.quadraticCurveTo(WIDTH * 0.26, HEIGHT * 0.82, WIDTH * 0.44, HEIGHT);
+      ctx.arc(WIDTH * 0.72, HEIGHT * 0.28, 120, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = '#1c0a05';
+      ctx.beginPath();
+      ctx.moveTo(0, HEIGHT * 0.62);
+      ctx.quadraticCurveTo(WIDTH * 0.4, HEIGHT * 0.52, WIDTH, HEIGHT * 0.68);
       ctx.lineTo(WIDTH, HEIGHT);
-      ctx.lineTo(WIDTH, 0);
+      ctx.lineTo(0, HEIGHT);
+      ctx.closePath();
+      ctx.fill();
+      return;
+    }
+
+    if (palette.id === 'creative') {
+      const band = ctx.createLinearGradient(0, 0, WIDTH * 0.6, HEIGHT);
+      band.addColorStop(0, palette.accent);
+      band.addColorStop(1, palette.secondary);
+      ctx.fillStyle = band;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(WIDTH * 0.55, 0);
+      ctx.lineTo(WIDTH * 0.32, HEIGHT);
+      ctx.lineTo(0, HEIGHT);
       ctx.closePath();
       ctx.fill();
       return;
@@ -1422,7 +1442,51 @@ window.VCardApp.CardCanvasExporter = (function () {
       ctx.fillStyle = palette.accent;
       ctx.fillRect(0, 0, WIDTH * 0.4, HEIGHT);
       ctx.fillStyle = palette.secondary;
-      ctx.fillRect(WIDTH * 0.4, 0, 18, HEIGHT);
+      ctx.fillRect(WIDTH * 0.4, 0, 14, HEIGHT);
+      return;
+    }
+
+    if (palette.id === 'sumi') {
+      ctx.fillStyle = palette.accent;
+      ctx.fillRect(0, 0, 18, HEIGHT);
+      ctx.fillStyle = palette.secondary;
+      ctx.fillRect(18, 0, 6, HEIGHT);
+      ctx.strokeStyle = palette.secondary;
+      ctx.lineWidth = 3;
+      drawRoundedRect(ctx, WIDTH * 0.72, HEIGHT * 0.62, 88, 88, 8);
+      ctx.stroke();
+      return;
+    }
+
+    if (palette.id === 'atelier') {
+      ctx.fillStyle = palette.accent;
+      ctx.fillRect(0, 0, WIDTH, 12);
+      ctx.fillRect(0, HEIGHT - 12, WIDTH, 12);
+      ctx.fillStyle = palette.secondary;
+      ctx.fillRect(0, 12, WIDTH, 3);
+      ctx.fillRect(0, HEIGHT - 15, WIDTH, 3);
+      drawCornerMarks(ctx, 24, 16, palette.accent);
+      return;
+    }
+
+    if (palette.id === 'arctic') {
+      ctx.fillStyle = palette.secondary;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(WIDTH * 0.4, 0);
+      ctx.lineTo(WIDTH * 0.22, HEIGHT);
+      ctx.lineTo(0, HEIGHT);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = palette.accent;
+      ctx.globalAlpha = 0.35;
+      ctx.beginPath();
+      ctx.moveTo(WIDTH, 0);
+      ctx.lineTo(WIDTH, HEIGHT * 0.45);
+      ctx.lineTo(WIDTH * 0.62, 0);
+      ctx.closePath();
+      ctx.fill();
+      ctx.globalAlpha = 1;
       return;
     }
 
@@ -1442,7 +1506,7 @@ window.VCardApp.CardCanvasExporter = (function () {
       return;
     }
 
-    if (palette.id === 'lagoon' || palette.id === 'arctic' || palette.id === 'slate') {
+    if (palette.id === 'lagoon' || palette.id === 'slate') {
       ctx.fillStyle = palette.secondary;
       ctx.beginPath();
       ctx.moveTo(0, 0);
