@@ -44,6 +44,7 @@ html.dark {
   --accent: #0a6b45;
   --accent-soft: rgba(10, 107, 69, 0.22);
   --accent-mid: #0e8556;
+  --on-accent: #ffffff;
   --info-warm: rgba(255, 107, 33, 0.12);
   --ambient-a: rgba(255, 107, 33, 0.1);
   --ambient-b: rgba(10, 107, 69, 0.1);
